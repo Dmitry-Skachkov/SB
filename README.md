@@ -36,7 +36,7 @@ Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng
 https://arxiv.org/abs/2001.00710
 
 
-   @misc{VASPsol-Software,
+<   @misc{VASPsol-Software,
      title        = {VASPsol: Implicit solvation and electrolyte model for density-functional theory},
      author       = {K. Mathew and V. S. Chaitanya Kolluru and R. G. Hennig},
      year         = 2018,
@@ -68,7 +68,7 @@ https://arxiv.org/abs/2001.00710
      pages        = {234101},
      doi          = {10.1063/1.5132354}
    }
-
+>
 
 
 
