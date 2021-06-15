@@ -1,6 +1,6 @@
 # First-Principles Method for Schottky Barrier
 
-![GitHub Logo](/images/logo.png)
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/logo.jpg)
 Format: ![Alt Text](url)
 
 
