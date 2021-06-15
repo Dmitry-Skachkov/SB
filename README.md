@@ -19,6 +19,12 @@ Load the appropriate modules for compilers. Compile the program:
 
 Please see the file ![USAGE.md](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/Docs/USAGE.md) in the docs folder for instructions and the examples folder for some sample calculations.
 
+# Authors
+
+Dmitry Skachkov
+Xiao-Guang Znang
+Hai-Ping Cheng
+
 # License
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
