@@ -37,7 +37,7 @@ Please contact at m2qm.efr[at]phys.ufl.edu
 
 # How to cite
 
-If you use the FPSchottkyBarrier package in your research, please cite the following papers:
+If you use the SB package in your research, please cite the following papers:
 
 "First-Principles Theory for Schottky Barrier Physics"
 Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng
@@ -46,7 +46,7 @@ https://arxiv.org/abs/2001.00710
 BibTex entry for the Github repository and the publications:
 
     @misc{VASPsol-Software,
-     title        = {FPSchottkyBarrier: First-Principles Method for Schottky Barrier},
+     title        = {SB: First-Principles Method for Schottky Barrier},
      author       = {D. Skachkov and Xiao-Guang Zhang and Hai-Ping Cheng},
      year         = 2021,
      publisher    = {GitHub},
@@ -57,8 +57,7 @@ BibTex entry for the Github repository and the publications:
     }
    
     @article{VASPsol2014-Dielectric,
-     title        = {Implicit solvation model for density-functional study of nanocrystal surfaces
-                     and reaction pathways.},
+     title        = {First-Principles Theory for Schottky Barrier Physics},
      author       = {D. Skachkov and S.-L. Liu and Y. Wang and X.-G. Zhang and H.-P. Cheng},
      year         = 2021,
      journal      = {ArXiv},
