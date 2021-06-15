@@ -51,8 +51,8 @@ BibTex entry for the Github repository and the publications:
      year         = 2021,
      publisher    = {GitHub},
      journal      = {GitHub repository},
-     howpublished = {\url{https://github.com/Dmitry-Skachkov/SchottkyBarrier}},
-     url          = {https://github.com/Dmitry-Skachkov/SchottkyBarrier},
+     howpublished = {\url{https://github.com/m2qm-efrc/SB}},
+     url          = {https://github.com/m2qm-efrc/SB},
      doi          = {}
     }
    
