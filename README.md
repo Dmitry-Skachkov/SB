@@ -1,4 +1,4 @@
-![GitHub Logo](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/logo.jpg)
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/Docs/logo.jpg)
 
 
 # First-Principles Method for Schottky Barrier
