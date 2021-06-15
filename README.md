@@ -8,8 +8,11 @@ We develop a first-principles theory for Schottky barrier physics. The Poisson e
 # Installation
 
 Copy sb_v1.0.tar file with the archive into the selected folder. Untar the archive:
+
 > tar -xvf sb_v1.0.tar
+
 Load the appropriate modules for compilers. Compile the program:
+
 > make
 
 # Usage
