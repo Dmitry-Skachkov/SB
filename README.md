@@ -33,7 +33,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 # Contributing
 
-Please contact at m2qm.efr[at]phys.ufl.edu
+Please contact at m2qm.efrc[at]phys.ufl.edu
 
 # How to cite
 
