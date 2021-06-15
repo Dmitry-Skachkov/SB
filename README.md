@@ -22,7 +22,9 @@ Please see the file ![USAGE.md](https://github.com/Dmitry-Skachkov/SchottkyBarri
 # Authors
 
 Dmitry Skachkov
+
 Xiao-Guang Znang
+
 Hai-Ping Cheng
 
 # License
