@@ -35,28 +35,28 @@ If you use the FPSchottkyBarrier package in your research, please cite the follo
 Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng
 https://arxiv.org/abs/2001.00710
 
+BibTex entry for the Github repository and the publications:
 
     @misc{VASPsol-Software,
-     title        = {VASPsol: Implicit solvation and electrolyte model for density-functional theory},
-     author       = {K. Mathew and V. S. Chaitanya Kolluru and R. G. Hennig},
-     year         = 2018,
+     title        = {FPSchottkyBarrier: First-Principles Method for Schottky Barrier},
+     author       = {D. Skachkov and Xiao-Guang Zhang and Hai-Ping Cheng},
+     year         = 2021,
      publisher    = {GitHub},
      journal      = {GitHub repository},
-     howpublished = {\url{https://github.com/henniggroup/VASPsol}},
-     url          = {https://github.com/henniggroup/VASPsol},
-     doi          = {10.5281/zenodo.2555053}
+     howpublished = {\url{https://github.com/Dmitry-Skachkov/SchottkyBarrier}},
+     url          = {https://github.com/Dmitry-Skachkov/SchottkyBarrier},
+     doi          = {}
     }
    
     @article{VASPsol2014-Dielectric,
      title        = {Implicit solvation model for density-functional study of nanocrystal surfaces
                      and reaction pathways.},
-     author       = {K. Mathew and R. Sundararaman and K. Letchworth-Weaver and T. A. Arias and
-                     R. G. Hennig},
-     year         = 2014,
-     journal      = {J. Chem. Phys.},
-     volume       = 140,
-     pages        = {084106},
-     doi          = {10.1063/1.4865107}
+     author       = {D. Skachkov and S.-L. Liu and Y. Wang and X.-G. Zhang and H.-P. Cheng},
+     year         = 2021,
+     journal      = {ArXiv},
+     volume       = 2001,
+     pages        = {00710},
+     doi          = {}
     }
    
 
