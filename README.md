@@ -45,7 +45,7 @@ https://arxiv.org/abs/2001.00710
 
 BibTex entry for the Github repository and the publications:
 
-    @misc{VASPsol-Software,
+    @misc{SB-Software,
      title        = {SB: First-Principles Method for Schottky Barrier},
      author       = {D. Skachkov and Xiao-Guang Zhang and Hai-Ping Cheng},
      year         = 2021,
@@ -56,7 +56,7 @@ BibTex entry for the Github repository and the publications:
      doi          = {}
     }
    
-    @article{VASPsol2014-Dielectric,
+    @article{SB-paper,
      title        = {First-Principles Theory for Schottky Barrier Physics},
      author       = {D. Skachkov and S.-L. Liu and Y. Wang and X.-G. Zhang and H.-P. Cheng},
      year         = 2021,
