@@ -41,8 +41,8 @@ If you use the SB package in your research, please cite the following papers:
 
     Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
     "First-Principles Theory for Schottky Barrier Physics"    
-    https://arxiv.org/abs/2001.00710
-    [![arXiv](https://img.shields.io/badge/arXiv-2001.00710-b31b1b.svg)](https://arxiv.org/abs/2001.00710)
+    https://arxiv.org/abs/2001.0071
+[![arXiv](https://img.shields.io/badge/arXiv-2001.00710-b31b1b.svg)](https://arxiv.org/abs/2001.00710)
 
 
 BibTex entry for the Github repository and the publications:
