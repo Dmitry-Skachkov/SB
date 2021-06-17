@@ -39,8 +39,8 @@ Please contact at m2qm.efrc[at]phys.ufl.edu
 
 If you use the SB package in your research, please cite the following papers:
 
-"First-Principles Theory for Schottky Barrier Physics"
-Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng
+Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
+"First-Principles Theory for Schottky Barrier Physics"  
 https://arxiv.org/abs/2001.00710
 
 BibTex entry for the Github repository and the publications:
