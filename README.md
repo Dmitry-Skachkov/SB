@@ -21,7 +21,7 @@ Please see the file [USAGE.md](Docs/USAGE.md) in the [Docs](Docs) folder for ins
 
 # Further development 
 
-Please see the file [Developer_documentation.pdf](Docs/Developer_documentation.pdf) in the Docs folder the detailed scheme of the SB program.
+Please see the file [Developer_documentation.pdf](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/Devepoler_documentation.pdf) in the [Docs](Docs) folder the detailed scheme of the SB program.
 
 # Authors
 
