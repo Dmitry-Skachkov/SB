@@ -1,5 +1,5 @@
 
-# Preparation
+# Preparation calculation
 
 There is necessary to do several DFT (or any first-principles) calculations and prepare the following input files:
 
