@@ -19,10 +19,6 @@ Load the appropriate modules for compilers. Compile the program:
 
 Please see the file [USAGE.md](Docs/USAGE.md) in the [Docs](Docs) folder for instructions and the examples folder for some sample calculations.
 
-# Further development 
-
-Please see the file [Developer_documentation.pdf](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/Devepoler_documentation.pdf) in the [Docs](Docs) folder for the detailed scheme of the SB program.
-
 # Authors
 
 Dmitry Skachkov
@@ -38,6 +34,10 @@ Unless required by applicable law or agreed to in writing, software distributed 
 # Contributing
 
 Please contact at m2qm.efrc[at]phys.ufl.edu
+
+# Further development 
+
+Please see the file [Developer_documentation.pdf](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/Devepoler_documentation.pdf) in the [Docs](Docs) folder for the detailed scheme of the SB program.
 
 # How to cite
 
