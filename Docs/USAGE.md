@@ -21,6 +21,10 @@ There is necessary to do several DFT (or any first-principles) calculations and 
   - b3
   - cz
 
+# Running the SB program
 
+In the folder with the input files run the program:
+> shottky 300. 1.42 inf 0. > output
+where 300. is the temperature, 1.42 is the Fermi level of the system, 'inf' corresponds to semiinfinite size of the semiconductor, and 0. corresponds to the surface charge on the gating electrode in cm-2
 
 
