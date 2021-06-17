@@ -35,10 +35,6 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 Please contact at m2qm.efrc[at]phys.ufl.edu
 
-# Further development 
-
-Please see the file [Developer_documentation.pdf](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/Devepoler_documentation.pdf) in the [Docs](Docs) folder for the detailed scheme of the SB program.
-
 # How to cite
 
 If you use the SB package in your research, please cite the following papers:
