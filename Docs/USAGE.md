@@ -29,7 +29,7 @@ In the folder with the input files run the program:
 
 where 300. is the temperature, 1.42 is the Fermi level of the system, 'inf' corresponds to semiinfinite size of the semiconductor, and 0. corresponds to the surface charge on the gating electrode in cm-2
 
-The *output* file contains the information about the Schottky barrier parameters: Schottky barrier height (SBH), surface filling level deltaE, charge density on the surace of the interface, the electric field close to the surface of the semiconductor.
+The *output* file contains the information about the Schottky barrier parameters: Schottky barrier height (SBH), surface filling level &DeltaE, charge density on the surace of the interface, the electric field close to the surface of the semiconductor.
 
 There are two additional output files:
 - *po_.dat* containing the charge densities for electrons, holes, MIGS and total (in cm-3)
