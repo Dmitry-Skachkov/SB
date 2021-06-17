@@ -4,21 +4,6 @@ We develop a first-principles method for calculating Schottky barrier parameters
 
 ![GitHub Logo](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/Docs/logo.jpg)
 
-
-# Installation
-
-Copy sb_v1.0.tar file with the archive into the selected folder. Untar the archive:
-
-> tar -xvf sb_v1.0.tar
-
-Load the appropriate modules for compilers. Compile the program:
-
-> make
-
-# Usage
-
-Please see the file [USAGE.md](Docs/USAGE.md) in the [Docs](Docs) folder for instructions and the examples folder for some sample calculations.
-
 # Authors
 
 Dmitry Skachkov
@@ -31,13 +16,17 @@ Hai-Ping Cheng
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
+# Usage
+
+Please see the [Docs](Docs) folder for instructions how to install the code, and the [Examples](Examples) folder for some sample calculations. 
+
 # Contributing
 
-Please contact at m2qm.efrc[at]phys.ufl.edu
+For contributing please contact Dr. Hai-Ping Cheng at m2qm.efrc[at]phys.ufl.edu
 
 # How to cite
 
-If you use the SB package in your research, please cite the following papers:
+If you use the SB package in your research, please cite the following paper:
 
 * Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
 "First-Principles Theory for Schottky Barrier Physics"    
