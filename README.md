@@ -4,6 +4,10 @@ We develop a first-principles method for calculating Schottky barrier parameters
 
 ![GitHub Logo](https://github.com/Dmitry-Skachkov/SchottkyBarrier/blob/main/Docs/logo.jpg)
 
+# Usage
+
+Please see the [Docs](Docs) folder for instructions how to install the code, and the [Examples](Examples) folder for some sample calculations. 
+
 # Authors
 
 Dmitry Skachkov
@@ -15,10 +19,6 @@ Hai-Ping Cheng
 # License
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-# Usage
-
-Please see the [Docs](Docs) folder for instructions how to install the code, and the [Examples](Examples) folder for some sample calculations. 
 
 # Contributing
 
