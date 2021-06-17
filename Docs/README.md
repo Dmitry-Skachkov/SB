@@ -5,7 +5,7 @@ Copy sb_v1.0.tar file with the archive into the selected folder. Untar the archi
 
 > tar -xvf sb_v1.0.tar
 
-Load the appropriate modules for Fortran compilers. Compile the program:
+Load the appropriate modules for Fortran compilers and compile the program:
 
 > make
 
