@@ -6,7 +6,7 @@ We develop a first-principles method for calculating Schottky barrier parameters
 
 # Usage
 
-Please see [Docs](Docs) folder for instructions how to install the code, and [Examples](Examples) folder for some sample calculations. 
+Please see [Docs](Docs) folder for instructions how to install the code and [Examples](Examples) folder for some sample calculations. 
 
 # Authors
 
