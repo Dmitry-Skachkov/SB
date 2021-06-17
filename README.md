@@ -17,7 +17,11 @@ Load the appropriate modules for compilers. Compile the program:
 
 # Usage
 
-Please see the file [USAGE.md](Docs/USAGE.md) in the docs folder for instructions and the examples folder for some sample calculations.
+Please see the file [USAGE.md](Docs/USAGE.md) in the [Docs](Docs) folder for instructions and the examples folder for some sample calculations.
+
+# Further development 
+
+Please see the file [Developer_documentation.pdf](Docs/Developer_documentation.pdf) in the Docs folder the detailed scheme of the SB program.
 
 # Authors
 
