@@ -11,7 +11,7 @@ Load the appropriate modules for Fortran compilers and compile the program:
 
 # Usage
 
-Please see the file [USAGE.md](USAGE.md) for instructions and the [Examples](../Examples) folder for some sample calculations.
+Please see file [USAGE.md](USAGE.md) for instructions and [Examples](../Examples) folder for some sample calculations.
 
 # Further development
 
