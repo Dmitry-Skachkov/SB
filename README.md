@@ -26,7 +26,7 @@ For contributing please contact Dr. Hai-Ping Cheng at m2qm.efrc[at]phys.ufl.edu
 
 # How to cite
 
-If you use the SB package in your research, please cite the following paper:
+If you use the SB package in your research, please cite the following publications:
 
 * Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
 "First-Principles Theory for Schottky Barrier Physics"    
