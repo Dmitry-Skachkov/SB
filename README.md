@@ -5,7 +5,7 @@
 * [Authors](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#authors)
 * [License](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#license)
 * [Contributing]()
-* [How to cite]()
+* [How to cite](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#how-to-cite)
 
 # Abstract
 
