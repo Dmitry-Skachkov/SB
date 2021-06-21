@@ -2,7 +2,7 @@
 
 * [Abstract](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#abstract)
 * [Usage](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#usage)
-* [Authors]()
+* [Authors](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#authors)
 * [License]()
 * [Contributing]()
 * [How to cite]()
