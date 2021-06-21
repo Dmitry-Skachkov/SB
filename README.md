@@ -1,6 +1,6 @@
 # First-Principles Method for Schottky Barrier
 
-* [Brief description]()
+* [Abstract](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#abstract)
 * [Usage]()
 * [Authors]()
 * [License]()
