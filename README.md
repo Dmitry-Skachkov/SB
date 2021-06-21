@@ -4,7 +4,7 @@
 * [Usage](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#usage)
 * [Authors](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#authors)
 * [License](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#license)
-* [Contributing]()
+* [Contributing](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#contributing)
 * [How to cite](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#how-to-cite)
 
 # Abstract
