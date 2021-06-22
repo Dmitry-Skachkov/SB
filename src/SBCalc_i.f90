@@ -94,42 +94,19 @@
      subroutine set_eps(eps,name)
       character(*)    :: name
       real(8)         :: eps
-       call set_eps1(eps,name)
-     end subroutine set_eps
-
-
-
-
-     subroutine set_eps1(eps,name)
-      character(*)    :: name
-      real(8)         :: eps
-      if(1.405d0 < EFermi1 .and. EFermi1 <= 1.420d0) then
-       eps = 1.d-16
-      elseif(1.230d0 < EFermi1 .and. EFermi1 <= 1.405d0) then
-       eps = 1.d-17
-      elseif(1.060d0 < EFermi1 .and. EFermi1 <= 1.230d0) then
-       eps = 1.d-18
-      elseif(0.885d0 < EFermi1 .and. EFermi1 <= 1.060d0) then
-       eps = 1.d-19
-      elseif(0.535d0 < EFermi1 .and. EFermi1 <= 0.885d0) then
-       eps = 1.d-20                ! accuracy for integration    
-      elseif(0.360d0 < EFermi1 .and. EFermi1 <= 0.535d0) then    
-       eps = 1.d-20
-      elseif(0.185d0 < EFermi1 .and. EFermi1 <= 0.360d0) then   
-       eps = 1.d-20
-      elseif(0.000d0 <= EFermi1 .and. EFermi1 <= 0.185d0) then
-       eps = 1.d-16
-      elseif(EFermi1 > 1.420d0) then
-       eps = 1.d-15
-      elseif(EFermi1 < 0.000d0) then
-       eps = 1.d-15
+      real(8)         :: x,pp
+      if(EFermi1 > EFermi_00) then
+       x = (EFermi1-EFermi_00)/(ECBM-EFermi_00)
+       pp = 20*(1-x)+16*x
+       eps = 10**(-pp)
+      elseif(EFermi1 < EFermi_00) then
+       x = (EFermi_00-EFermi1)/(EFermi_00-EVBM)
+       pp = 20*(1-x)+16*x
+       eps = 10.D0**(-pp)
       else
-       print *,'EFermi1=',EFermi1
-       print *,name,':  define eps for this Fermi level'
-       stop
+       eps = 1.D-20
       endif
-     end subroutine set_eps1
-
+     end subroutine set_eps
 
 
 
@@ -180,7 +157,9 @@
 
      real(8) function F1(E)
       real(8)              :: E
-      F1 = (dexp((E-EFermi1)/kbT)/(1.d0+dexp((E-EFermi1)/kbT)))*DOS_SCs(E)
+      real(8)              :: dexpx
+      dexpx = dexp((E-EFermi1)/kbT)
+      F1 = (dexpx/(1.d0+dexpx))*DOS_SCs(E)
      end function F1
 
 
@@ -250,48 +229,47 @@
 
 
 
-     real(8) function poMIGS(z)                                  ! charge density of MIGS
+     real(8) function poMIGS(z)                                            ! charge density of MIGS
       real(8)        :: z
       real(8)        :: R3,R31,R32,R33
       real(8)        :: eps
       zp = z
-      if(zp < 20.D0) then
-       eps = 1.d-12  
-      elseif(zp < 70.D0) then
-       eps = 1.d-14  
-      elseif(zp < 150.D0) then
-       eps = 1.d-16
-      elseif(zp < 250.D0) then
-       eps = 1.d-18
-      elseif(zp < 700.D0) then
-       eps = 1.d-20
-      elseif(zp < 1400.D0) then
-       eps = 1.d-24
-      elseif(zp < 2000.D0) then
-       eps = 1.d-28
-      elseif(zp < 3000.D0) then
-       eps = 1.d-30
-      endif  
-     if(z < 3.d0*za) then                         !1000.d0) then 
-      eVz = -Vels(z)
-      call QSL3D(R31,Exxm1(1)+eVz,Exxm2(1)+eVz,poMIGS_2,eps)              ! MIGS
-      call QSL3D(R32,Exxm1(2)+eVz,Exxm2(2)+eVz,poMIGS_2,eps)              ! MIGS
-      call QSL3D(R33,Exxm1(3)+eVz,Exxm2(3)+eVz,poMIGS_2,eps)              ! MIGS
-      R3 = (R31+R32+R33)
-     else
-      R3 = 0.d0              ! if z > 3*za 
-     endif 
+      if(z < 1000.d0) then                          
+       call set_epsMIGS(z,eps)
+       eVz = -Vels(z)
+       call QSL3D(R31,Exxm1(1)+eVz,Exxm2(1)+eVz,poMIGS_2,eps)              ! MIGS
+       call QSL3D(R32,Exxm1(2)+eVz,Exxm2(2)+eVz,poMIGS_2,eps)              ! MIGS
+       call QSL3D(R33,Exxm1(3)+eVz,Exxm2(3)+eVz,poMIGS_2,eps)              ! MIGS
+       R3 = (R31+R32+R33)
+      else
+       R3 = 0.d0                                                           ! if z > 3*za 
+      endif 
       poMIGS =   -R3/V_D0           
      end function poMIGS
 
 
 
 
-     real(8) function poMIGS_2(E)                                ! charge density of MIGS
+     real(8) function poMIGS_2(E)                                          ! charge density of MIGS
       real(8)        :: E
-      poMIGS_2 =   DMIGS(E-eVz)/(1.d0+dexp((E-EFermi2)/kbT))                             !*(Nee1/Nee2)            !/V_D0     
+      poMIGS_2 =   DMIGS(E-eVz)/(1.d0+dexp((E-EFermi2)/kbT))              
      end function poMIGS_2
 
+
+
+
+
+     subroutine set_epsMIGS(z,eps)
+      real(8)         :: eps
+      real(8)         :: z,x,pp
+      if(z < 3000.d0) then
+       x = z/3000.d0
+       pp = 30*x+12*(1-x)
+       eps = 10**(-pp)
+      else
+       eps = 1.d-30
+      endif
+     end subroutine set_epsMIGS
 
 
 
@@ -310,10 +288,10 @@
        DMIGS = 0.d0
       else
 !      call calc_connection(E)                      ! calculate z0 for connection analytical and numerical results
-       zconnect = 0.5d0
+       zconnect = 1.5d0
        if(E > 0.d0 .and. E < ECBM) then
-   !    call separate(E,ImKHs2(E,k),ImKs2(E,k),DLDH)
-        DLDH = 1.d0
+        call separate(E,ImKHs2(E,k),ImKs2(E,k),DLDH)
+   !     DLDH = 1.d0
        elseif(E <= 0.d0) then
         DLDH = 1.0d0 
        elseif(E >= ECBM) then
@@ -371,6 +349,7 @@
 
 
 
+
     real(8) function DiG(E,k)                           ! DOS interface with Gaussian approximation (for large distances)
      real(8)      :: E
      integer      :: k
@@ -408,7 +387,7 @@
 
 
 
-     subroutine calc_gaus(E)                     ! check integral
+     subroutine calc_gaus(E)                            ! check integral
       real(8)     :: E
       integer     :: k
       real(8)     :: int
@@ -616,6 +595,7 @@
 
 
 
+
        subroutine calc_EFermi(eps)
         real(8)    :: eps
         real(8)    :: a,b
@@ -641,21 +621,20 @@
 
 
 
-      subroutine calc_connection(Ex)            ! calculate connection between numerical and analytical solutions
+      subroutine calc_connection(Ex)                               ! calculate connection between numerical and analytical solutions
        real(8)      :: Ex
-       real(8)      :: d2                       ! numerical width
+       real(8)      :: d2                                          ! numerical width
        real(8)      :: G1,G2
        real(8)      :: kvec(3)
        real(8)      :: kr2
        integer      :: k9
        real(8)      :: logG2G1
        real(8)      :: Kz0,Kz9
-!************************************************************************************************************************
-       k9 = 9    ! 2 ! Si-Al     !GaAs 9                                   ! k=9 and 16 point in k-mesh for 15x15 
-       G1 = DOS_Ms(Ex,1)                        !Di(Ex,1)                          ! value of Di(E,k) at Gamma
-       G2 = DOS_Ms(Ex,k9)                       !Di(Ex,9)                          ! value of Di(E,k) at nearest point at Gamma-K pathway (no. 9 in 15x15 k-mesh) 
-       kvec(1:3) = kp(1,k9)*b1(1:3) + kp(2,k9)*b2(1:3)    ! 1/A
-       kr2 = (kvec(1)**2 + kvec(2)**2)                    ! kr**2     kvec(3) = 0
+       k9 = 9                                                      ! k=9 and 16 point in k-mesh for 15x15 
+       G1 = DOS_Ms(Ex,1)                                           ! value of Di(E,k) at Gamma
+       G2 = DOS_Ms(Ex,k9)                                          ! value of Di(E,k) at nearest point at Gamma-K pathway (no. 9 in 15x15 k-mesh) 
+       kvec(1:3) = kp(1,k9)*b1(1:3) + kp(2,k9)*b2(1:3)             ! 1/A
+       kr2 = (kvec(1)**2 + kvec(2)**2)                             ! kr**2     kvec(3) = 0
        logG2G1 = dlog(G2/G1)
        d2 = -kr2/dlog(G2/G1)
        Kz9 = ImKs2(Ex,k9)*ckA
