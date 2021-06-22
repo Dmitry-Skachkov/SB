@@ -91,7 +91,7 @@
 
 
 
-     subroutine set_eps(eps,name)
+     subroutine set_eps(eps,name)                                        ! set accuracy of integartion for poe and poh
       character(*)    :: name
       real(8)         :: eps
       real(8)         :: x,pp
@@ -183,14 +183,16 @@
       call QSL3D(R15,Exxh1(5)+eVz,Exxh2(5)+eVz,poh_2,eps)        
       call QSL3D(R16,Exxh1(6)+eVz,Exxh2(6)+eVz,poh_2,eps)        
       call QSL3D(R17,Exxh1(7)+eVz,Exxh2(7)+eVz,poh_2,eps)        
-      poh =  (R11+R12+R13+R14+R15+R16+R17)/V_DSC                                           ! devide by volume of DOS for semiconductor
+      poh =  (R11+R12+R13+R14+R15+R16+R17)/V_DSC                ! devide by volume of DOS for semiconductor
      end function poh
 
 
 
      real(8) function poh_2(E)                                   ! charge density of holes
       real(8)        :: E
-      poh_2 =  DOS_SCs(E-eVz)*(dexp((E-EFermi1)/kbT)/(1.d0+dexp((E-EFermi1)/kbT))) 
+      real(8)        :: dexpx
+      dexpx = dexp((E-EFermi1)/kbT)
+      poh_2 =  DOS_SCs(E-eVz)*(dexpx/(1.d0+dexpx)) 
      end function poh_2
 
 
@@ -214,8 +216,9 @@
       call QSL3D(R14,Exxe1(4)+eVz,Exxe2(4)+eVz,poe_2,eps)        
       call QSL3D(R15,Exxe1(5)+eVz,Exxe2(5)+eVz,poe_2,eps)        
       call QSL3D(R16,Exxe1(6)+eVz,Exxe2(6)+eVz,poe_2,eps)        
-      poe =   -(R11+R12+R13+R14+R15+R16)/V_DSC                                                 ! devide by volume of DOS for semiconductor      
+      poe =   -(R11+R12+R13+R14+R15+R16)/V_DSC                   ! devide by volume of DOS for semiconductor      
      end function poe
+
 
 
 
@@ -259,7 +262,7 @@
 
 
 
-     subroutine set_epsMIGS(z,eps)
+     subroutine set_epsMIGS(z,eps)                                         ! set accuracy of integration for poMIGS calculation
       real(8)         :: eps
       real(8)         :: z,x,pp
       if(z < 3000.d0) then
@@ -278,7 +281,7 @@
 
 
 
-    real(8) function DMIGS(E)                                 ! density of MIGS in states/(eV*Vcell)
+    real(8) function DMIGS(E)                                  ! density of MIGS in states/(eV*Vcell)
       real(8)           :: E                                   ! in eV
       integer           :: k
       real(8)           :: Dx
@@ -287,7 +290,7 @@
       if(zp < z3) then
        DMIGS = 0.d0
       else
-!      call calc_connection(E)                      ! calculate z0 for connection analytical and numerical results
+!      call calc_connection(E)                                 ! calculate z0 for connection analytical and numerical results
        zconnect = 1.5d0
        if(E > 0.d0 .and. E < ECBM) then
         call separate(E,ImKHs2(E,k),ImKs2(E,k),DLDH)
@@ -297,9 +300,9 @@
        elseif(E >= ECBM) then
         DLDH = 0.0d0 
        endif
-       if(zp < zconnect) then                    ! int dk is calculated only for small z
+       if(zp < zconnect) then                                 ! int dk is calculated only for small z
         Dx = 0.d0
-        do k=1,Nk                                         ! integrate over kx,ky
+        do k=1,Nk                                             ! integrate over kx,ky
          if(k==1) then
           cx = DLDH
          else
@@ -338,8 +341,8 @@
 
 
 
-    real(8) function DMIGS_G(E)                                 ! MIGS from Gussian distribution around (kx,ky) = (0,0)
-     real(8)           :: E                                     ! in eV
+    real(8) function DMIGS_G(E)                      ! MIGS from Gussian distribution around (kx,ky) = (0,0)
+     real(8)           :: E                          ! in eV
      if(abs(zp) > 0.d0) then
       DMIGS_G = DOS_Ms(E,1)*exp(-2.d0*Imks2(E,1)*ckA*abs(zp))*(Imks2(E,1)*ckA)/abs(zp)/(a2p**2)*(1.d0-exp(-((a2p**2)/(Imks2(E,1)*ckA))*abs(zp)))
      else
@@ -350,7 +353,7 @@
 
 
 
-    real(8) function DiG(E,k)                           ! DOS interface with Gaussian approximation (for large distances)
+    real(8) function DiG(E,k)                        ! DOS interface with Gaussian approximation (for large distances)
      real(8)      :: E
      integer      :: k
      real(8)      :: kr2,d2
@@ -363,7 +366,7 @@
 
 
 
-    real(8) function Di(E,k)                           ! DOS interface (E,k,z)
+    real(8) function Di(E,k)                         ! DOS interface (E,k,z)
      real(8)      :: E
      integer      :: k
      Di = DOS_Ms(E,k)*exp(-2.d0*Imks2(E,k)*ckA*abs(zp))
@@ -465,7 +468,7 @@
       print *,'Int over EVBM to ECBM    NeC=',NeC
       call QSL3D(NeC,EVBM,ECBM,DOS0s,eps)
       print *,'Int over EVBM to ECBM for DOS0  NeC=',NeC
-      DS0 = NeC/(ECBM-EVBM)/V_D0                      ! density of states 
+      DS0 = NeC/(ECBM-EVBM)/V_D0                             ! density of states 
       print *,'DS0=',DS0
      end subroutine calc_DM_int
 
@@ -473,7 +476,7 @@
 
 
 
-     subroutine calc_deltaE                       ! calculate filling level of the surface
+     subroutine calc_deltaE                                  ! calculate filling level of the surface
       real(8)            :: eps
       real(8)            :: E1,E2
       eps = 0.000001d0
@@ -499,7 +502,7 @@
 
 
 
-     subroutine zero12(a,b,za,eps)  ! search zero by 1/2
+     subroutine zero12(a,b,za,eps)                           ! search zero by 1/2 method
       real(8)    :: a,b,za,eps
         do while (dabs(a-b) > eps)
          za = (a+b)/2.d0
@@ -521,12 +524,13 @@
 
 
 
+
      real(8) function Fsigma(dE)
       real(8)            :: dE
       real(8)            :: Nsigma,SInt
       real(8)            :: eps
       real(8)            :: E1,E2
-      real(8)            :: SigS                    ! surface charge
+      real(8)            :: SigS                                            ! initial surface charge on the interface
       eps = 1.d-12
       EFermi111 = CNL + dE
       if(dE > 0.d0) then
@@ -566,7 +570,7 @@
 
 
 
-       subroutine calc_zero_EF                           ! calculate EFermi for intrinsic SC
+       subroutine calc_zero_EF                                             ! calculate EFermi for intrinsic SC
         integer :: i
         print *,'calc_zero_EF:'
         print *,'looking for EF between EVBM=',EVBM,' and ECBM=',ECBM
@@ -589,7 +593,7 @@
          L_n_type = .false.
          L_p_type = .false.
         endif
-        EFermi1 = EFermi_input                                      ! set Fermi level for the system
+        EFermi1 = EFermi_input                                             ! set Fermi level for the system
        end subroutine calc_zero_EF
 
 
@@ -663,9 +667,6 @@
         call calc_DM_int
         call calc_DSC_int
        end subroutine calc_DOS_int
-
-
-
 
 
 
