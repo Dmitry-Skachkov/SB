@@ -1,4 +1,12 @@
 
+
+!      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
+!
+! (C)  Copyrigth 2021, Skachkov, Zhang, Cheng, Center for Molecular Magnetic Quantum Materials (M2QM),
+!                      Quantum Theory Project (QTP),
+!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      https://efrc.ufl.edu/
+
      Module SBParameters
       implicit none
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0

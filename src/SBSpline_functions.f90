@@ -1,5 +1,13 @@
 
 
+!      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
+!
+! (C)  Copyrigth 2021, Skachkov, Zhang, Cheng, Center for Molecular Magnetic Quantum Materials (M2QM),
+!                      Quantum Theory Project (QTP),
+!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      https://efrc.ufl.edu/
+
+
   Module SBSpline_functions
    use SBParameters
    use SBMathLibrary
@@ -71,7 +79,7 @@
 
 
     subroutine spline_start_1
-      integer           :: Nptmx,k     
+      integer           :: k     
       print *
       print *
       print *
@@ -94,20 +102,20 @@
       print *,'2 N_DOS_M=',N_DOS_M
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
       print *,'3 N_DOS_M=',N_DOS_M
-     do k=1,Nk
-      print *,'k=',k 
-      call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
-      call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
-     enddo
-     print *,'DOS_M'
-     do k=1,Nk
-      call spline(Ef_DOS_M,DOS_M(1:N_DOS_M,k),bspl2(1:N_DOS_M,k),cspl2(1:N_DOS_M,k),dspl2(1:N_DOS_M,k),N_DOS_M)    ! calculate spline coefficients for DOS_M
-     enddo
-     call spline(Ef_DOS_M, DOS_Mtot,bspl2t,cspl2t,dspl2t,N_DOS_M)                ! calculate spline coefficients 
-     call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
-     call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
-     call calc_z_mesh
-     call calc_E_mesh
+      do k=1,Nk
+       print *,'k=',k 
+       call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
+       call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
+      enddo
+      print *,'DOS_M'
+      do k=1,Nk
+       call spline(Ef_DOS_M,DOS_M(1:N_DOS_M,k),bspl2(1:N_DOS_M,k),cspl2(1:N_DOS_M,k),dspl2(1:N_DOS_M,k),N_DOS_M)    ! calculate spline coefficients for DOS_M
+      enddo
+      call spline(Ef_DOS_M, DOS_Mtot,bspl2t,cspl2t,dspl2t,N_DOS_M)                ! calculate spline coefficients 
+      call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
+      call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
+      call calc_z_mesh
+      call calc_E_mesh
     end subroutine spline_start_1
 
 
@@ -126,7 +134,7 @@
 
 
 
-     subroutine calc_z_mesh
+     subroutine calc_z_mesh                                     ! logarithmic z-mesh points
       real(8)          :: dz
       integer          :: i
       real(8)          :: pz,dp

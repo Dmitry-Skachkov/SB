@@ -1,8 +1,17 @@
 
 
 
+!      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
+!
+! (C)  Copyrigth 2021, Skachkov, Zhang, Cheng, Center for Molecular Magnetic Quantum Materials (M2QM),
+!                      Quantum Theory Project (QTP),
+!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      https://efrc.ufl.edu/
 
-     Module SBCalc_z                                           ! calculate points for plotting
+
+
+
+     Module SBCalc_z                                           ! calculate density and V on z-mesh points and do scf cycle
       use SBParameters
       use SBCalc_i
       use SBSpline_functions
@@ -13,7 +22,7 @@
 
 
 
-     subroutine calc_elpot
+     subroutine calc_elpot                                     ! calculate Schottky potential
       integer          :: i,j
       real(8)          :: delta_Vi
       real(8)          :: V1(Nz-1),V2(Nz-1)
@@ -22,11 +31,11 @@
       do i=1,Nz                                   
        V_el1(i) = Vel(Zz(i))
       enddo
-      do i=2,Nz-1                                            ! calculate derivative
-       El_f(i) = -(V_el1(i+1)-V_el1(i-1))/(Zz(i+1)-Zz(i-1))  ! V/Ang              /36.3609d0 ! in a.u. Ry            !51.4220632d0 ! in a.u.(Ha) for QE
+      do i=2,Nz-1                                              ! calculate derivative
+       El_f(i) = -(V_el1(i+1)-V_el1(i-1))/(Zz(i+1)-Zz(i-1))    ! V/Ang             
       enddo
       El_f(Nz) = 0.d0
-      El_f(1) = El_f(2) - (El_f(3) - El_f(2))*(Zz(2)-Zz(1))/(Zz(3)-Zz(2))     ! continue to point 1 with the same derivative
+      El_f(1) = El_f(2) - (El_f(3) - El_f(2))*(Zz(2)-Zz(1))/(Zz(3)-Zz(2))    
       delta_V = 0.d0
       delta_Vm = 0.d0
       do i=1,Nz
@@ -59,7 +68,7 @@
         po3 = poe(Zz(i))
         po_e(i) = po3
         poe_max = dmin1(poe_max,po3)
-        po4 = poMIGS(Zz(i))                   ! return to previous
+        po4 = poMIGS(Zz(i))                  
         po_MIGS(i) = po4
         poMe_max = dmin1(poMe_max,po4)
         po5 = 0.d0
@@ -132,8 +141,8 @@
       z01 = 100.d0
       dV0 = dV(1)
       call spline(Zz,dV,bsplx,csplx,dsplx,10)                        ! make cubic spline for 3 points in order to calculate derivative at z=0
-      ddV0 = bsplx(1)                                               ! V(z) = V(i) + b(i)*(z-z(i)) + c(i)*(z-z(i))**2 + d(i)*(z-z(i))**3
-                                                                    ! dV/dz(z=0) = b(1)
+      ddV0 = bsplx(1)                                                ! V(z) = V(i) + b(i)*(z-z(i)) + c(i)*(z-z(i))**2 + d(i)*(z-z(i))**3
+                                                                     ! dV/dz(z=0) = b(1)
   !    F1 = dV0*(1.d0-alfa_V)
   !    F2 = 3.d0*ddV0*(1.d0-alfa_Sig)/10.d0     ! need to be removed
        F1 = 0.d0
@@ -189,14 +198,14 @@
 
 
 
-       subroutine calc_scf                                                         ! find SCF solution for the system M-SC
+       subroutine calc_scf                                             ! find SCF solution for the system M-SC
         real(8)       :: zz1,zz2
         integer       :: is
         call set_limits_zz1(zz1,zz2)
         do is = 1,Nitscf
         call calc_look_po_z(zz1,zz2)                                   ! find za corresonding to -eV0
-        call calc_charges
-        call calc_deltaE                                 ! calculate filling level of the surface
+        call calc_charges                                              ! calculate charge on the interface
+        call calc_deltaE                                               ! calculate filling level of the surface
         print *,'CBM=',ECBM
         print *,'EFermi1=',EFermi1
         if(L_n_type) then
@@ -304,11 +313,11 @@
 
 
 
-                                          !
+                                          
         subroutine calc_diff_eV0(diffV)
          real(8)         :: diffV
-         call set_initial_po_V                                                 ! calculate V(z)
-         call spline_start_2                                                   ! spline coeff. for V_eln and po_new
+         call set_initial_po_V                                                ! calculate V(z)
+         call spline_start_2                                                  ! spline coeff. for V_eln and po_new
          filen = filen + 1
          call calc_po1                                                        ! calculate charge density po1 (po_h, po_e, and po_MIGS)
          call mixing_po                                                       ! mixing new and old density (po_new = (1-a)po0+a*po1) + spline coeff. 

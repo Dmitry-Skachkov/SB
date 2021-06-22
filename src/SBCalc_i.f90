@@ -1,7 +1,16 @@
 
 
 
-     Module SBCalc_i                                           ! integration
+!      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
+!
+! (C)  Copyrigth 2021, Skachkov, Zhang, Cheng, Center for Molecular Magnetic Quantum Materials (M2QM),
+!                      Quantum Theory Project (QTP),
+!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      https://efrc.ufl.edu/
+
+
+
+     Module SBCalc_i                                           ! integration, calculate density and potential
       use SBParameters
       use SBSpline_functions
       use SBMathLibrary
@@ -15,7 +24,7 @@
 
 
 
-     real(8) function Vel(z)                                   ! electrostatic potential in V
+     real(8) function Vel(z)                                   ! electrostatic potential (in V)
       real(8)            :: z
       real(8)            :: eps
       real(8)            :: intpo2,intpo21,intpo22,intpo23,intpo24,intpo25,intpo26
