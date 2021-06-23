@@ -198,19 +198,24 @@
        subroutine calc_scf                                             ! find SCF solution for the system M-SC
         real(8)       :: zz1,zz2
         integer       :: is
+        logical       :: Lsuc1,Lsuc2
         call set_limits_zz1(zz1,zz2)
         do is = 1,Nitscf
-        call calc_look_po_z(zz1,zz2)                                   ! find za corresonding to -eV0
+        call calc_look_po_z(1,zz1,zz2,Lsuc1,Lsuc2)                                   ! find za corresonding to -eV0
+        if(.not.Lsuc1 .or. .not.Lsuc2) then
+         call reset_zz(zz1,zz2,Lsuc1,Lsuc2)
+         call calc_look_po_z(2,zz1,zz2,Lsuc1,Lsuc2)
+        endif
         call calc_charges                                              ! calculate charge on the interface
         call calc_deltaE                                               ! calculate filling level of the surface
-        print *,'CBM=',ECBM
-        print *,'EFermi1=',EFermi1
+    !    print *,'CBM=',ECBM
+    !    print *,'EFermi1=',EFermi1
         if(L_n_type) then
          SBH = -V_eln(1) + (ECBM - EFermi1)
         elseif(L_p_type) then
          SBH =  V_eln(1) + (EFermi1 - EVBM)
         endif
-        print *,'is=',is,' SBH=',SBH
+    !    print *,'is=',is,' SBH=',SBH
         enddo
         L_conv = .true.
        end subroutine calc_scf
@@ -220,39 +225,27 @@
 
 
 
+       subroutine reset_zz(zz1,zz2,Lsuc1,Lsuc2)
+        real(8)       :: zz1,zz2
+        logical       :: Lsuc1,Lsuc2
+        if(.not.Lsuc1) then
+         zz1 = 0.1d0*zz1
+        elseif(.not.Lsuc2) then
+         zz2 = 10.d0*zz2
+        endif
+       end subroutine reset_zz
+
+
+
+
        subroutine set_limits_zz1(zz1,zz2)
-        real(8)     zz1,zz2
-        if(1.40d0 < EFermi1 .and. EFermi1 <= 1.42d0) then
-         zz1 = 100.d0 
-         zz2 = 300.d0    !5000.d0 
-        elseif(1.35d0 < EFermi1 .and. EFermi1 <= 1.40d0) then
-         zz1 = 100.d0 
-         zz2 = 5000.d0 
-        elseif(1.25d0 < EFermi1 .and. EFermi1 <= 1.35d0) then
-         zz1 = 1000.d0 
-         zz2 = 30000.d0 
-        elseif(1.15d0 < EFermi1 .and. EFermi1 <= 1.25d0) then
-         zz1 = 5000.d0 
-         zz2 = 100000.d0
-        elseif(0.99d0 < EFermi1 .and. EFermi1 <= 1.15d0) then
-         zz1 = 5000.d0 
-         zz2 = 100000.d0
-        elseif(0.00d0 <= EFermi1 .and. EFermi1 < 0.20d0) then
-         zz1 = 3.d0 
-         zz2 = 300.d0
-        elseif(0.20d0 <= EFermi1 .and. EFermi1 < 0.24d0) then
-         zz1 = 10.d0 
-         zz2 = 5000.d0
-        elseif(0.24d0 <= EFermi1 .and. EFermi1 < 0.27d0) then
-         zz1 = 2000.d0 
-         zz2 = 2500.d0
-        elseif(0.27d0 <= EFermi1 .and. EFermi1 < 0.33d0) then
-         zz1 = 1000.d0 
-         zz2 = 30000.d0
-        else
-         print *,'define limits for zz1,zz2'
-         stop
-        endif 
+        real(8)     :: zz1,zz2
+        real(8)     :: x,zz
+        x = (EFermi1 - EFermi_00)/(ECBM - EFermi_00)
+        zz = 1.d0/(0.00000001d0*x + 0.000001d0*x**2 + 0.00001d0*x**3 + 0.0010d0*x**4)
+     !   print *,'zz=',zz
+        zz1 = 0.1d0*zz
+        zz2 = 10.d0*zz
        end subroutine set_limits_zz1
 
 
@@ -262,15 +255,19 @@
 
 
 
-       subroutine calc_look_po_z(za1,za2)                                     ! find za corresonding to -eV0 on the interval [za1,za2]
+       subroutine calc_look_po_z(Natmpt,za1,za2,Lsuc1,Lsuc2)                                     ! find za corresonding to -eV0 on the interval [za1,za2]
         real(8)        :: za1,za2   
         real(8)        :: eps
         real(8)        :: a,b
         real(8)        :: diffV
+        integer        :: Natmpt
+        logical        :: Lsuc1,Lsuc2
         eps = 0.0001d0                                                        ! 0.1 meV accuracy to find the Fermi level
         a = za1
         b = za2
-         filen = 0
+        filen = 0
+        Lsuc1 = .true.
+        Lsuc2 = .true.
         do while (dabs(a-b) > eps)
          filen = filen + 1
          za = (a+b)/2.d0
@@ -296,12 +293,18 @@
          print *,'za=',za
          print *,'za1=',za1
          print *,'za2=',za2
-         stop
+         Lsuc1 = .false.
+         !stop
         elseif( (dabs(za-za2).le.0.01d0) ) then
          print 2
          print *,'za=',za
          print *,'za1=',za1
          print *,'za2=',za2
+         Lsuc2 = .false.
+        endif
+        if((.not.Lsuc1 .or. .not.Lsuc2).and.Natmpt==2) then
+         print 3
+         if(dabs(EFermi1-EFermi_00) < 0.2d0) print 4
          stop
         endif
         print *,'filen=',filen
@@ -312,6 +315,8 @@
         print *,'EFermi1-(CNL+dEf)=',EFermi1-(CNL+dEf)
  1      format(/'***** ERROR *****'/' za is too close to za1'/' Please decrease the value za1')
  2      format(/'***** ERROR *****'/' za is too close to za2'/' Please increase the value za2')
+ 3      format(/'We made two attempts to find the solution, unfortunately it is outside of the region'/'The parameters of the system are:')
+ 4      format('If you really need to calculate the solution for these parameters, then it is necessary to increase ')
        end subroutine calc_look_po_z
 
 
