@@ -212,6 +212,7 @@
         endif
         print *,'is=',is,' SBH=',SBH
         enddo
+        L_conv = .true.
        end subroutine calc_scf
 
 
@@ -290,9 +291,14 @@
          endif
         endif
         enddo
-        if( (dabs(za-za1).le.0.01d0) .or. &
-            (dabs(za-za2).le.0.01d0) ) then
+        if( (dabs(za-za1).le.0.01d0) ) then
          print 1
+         print *,'za=',za
+         print *,'za1=',za1
+         print *,'za2=',za2
+         stop
+        elseif( (dabs(za-za2).le.0.01d0) ) then
+         print 2
          print *,'za=',za
          print *,'za1=',za1
          print *,'za2=',za2
@@ -304,7 +310,8 @@
         print *,'EFermi1=',EFermi1
         print *,'CNL=',CNL
         print *,'EFermi1-(CNL+dEf)=',EFermi1-(CNL+dEf)
- 1      format(' za is too close to za1 or za2')
+ 1      format(/'***** ERROR *****'/' za is too close to za1'/' Please decrease the value za1')
+ 2      format(/'***** ERROR *****'/' za is too close to za2'/' Please increase the value za2')
        end subroutine calc_look_po_z
 
 
@@ -325,6 +332,7 @@
          print *,'filling level=',dEf
          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
         end subroutine calc_diff_eV0
+
 
 
 
