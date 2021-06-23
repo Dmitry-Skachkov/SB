@@ -79,7 +79,7 @@
       real(8)                :: po_h(Nz)                       ! po_h holes (to write to the file only)
       real(8)                :: po_e(Nz)                       ! po_e electrons (to write to the file only)
       real(8)                :: Zz(Nz)                         ! z mesh
-      real(8)                :: E1(NE)                         ! E mesh
+ !     real(8)                :: E1(NE)                         ! E mesh
       integer                :: filen                          ! number of file for results
       real(8)                :: po0                            ! parameters of initial distribution po(z) = po0 * exp(- ImKz(E*,0)z)      !z/z0)
       real(8)                :: V_D0                           ! volume (in A^3) of the interface
@@ -89,7 +89,7 @@
       real(8)                :: po00_e                         ! density of electrons at +infinity
       real(8)                :: po00_h0                        ! density of holes at +infinity
       real(8)                :: po00_e0                        ! density of electrons at +infinity
-      real(8)                :: po00_S                         ! density of natural doped electrons of surface layer (on infinity)
+ !     real(8)                :: po00_S                         ! density of natural doped electrons of surface layer (on infinity)
       real(8)                :: Nee1                           ! norm for DOS_SC
       real(8)                :: Nee2                           ! norm for DOS_M
       real(8)                :: poh_max                        ! max of poh(z)
@@ -122,9 +122,9 @@
       real(8)                :: b1(3),b2(3),b3(3)              ! reciprocal vectors
       real(8)                :: zconnect                       ! connection numerical and analytical solution
    !   integer                :: Str                            ! structure
-      real(8)                :: ImKz_H(100)                    ! heavy holes
-      real(8)                :: EfH(100)                       ! heavy holes
-      integer                :: NptH                           ! number of points for ImKz_H
+ !     real(8)                :: ImKz_H(100)                    ! heavy holes
+ !     real(8)                :: EfH(100)                       ! heavy holes
+ !     integer                :: NptH                           ! number of points for ImKz_H
       integer, parameter     :: Npt1 = 50                      ! number of points for CBS
       real(8)                :: ImKL1(Npt1,Nk)                 ! light holes
       real(8)                :: ImKH1(Npt1,Nk)                 ! heavy holes
