@@ -10,7 +10,7 @@
 
 
 
-     Module SBCalc_i                                           ! integration, calculate density and potential
+     Module SBCalc_i                                           ! integration, calculate charge density and potential
       use SBParameters
       use SBSpline_functions
       use SBMathLibrary
@@ -18,6 +18,7 @@
       real(8)                :: eVz
       real(8)                :: eV0
       real(8)                :: EFermi111
+      real(8)                :: dEf1
      contains
 
 
@@ -84,16 +85,18 @@
       po00_h = poh0(0.d0)
       po00_e = poe0(0.d0)
       po00 =   po00_h + po00_e                           
-      if(EFermi1 > EFermi_00) then
+      if(L_n_type) then                       !EFermi1 > EFermi_00) then
        po00_e0 = po00
        po00_h0 = 0.d0
-      elseif(EFermi1 < EFermi_00) then
+      elseif(L_p_type) then                       !(EFermi1 < EFermi_00) then
        po00_h0 = po00
        po00_e0 = 0.d0
       endif
+      if(dabs(EFermi1-EFermi_00) .lt. 0.1d0) print 9
       print *,'   EFermi1     po_n'
       print 88,EFermi1,po00*1.d24
 88    format(F12.3,E20.4)
+ 9    format(/'*** WARNING ***'/' This is too small doping concentration. Are you sure about the input parameters?'/)
      end subroutine calc_po00
 
 
@@ -488,9 +491,8 @@
      subroutine calc_deltaE                                  ! calculate filling level of the surface
       real(8)            :: eps
       real(8)            :: E1,E2
+      dEf1 = dEf                                             ! store previous value
       eps = 0.000001d0
-      print *
-      print *,'calc_deltaE:'
       if(L_n_type) then
        E1 =  0.d0
        E2 =  0.2d0
@@ -502,12 +504,13 @@
        E2 =  0.0d0
       endif
       call zero12(E1,E2,dEf,eps)
-      print *,'filing level =',dEf
       if(dabs(dEf-0.2d0) .le. 0.001d0) then
-       print *,'increase searching range'
+       print *,'calc_deltaE: increase searching range'
        stop
       endif
      end subroutine calc_deltaE    
+
+
 
 
 
@@ -552,16 +555,12 @@
        E1 = CNL
        E2 = CNL
       endif
-      print *,'E1=',E1
-      print *,'E2=',E2
       call QSL3D(SInt,E1,E2,F99,eps)
       SigS = 0.d-3                      ! 1E-3 in e/A^2     = 1E13 cm-2   (x1E16)
       Nsigma = (dabs(Sig)+dabs(SigS))*Surface
       Fsigma = Sint - Nsigma 
-      print *,'Nsigma=',Nsigma
-      print *,'SInt=',SInt
-      print *,'Fsigma=',Fsigma
      end function Fsigma
+
 
 
 
@@ -586,19 +585,20 @@
         call calc_EFermi(1.d-15)
         print *
         print *,'EFermi1=',EFermi1
-        print *,'po00=',po00
-        print *,'po00_h=',po00_h
+        print *,'po00=',po00                                               ! this should be close to zero
+        print *,'po00_h=',po00_h                                           ! h and e compensate each other
         print *,'po00_e=',po00_e
         EFermi_00 = EFermi1
-        print *,'Fermi level for intrinsic SC=',EFermi1
+        print *,'Temperature =',Temp
+        print *,'Fermi level for intrinsic SC =',EFermi1
         print *
-        if(EFermi_input > EFermi_00) then
+        if(EFermi_input > EFermi_00) then                                  ! n-type
          L_n_type = .true.
          L_p_type = .false.
-        elseif(EFermi_input < EFermi_00) then
+        elseif(EFermi_input < EFermi_00) then                              ! p-type
          L_n_type = .false.
          L_p_type = .true.
-        else
+        else                                                               ! intrinsic
          L_n_type = .false.
          L_p_type = .false.
         endif

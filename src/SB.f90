@@ -6,10 +6,11 @@
 !                      Quantum Theory Project (QTP),
 !                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
 !                      https://efrc.ufl.edu/
-!                      Documentation and license:    https://github.com/m2qm-efrc/SB
-!                      Requests for contributing:    Hai-Ping Cheng m2qm.efrc@phys.ufl.edu
-!                      Questions regarding the code: Dmitry Skachkov d.g.skachkov@gmail.com
-!                      Description of the method:    https://arxiv.org/abs/2001.00710
+!                      Description of the method:      https://arxiv.org/abs/2001.00710
+!                      Documentation and license:      https://github.com/m2qm-efrc/SB
+!                      Requests for contributing:      Dr. Hai-Ping Cheng m2qm.efrc@phys.ufl.edu
+!                      Questions regarding the code:   Dr. Dmitry Skachkov d.g.skachkov@gmail.com
+!                      Questions regarding the method: Dr. Xiao-Guang Zhang xgz@ufl.edu
 !
 
        Program SB                                                   ! calculate Schottky barrier parameters
@@ -25,6 +26,7 @@
         call calc_DOS_int                                           ! calculate integral of DOS to check number of valence electrons
         call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
         call calc_scf                                               ! find SCF solution for the system M-SC
+        call calc_check_scf                                         ! check accuracy of scf cycle
         call write_results                                          ! write density po and potential V into gthe files
         call print_results                                          ! print all SB parameters
        end program SB

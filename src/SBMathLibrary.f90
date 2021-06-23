@@ -10,7 +10,7 @@
 
       SUBROUTINE QSL3D(RINT,A,B,F,E)
 !
-!     Adaptive integration using 11th power Lobatto formula with guaranteed accuracy. 
+!     Adaptive integration using Lobatto formula of 11th power with guaranteed accuracy. 
 !
 !     RINT - on exit contains the integral value
 !     A, B - lower and upper limits for integration 
@@ -21,14 +21,14 @@
 !
 ! (C) Copyright 1974-2021 Library of the numerical analysis, Research Computing Center, 
 !                         Lomonosov Moscow State University
-!                         http://www.srcc.msu.ru/num_anal
+!                         http://num-anal.srcc.msu.ru/lib_na/libnal.htm
 !     The library can be used without any limitations only for non-commercial usage.
 !     If the Library or any part of it is installed in organization for use in a shared access mode, 
 !     then the organization must arrange non-commercial usage of the Library's subprograms.
 !     Users or organizations have no right to transfer the programs of the Library or their modifications 
 !     to other persons or organizations for non-commercial usage without written permission 
-!     of the Research Computing Center of Moscow State University.
-!     For commercial usage please contact Dr. Oleg Arushanyan at arush@srcc.msu.ru
+!     from the Research Computing Center of Moscow State University.
+!     For commercial usage please contact Research Computing Center at arush@srcc.msu.ru
 !
       External F
       DIMENSION AY(7),BY(7),KSI(7),OM(3),D(3)

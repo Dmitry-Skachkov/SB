@@ -85,7 +85,9 @@
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
       real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
       integer                :: Nit                            ! number of iterations
-      integer                :: Nitscf                         ! 
+      integer                :: Nitscf                         ! number of iterations for scf
+      integer                :: Nitscf0                        ! number of iterations for initial search
+      integer                :: Nitscf2                        ! number of iterations second loop
       character(1)           :: Calc                           ! s - start; c - continue calculation
       integer, parameter     :: Npol = 11                      ! number points for polarization
       real(8)                :: dpol(Npol)                     ! polarization (a.u.)
@@ -125,6 +127,7 @@
       real(8)                :: V_gate                         ! gating voltage  
       real(8)                :: E_00                           ! electric field close to SC surface
       real(8)                :: P_00                           ! polarization close to SC surface
+      logical                :: L_debug                        ! for detailed printing
      contains
 
 
@@ -180,7 +183,6 @@
         print *,'EFermi1=',EFermi1,' eV'
         print *,'EFermi2=',EFermi2,' eV'
         dEf = 0.d0                                         ! initial
-        Nitscf = 3
         alfa   = 1.0d0                                             ! mixing po
         alfa_MIGS = 1.d0
         alfa_dipole = 1.d0
@@ -199,6 +201,10 @@
         print *,'cz=',cz,' A'
         print *,'V0=',V0,' eV'
         print *,'EFermi_input=',EFermi_input,' eV'
+        Nitscf  = 1                                      ! cycle over deltaE
+        Nitscf0 = 3                                      ! pre scf cycle
+        Nitscf2 = 1                                      ! post scf cycle
+        L_debug = .true.                                 ! print all intermediate results
        end subroutine read_data
 
 
