@@ -17,27 +17,20 @@
       real(8)                :: DOS_M(Nptm,Nk)                 ! DOS for interface (E,kx,ky)
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
-   !   real(8)                :: Efd(Nptm)                      ! E points for CBS
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M
       real(8)                :: Ef_DOS_SC(Nptm)                ! E points for DOS_SC
       real(8)                :: PDOS3(Nptm,Nk),Efi3(Nptm)      ! for separation D_L and D_H
       real(8)                :: PDOS4(Nptm,Nk),Efi4(Nptm)
       real(8)                :: DOS0(Nptm),Efi0(Nptm)          ! PDOS of the surface
-  !    integer                :: Nptd                           ! number of points for CBS
       integer                :: N_DOS_M                        ! number of points for DOS_M interface
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
       real(8)                :: Sig                            ! charge surface density on the interface (in e/Angstrom**2)
       real(8)                :: SigMIGS                        ! equivalent charge surface density of the MIGS (in e/Angstrom**2)
       real(8)                :: Sig_e                          ! equivalent charge surface density of the electrons (in e/Angstrom**2)
       real(8)                :: Sig_h                          ! equivalent charge surface density of the holes (in e/Angstrom**2)
-  !    real(8)                :: po_S                           ! volume density on surface layer
       real(8)                :: zp                             ! z as a parameter for DMIGS (in Angstrom)
       real(8)                :: ECBM                           ! CBM (in eV)
       real(8)                :: EVBM                           ! VBM (in eV)
-   !   real(8)                :: ECBM_S                         ! CBM of surface (in eV)
-    !  real(8)                :: EVBM_S                         ! VBM of surface (in eV)
- !     real(8), parameter     :: Minf = - 50.d0                 ! minus infinity
-!      real(8), parameter     :: Pinf =   50.d0                 ! plus infinity 
       real*8,  parameter     :: kb=8.6173430060d-5             ! Boltsman const in eV/K
       real(8)                :: Temp                           ! temperature in K
       real(8)                :: kbT                            != kb*Temp                  ! in eV
@@ -55,12 +48,7 @@
       logical                :: L_scf  = .false.               ! divergency
       integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
       integer, parameter     :: Nptmxx = 200
-  !    real(8)                :: Ef(Nptmxx,Nk)                  ! E points for CBS bands
-  !    real(8)                :: ImK(Nptmxx,Nk)                 ! Im k CBS separated by bands
       real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
-   !   real(8)                :: EminH1,EmaxH1                  ! CBS band limits for heavy holes
- !     real(8), parameter     :: Emin = -20.d0                  ! energy window for plot
- !     real(8), parameter     :: Emax =  7.d0
       integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
       integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
       real(8)                :: V_el1(Nz)                      ! electrostatic potential 
@@ -79,7 +67,6 @@
       real(8)                :: po_h(Nz)                       ! po_h holes (to write to the file only)
       real(8)                :: po_e(Nz)                       ! po_e electrons (to write to the file only)
       real(8)                :: Zz(Nz)                         ! z mesh
- !     real(8)                :: E1(NE)                         ! E mesh
       integer                :: filen                          ! number of file for results
       real(8)                :: po0                            ! parameters of initial distribution po(z) = po0 * exp(- ImKz(E*,0)z)      !z/z0)
       real(8)                :: V_D0                           ! volume (in A^3) of the interface
@@ -89,20 +76,17 @@
       real(8)                :: po00_e                         ! density of electrons at +infinity
       real(8)                :: po00_h0                        ! density of holes at +infinity
       real(8)                :: po00_e0                        ! density of electrons at +infinity
- !     real(8)                :: po00_S                         ! density of natural doped electrons of surface layer (on infinity)
       real(8)                :: Nee1                           ! norm for DOS_SC
       real(8)                :: Nee2                           ! norm for DOS_M
       real(8)                :: poh_max                        ! max of poh(z)
       real(8)                :: poe_max                        ! max of poe(z)
       real(8)                :: poMe_max                       ! max of poSIGS_e(z)
-   !   real(8)                :: poMh_max                       ! max of poSIGS_h(z)
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
       real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
       integer                :: Nit                            ! number of iterations
       integer                :: Nitscf                         ! 
       character(1)           :: Calc                           ! s - start; c - continue calculation
-  !    real(8)                :: dz1l = 3.31445d0               ! distance between layers in GaAs
       integer, parameter     :: Npol = 11                      ! number points for polarization
       real(8)                :: dpol(Npol)                     ! polarization (a.u.)
       real(8)                :: Epol(Npol)                     ! electric field points for polarization (a.u.)
@@ -121,10 +105,6 @@
       real(8)                :: alat                           ! lattice parameter (A)
       real(8)                :: b1(3),b2(3),b3(3)              ! reciprocal vectors
       real(8)                :: zconnect                       ! connection numerical and analytical solution
-   !   integer                :: Str                            ! structure
- !     real(8)                :: ImKz_H(100)                    ! heavy holes
- !     real(8)                :: EfH(100)                       ! heavy holes
- !     integer                :: NptH                           ! number of points for ImKz_H
       integer, parameter     :: Npt1 = 50                      ! number of points for CBS
       real(8)                :: ImKL1(Npt1,Nk)                 ! light holes
       real(8)                :: ImKH1(Npt1,Nk)                 ! heavy holes
@@ -446,8 +426,6 @@
       read(2,2) N_DOS_SC
       do j=1,N_DOS_SC
        read(2,*) Ef_DOS_SC(j),DOS_SC(j)
-    !   if(Ef_DOS_SC(j) < Emin) DOS_SC(j) = 0.d0
-    !   if(Ef_DOS_SC(j) > Emax) DOS_SC(j) = 0.d0
        if(DOS_SC(j) < 0.d0) then
         DOS_SC(j) = 0.d0
        endif
@@ -486,8 +464,6 @@
        endif    
        do j=1,N_DOS_M
         read(2,*) Efi(j),PDOS(j,k)
-     !   if(Ef_DOS_M(j) < Emin) PDOS(j,k) = 0.d0
-     !   if(Ef_DOS_M(j) > Emax) PDOS(j,k) = 0.d0
        enddo
       enddo
       print *,'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
@@ -508,8 +484,6 @@
        read(2,*) 
        do j=1,N_DOS_M
         read(2,*) Efi0(j),DOS0(j)
-   !     if(Efi0(j) < Emin) DOS0(j) = 0.d0
-   !     if(Efi0(j) > Emax) DOS0(j) = 0.d0
        enddo
        print *,'read_pdos_0: read ',N_DOS_M,' points of surface layer'
        do j=1,N_DOS_M

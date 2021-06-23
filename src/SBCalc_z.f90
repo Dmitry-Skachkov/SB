@@ -58,7 +58,6 @@
       real(8)          :: po2,po3,po4,po1Nz
       poh_max = 0.d0
       poe_max = 0.d0
-    !  poMh_max = 0.d0
       poMe_max = 0.d0
       delta_po = 0.d0
        do i=Nz,1,-1     ! going to z(1)
@@ -71,8 +70,6 @@
         po4 = poMIGS(Zz(i))                  
         po_MIGS(i) = po4
         poMe_max = dmin1(poMe_max,po4)
-    !    po5 = 0.d0
-    !    poMh_max = dmax1(poMh_max,po5)
         po1(i) = po2 + po3 + po4 - po00 
         if(i==Nz) po1Nz = po1(i)                  ! make po1(Nz) = 0, just to correct inaccuracy of calculations
         if(i==Nz) then

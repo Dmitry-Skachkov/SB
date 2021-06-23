@@ -115,7 +115,6 @@
       call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
       call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
       call calc_z_mesh
- !     call calc_E_mesh
     end subroutine spline_start_1
 
 
@@ -158,20 +157,6 @@
 2     format(I5,F12.3)
      end subroutine calc_z_mesh
 
-
-
-
- !    subroutine calc_E_mesh
- !     real(8)        :: E11
- !     real(8)        :: dE
- !     integer        :: j
- !     dE = (Emax-Emin)/(dfloat(NE-1))
- !     E11 = Emin
- !     do j=1,NE                                   ! calculate E mesh
- !      E11 = E11 + dE
- !      E1(j) = E11 
- !     enddo
- !    end subroutine calc_E_mesh
 
 
 
