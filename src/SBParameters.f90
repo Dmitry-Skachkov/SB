@@ -55,12 +55,12 @@
       logical                :: L_scf  = .false.               ! divergency
       integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
       integer, parameter     :: Nptmxx = 200
-      real(8)                :: Ef(Nptmxx,Nk)                  ! E points for CBS bands
-      real(8)                :: ImK(Nptmxx,Nk)                 ! Im k CBS separated by bands
+  !    real(8)                :: Ef(Nptmxx,Nk)                  ! E points for CBS bands
+  !    real(8)                :: ImK(Nptmxx,Nk)                 ! Im k CBS separated by bands
       real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
-      real(8)                :: EminH1,EmaxH1                  ! CBS band limits for heavy holes
-      real(8), parameter     :: Emin = -20.d0                  ! energy window for plot
-      real(8), parameter     :: Emax =  7.d0
+   !   real(8)                :: EminH1,EmaxH1                  ! CBS band limits for heavy holes
+ !     real(8), parameter     :: Emin = -20.d0                  ! energy window for plot
+ !     real(8), parameter     :: Emax =  7.d0
       integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
       integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
       real(8)                :: V_el1(Nz)                      ! electrostatic potential 
@@ -446,8 +446,8 @@
       read(2,2) N_DOS_SC
       do j=1,N_DOS_SC
        read(2,*) Ef_DOS_SC(j),DOS_SC(j)
-       if(Ef_DOS_SC(j) < Emin) DOS_SC(j) = 0.d0
-       if(Ef_DOS_SC(j) > Emax) DOS_SC(j) = 0.d0
+    !   if(Ef_DOS_SC(j) < Emin) DOS_SC(j) = 0.d0
+    !   if(Ef_DOS_SC(j) > Emax) DOS_SC(j) = 0.d0
        if(DOS_SC(j) < 0.d0) then
         DOS_SC(j) = 0.d0
        endif
@@ -486,8 +486,8 @@
        endif    
        do j=1,N_DOS_M
         read(2,*) Efi(j),PDOS(j,k)
-        if(Ef_DOS_M(j) < Emin) PDOS(j,k) = 0.d0
-        if(Ef_DOS_M(j) > Emax) PDOS(j,k) = 0.d0
+     !   if(Ef_DOS_M(j) < Emin) PDOS(j,k) = 0.d0
+     !   if(Ef_DOS_M(j) > Emax) PDOS(j,k) = 0.d0
        enddo
       enddo
       print *,'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
@@ -508,8 +508,8 @@
        read(2,*) 
        do j=1,N_DOS_M
         read(2,*) Efi0(j),DOS0(j)
-        if(Efi0(j) < Emin) DOS0(j) = 0.d0
-        if(Efi0(j) > Emax) DOS0(j) = 0.d0
+   !     if(Efi0(j) < Emin) DOS0(j) = 0.d0
+   !     if(Efi0(j) > Emax) DOS0(j) = 0.d0
        enddo
        print *,'read_pdos_0: read ',N_DOS_M,' points of surface layer'
        do j=1,N_DOS_M
