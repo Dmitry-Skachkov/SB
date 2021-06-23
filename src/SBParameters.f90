@@ -95,7 +95,7 @@
       real(8)                :: poh_max                        ! max of poh(z)
       real(8)                :: poe_max                        ! max of poe(z)
       real(8)                :: poMe_max                       ! max of poSIGS_e(z)
-      real(8)                :: poMh_max                       ! max of poSIGS_h(z)
+   !   real(8)                :: poMh_max                       ! max of poSIGS_h(z)
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
       real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)

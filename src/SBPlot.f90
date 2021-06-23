@@ -38,7 +38,7 @@
         P_00 = kappa*E_00
         print 6,P_00
         print 1
-        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,poMh_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V,delta_Vm
+        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V,delta_Vm
         if(L_n_type) then
          SBH = dabs(-V_eln(1))-dEf + (ECBM-EFermi1) 
         elseif(L_p_type) then
@@ -49,8 +49,8 @@
         print 8,dEf
         if(L_scf) print 3,filen,V_eln(1)
         if(L_conv) print 4
-1       format('  it    -eV(0)      Sig(po)     dV/dz(er*e0)         poh_m          poe_m        poMe_m        poMh_m         po(0)        delta_po2     delta_V     delta_Vm')
-2       format(I4,F9.5,2E15.5,7E14.4,F12.4)
+1       format('  it    -eV(0)      Sig(po)     dV/dz(er*e0)         poh_m          poe_m        poMe_m          po(0)        delta_po2     delta_V     delta_Vm')
+2       format(I4,F9.5,2E15.5,6E14.4,F12.4)
 3       format(I4,F9.5,'     divergency due to V'/'STOP')
 4       format('We have reached convergency with respect to po')
 5       format(' E(0)=',E15.5,'  V/A')
