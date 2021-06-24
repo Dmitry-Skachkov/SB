@@ -12,15 +12,19 @@
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
       integer, parameter     :: Nptm = 10000                   ! max number of energy points
-      integer, parameter     :: Nk = 27                        ! number of k-points 27 for GaAs    121 for Si-Al
-  !    real(8)                :: ImKd(Nptm)                     ! Im k
-      real(8)                :: DOS_M(Nptm,Nk)                 ! DOS for interface (E,kx,ky)
+      integer                :: Nk                             ! number of k-points                    ! 27 for GaAs    121 for Si-Al
+!      real(8)                :: DOS_M(Nptm,Nk)                 ! DOS for interface (E,kx,ky)
+      real(8), allocatable   :: DOS_M(:,:)                     ! DOS for interface (E,kx,ky)
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M
       real(8)                :: Ef_DOS_SC(Nptm)                ! E points for DOS_SC
-      real(8)                :: PDOS3(Nptm,Nk),Efi3(Nptm)      ! for separation D_L and D_H
-      real(8)                :: PDOS4(Nptm,Nk),Efi4(Nptm)
+!      real(8)                :: PDOS3(Nptm,Nk),Efi3(Nptm)      ! for separation D_L and D_H
+      real(8), allocatable   :: PDOS3(:,:)                     ! for separation D_L and D_H
+      real(8)                :: Efi3(Nptm)                     ! for separation D_L and D_H
+!      real(8)                :: PDOS4(Nptm,Nk),Efi4(Nptm)
+      real(8), allocatable   :: PDOS4(:,:)
+      real(8)                :: Efi4(Nptm)
       real(8)                :: DOS0(Nptm),Efi0(Nptm)          ! PDOS of the surface
       integer                :: N_DOS_M                        ! number of points for DOS_M interface
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
@@ -46,12 +50,8 @@
       real(8)                :: EFermi2                        ! E Fermi in Graphene
       logical                :: L_conv = .false.               ! reach convergency
       logical                :: L_scf  = .false.               ! divergency
- !     integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
-   !   integer, parameter     :: Nptmxx = 200
-!      real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
       real(8)                :: Emin1,Emax1                    ! CBS limits
       integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
-  !    integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
       real(8)                :: V_el1(Nz)                      ! electrostatic potential 
       real(8)                :: V_el0(Nz)                      ! electrostatic potential (from previous step) 
       real(8)                :: V_eln(Nz)                      ! electrostatic potential on next iteration (mixed with alfa) 
@@ -85,7 +85,6 @@
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
       real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
-   !   integer                :: Nit                            ! number of iterations
       integer                :: Nitscf                         ! number of iterations for scf
       integer                :: Nitscf0                        ! number of iterations for initial search
       integer                :: Nitscf2                        ! number of iterations second loop
@@ -101,17 +100,23 @@
       real(8)                :: CNL                            ! charge neutrality level
       real(8)                :: SigmaS                         ! charge on the interface
       real(8)                :: SBH                            ! Schottky barrier height
-      real(8)                :: kp(3,Nk)                       ! k-points for integration
-      real(8)                :: wk(Nk)                         ! weights for k-space integration 
+!      real(8)                :: kp(3,Nk)                       ! k-points for integration
+      real(8), allocatable   :: kp(:,:)                        ! k-points for integration
+!      real(8)                :: wk(Nk)                         ! weights for k-space integration 
+      real(8), allocatable   :: wk(:)                          ! weights for k-space integration 
       real(8)                :: sumk                           ! sum of wk(k)
       real(8)                :: a2p                            ! 2pi/a for CBS
       real(8)                :: alat                           ! lattice parameter (A)
       real(8)                :: b1(3),b2(3),b3(3)              ! reciprocal vectors
       real(8)                :: zconnect                       ! connection numerical and analytical solution
-      integer, parameter     :: Npt1 = 50                      ! number of points for CBS
-      real(8)                :: ImKL1(Npt1,Nk)                 ! light holes
-      real(8)                :: ImKH1(Npt1,Nk)                 ! heavy holes
-      real(8)                :: Ef1(Npt1)                      ! energy points for CBS
+!      integer, parameter     :: Npt1 = 50                      ! number of points for CBS
+      integer                 :: Npt1                          ! number of points for CBS
+!      real(8)                :: ImKL1(Npt1,Nk)                 ! light holes
+!      real(8)                :: ImKH1(Npt1,Nk)                 ! heavy holes
+      real(8), allocatable   :: ImKL1(:,:)                     ! light holes
+      real(8), allocatable   :: ImKH1(:,:)                     ! heavy holes
+!      real(8)                :: Ef1(Npt1)                      ! energy points for CBS
+      real(8), allocatable   :: Ef1(:)                      ! energy points for CBS
       real(8)                :: z3,z4                          ! 3d and 4th layers
       real(8)                :: za                             ! initial approximation (width)
       real(8)                :: EFermi_00                      ! charge neutrality level in the bulk semiconductor
@@ -138,18 +143,16 @@
 
 
        subroutine read_data
-        print *,'read_data: 1'                                        
         call getargR(1,Temp)                    ! temperature                                          
         call getargR(2,EFermi_input)            ! Fermi level                               
         call getargR(3,Sig_gate)                ! charge density on the gate
-        print *,'read_data: 2'                                        
         kbT = kb*Temp
         Calc = 's'
         if(Calc=='s') print *,'start calculations'
         if(Calc=='c') print *,'continue calculations from previous step'
-        call read_k_mesh      !(DIR)
+        call read_k_mesh      
         print *,'open input.dat'
-        open(unit=1,file='input.dat')     !file=trim(adjustl(DIR))//'/input.dat')
+        open(unit=1,file='input.dat')    
          print *,'open input.dat'
          read(1,*) V_D0
          print *,'V_D0=',V_D0
@@ -175,15 +178,14 @@
          print *,'cz=',cz
         close(unit=2)
         call calc_reciprocal_param
-        call read_CBS_data     !(DIR)
-        call set_limits_GaAs                              ! set limits for integration
-        call read_PDOS    !(DIR)                                ! read DOS of SC and PDOS of interfacial layer   
-        call read_pol    !(DIR)                                      ! read polarization data                                    
+        call read_CBS_data    
+        call set_limits_GaAs                                       ! set limits for integration
+        call read_PDOS                                             ! read DOS of SC and PDOS of interfacial layer   
+        call read_pol                                              ! read polarization data                                    
         EFermi2 = EFermi1
         print *,'Temp=',Temp,' K'
         print *,'EFermi1=',EFermi1,' eV'
         print *,'EFermi2=',EFermi2,' eV'
-        dEf = 0.d0                                         ! initial
         alfa   = 1.0d0                                             ! mixing po
         alfa_MIGS = 1.d0
         alfa_dipole = 1.d0
@@ -211,20 +213,27 @@
 
 
      subroutine read_CBS_data    
-      integer                :: rNk,rNpt1,k,k1,i
-      print *
-      print *,'READ CBS'
-      print 4
-      open(unit=1,file='cbs.dat') !file=trim(adjustl(DIR))//'/cbs.dat')
-       read(1,1) rNk,rNpt1
+      integer                :: rNk,k,k1,i
+      if(L_debug) then
+       print *
+       print *,'READ CBS'
+       print 4
+      endif
+      open(unit=1,file='cbs.dat') 
+       read(1,1) rNk,Npt1
+       print *,'Npt1=',Npt1
+       print *,'allocate arrays'
+       allocate(ImKL1(Npt1,Nk))
+       allocate(ImKH1(Npt1,Nk))
+       allocate(Ef1(Npt1))
        if(rNk/=Nk) then
         print *,'ERROR with Nk'
         stop
        endif
-       if(rNpt1/=Npt1) then
-        print *,'ERROR with Npt1'
-        stop
-       endif
+     !  if(rNpt1/=Npt1) then
+     !   print *,'ERROR with Npt1'
+     !   stop
+     !  endif
        do k=1,Nk
         read(1,2) k1
         if(k1/=k) then
@@ -349,17 +358,16 @@
        subroutine read_k_mesh   
         integer      :: k
         real(8)      :: kr
-        open(unit=1,file='k_mesh.dat')
-        open(unit=2,file='k_mesh2.dat')
-        write(2,3) Nk
-        print *
         print *,'open file k_mesh.dat'
-         read(1,*)
+        open(unit=2,file='k_mesh.dat')
+         read(2,*) Nk
+         print *,'Nk=',Nk
+         allocate(kp(3,Nk))
+         allocate(wk(Nk))
+         kp(1:3,1:Nk) = 0.d0
          do k=1,Nk
-          read(1,1) kp(1:3,k),wk(k)
-          write(2,2) kp(1:2,k),wk(k)
+          read(2,*) kp(1:2,k),wk(k)
          enddo
-        close(unit=1)
         close(unit=2)
         print *,'read k-mesh with weights'
         sumk = 0.d0
@@ -407,12 +415,15 @@
 
 
 
-     subroutine read_PDOS   !(DIR)
+     subroutine read_PDOS   
       integer       :: j                       ! energy 
       integer       :: k                       ! k-points
+      allocate(PDOS3(Nptm,Nk))
+      allocate(PDOS4(Nptm,Nk))
+      allocate(DOS_M(Nptm,Nk))
       call read_pdos_1(Efi3,PDOS3,3)       ! PDOS of 3d layer of interface
       call read_pdos_1(Efi4,PDOS4,4)       ! PDOS of 4th layer of interface
-      call read_pdos_0 !(DIR)        ! PDOS of the surface
+      call read_pdos_0                     ! PDOS of the surface
       print *,'N_DOS_M=',N_DOS_M
       do k=1,Nk
        do j=1,N_DOS_M
