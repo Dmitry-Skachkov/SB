@@ -65,7 +65,7 @@
        call QSL3D(intpo26,z,Zz(Nz),F6,eps)
        intpo2 = intpo26
       endif
-      Vel = (1.d0/(er*e0)*intpo2) + V_gate
+      Vel = (1.d0/(er*e0)*intpo2)     !+ V_gate
      end function Vel
 
 

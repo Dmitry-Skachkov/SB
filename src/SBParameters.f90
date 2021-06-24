@@ -13,7 +13,7 @@
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
       integer, parameter     :: Nptm = 10000                   ! max number of energy points
       integer, parameter     :: Nk = 27                        ! number of k-points 27 for GaAs    121 for Si-Al
-      real(8)                :: ImKd(Nptm)                     ! Im k
+  !    real(8)                :: ImKd(Nptm)                     ! Im k
       real(8)                :: DOS_M(Nptm,Nk)                 ! DOS for interface (E,kx,ky)
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
@@ -46,12 +46,12 @@
       real(8)                :: EFermi2                        ! E Fermi in Graphene
       logical                :: L_conv = .false.               ! reach convergency
       logical                :: L_scf  = .false.               ! divergency
-      integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
-      integer, parameter     :: Nptmxx = 200
+ !     integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
+   !   integer, parameter     :: Nptmxx = 200
 !      real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
       real(8)                :: Emin1,Emax1                    ! CBS limits
       integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
-      integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
+  !    integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
       real(8)                :: V_el1(Nz)                      ! electrostatic potential 
       real(8)                :: V_el0(Nz)                      ! electrostatic potential (from previous step) 
       real(8)                :: V_eln(Nz)                      ! electrostatic potential on next iteration (mixed with alfa) 
@@ -123,9 +123,9 @@
       logical                :: L_n_type                       ! n-type semiconductor
       real(8)                :: dEf                            ! filling level of the surface 
       real(8)                :: Surface                        ! surface size of the cell
-      real(8)                :: Lz
-      real(8)                :: Lz_int
-      real(8)                :: V_gate                         ! gating voltage  
+      real(8)                :: Lz                             ! length of the cell in the interface calculation (in A) 
+      real(8)                :: Lz_int                         ! width of the interfacial layer (in A) 
+      real(8)                :: Sig_gate                       ! surface charge on the gate (in cm-2)  
       real(8)                :: E_00                           ! electric field close to SC surface
       real(8)                :: P_00                           ! polarization close to SC surface
       logical                :: L_debug                        ! for detailed printing
@@ -141,7 +141,7 @@
         print *,'read_data: 1'                                        
         call getargR(1,Temp)                    ! temperature                                          
         call getargR(2,EFermi_input)            ! Fermi level                               
-        call getargR(3,V_gate)                  ! gating voltage
+        call getargR(3,Sig_gate)                ! charge density on the gate
         print *,'read_data: 2'                                        
         kbT = kb*Temp
         Calc = 's'
