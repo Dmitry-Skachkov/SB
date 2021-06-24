@@ -24,51 +24,6 @@
 
 
 
-
-     real(8) function Vel2(z)                                   ! electrostatic potential (in V)
-      real(8)            :: z
-      real(8)            :: eps
-      real(8)            :: intpo2,intpo21,intpo22,intpo23,intpo24,intpo25,intpo26
-      eps = 1.d-10
-      zp = z
-      if(z < 10.d0) then                                       
-       call QSL3D(intpo21,z,10.d0,F6,eps)
-       call QSL3D(intpo22,10.d0,100.d0,F6,eps)
-       call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
-       call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-       call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-       call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-       intpo2 = intpo21+intpo22+intpo23+intpo24+intpo25+intpo26
-      elseif(z < 100.d0) then                      
-       call QSL3D(intpo22,z,100.d0,F6,eps)
-       call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
-       call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-       call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-       call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-       intpo2 = intpo22+intpo23+intpo24+intpo25+intpo26
-      elseif(z < 1000.d0) then                      
-       call QSL3D(intpo23,z,1000.d0,F6,eps)
-       call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-       call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-       call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-       intpo2 = intpo23+intpo24+intpo25+intpo26
-      elseif(z < 10000.d0) then                      
-       call QSL3D(intpo24,z,10000.d0,F6,eps)
-       call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-       call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-       intpo2 = intpo24+intpo25+intpo26
-      elseif(z < 100000.d0) then                      
-       call QSL3D(intpo25,z,100000.d0,F6,eps)
-       call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-       intpo2 = intpo25+intpo26
-      elseif(z > 100000.d0) then                      
-       call QSL3D(intpo26,z,Zz(Nz),F6,eps)
-       intpo2 = intpo26
-      endif
-      Vel2 = (1.d0/(er*e0)*intpo2)     !+ V_gate
-     end function Vel2
-
-
      real(8) function Vel(z)                                   ! electrostatic potential in V
       real(8)            :: z
       real(8)            :: eps
@@ -82,27 +37,31 @@
        intpo24 = 0.d0
        intpo25 = 0.d0
        intpo26 = 0.d0
-       call QSL3D(intpo21,z,10.d0,F6,eps)
-       if(Lsc > 100.d0) then
-        call QSL3D(intpo22,10.d0,100.d0,F6,eps)
-        if(Lsc > 1000.d0) then
-         call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
-         if(Lsc > 10000.d0) then
-          call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-          if(Lsc > 100000.d0) then
-           call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-           call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
+       if(Lsc > 10.d0) then
+        call QSL3D(intpo21,z,10.d0,F6,eps)
+        if(Lsc > 100.d0) then
+         call QSL3D(intpo22,10.d0,100.d0,F6,eps)
+         if(Lsc > 1000.d0) then
+          call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
+          if(Lsc > 10000.d0) then
+           call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
+           if(Lsc > 100000.d0) then
+            call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
+            call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
+           else
+            call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
+           endif
           else
-           call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
+           call QSL3D(intpo24,1000.d0,Lsc,F6,eps)
           endif
          else
-          call QSL3D(intpo24,1000.d0,Lsc,F6,eps)
+          call QSL3D(intpo23,100.d0,Lsc,F6,eps)
          endif
         else
-         call QSL3D(intpo23,100.d0,Lsc,F6,eps)
+         call QSL3D(intpo22,10.d0,Lsc,F6,eps)
         endif
        else
-        call QSL3D(intpo22,10.d0,Lsc,F6,eps)
+        call QSL3D(intpo21,z,Lsc,F6,eps)
        endif
        intpo2 = intpo21+intpo22+intpo23+intpo24+intpo25+intpo26
       elseif(z < 100.d0) then 
@@ -112,7 +71,7 @@
        intpo25 = 0.d0
        intpo26 = 0.d0
        if(Lsc > 100.d0) then
-        call QSL3D(intpo22,10.d0,100.d0,F6,eps)
+        call QSL3D(intpo22,z,100.d0,F6,eps)
         if(Lsc > 1000.d0) then
          call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
          if(Lsc > 10000.d0) then
@@ -130,7 +89,7 @@
          call QSL3D(intpo23,100.d0,Lsc,F6,eps)
         endif
        else
-        call QSL3D(intpo22,10.d0,Lsc,F6,eps)
+        call QSL3D(intpo22,z,Lsc,F6,eps)
        endif
        intpo2 = intpo22+intpo23+intpo24+intpo25+intpo26
       elseif(z < 1000.d0) then  
@@ -138,48 +97,48 @@
        intpo24 = 0.d0
        intpo25 = 0.d0
        intpo26 = 0.d0
-        if(Lsc > 1000.d0) then
-         call QSL3D(intpo23,100.d0,1000.d0,F6,eps)
-         if(Lsc > 10000.d0) then
-          call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-          if(Lsc > 100000.d0) then
-           call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-           call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-          else
-           call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
-          endif
+       if(Lsc > 1000.d0) then
+        call QSL3D(intpo23,z,1000.d0,F6,eps)
+        if(Lsc > 10000.d0) then
+         call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
+         if(Lsc > 100000.d0) then
+          call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
+          call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
          else
-          call QSL3D(intpo24,1000.d0,Lsc,F6,eps)
+          call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
          endif
         else
-         call QSL3D(intpo23,100.d0,Lsc,F6,eps)
+         call QSL3D(intpo24,1000.d0,Lsc,F6,eps)
         endif
+       else
+        call QSL3D(intpo23,z,Lsc,F6,eps)
+       endif
        intpo2 = intpo23+intpo24+intpo25+intpo26
       elseif(z < 10000.d0) then  
        intpo24 = 0.d0
        intpo25 = 0.d0
        intpo26 = 0.d0
-         if(Lsc > 10000.d0) then
-          call QSL3D(intpo24,1000.d0,10000.d0,F6,eps)
-          if(Lsc > 100000.d0) then
-           call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
-           call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-          else
-           call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
-          endif
-         else
-          call QSL3D(intpo24,1000.d0,Lsc,F6,eps)
-         endif
+       if(Lsc > 10000.d0) then
+        call QSL3D(intpo24,z,10000.d0,F6,eps)
+        if(Lsc > 100000.d0) then
+         call QSL3D(intpo25,10000.d0,100000.d0,F6,eps)
+         call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
+        else
+         call QSL3D(intpo25,10000.d0,Lsc,F6,eps)
+        endif
+       else
+        call QSL3D(intpo24,z,Lsc,F6,eps)
+       endif
        intpo2 = intpo24+intpo25+intpo26
       elseif(z < 100000.d0) then                      
        intpo25 = 0.d0
        intpo26 = 0.d0
-          if(Lsc > 100000.d0) then
-           call QSL3D(intpo25,z,100000.d0,F6,eps)
-           call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
-          else
-           call QSL3D(intpo25,z,Lsc,F6,eps)
-          endif
+       if(Lsc > 100000.d0) then
+        call QSL3D(intpo25,z,100000.d0,F6,eps)
+        call QSL3D(intpo26,100000.d0,Zz(Nz),F6,eps)
+       else
+        call QSL3D(intpo25,z,Lsc,F6,eps)
+       endif
        intpo2 = intpo25+intpo26
       elseif(z > 100000.d0) then                      
        call QSL3D(intpo26,z,Zz(Nz),F6,eps)

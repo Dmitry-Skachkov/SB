@@ -151,7 +151,7 @@
         print 2,i,Zz(i)
        enddo
       endif
-2     format(I5,F15.3)
+2     format(I5,F18.3)
      end subroutine calc_z_mesh
 
 
