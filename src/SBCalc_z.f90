@@ -410,7 +410,7 @@
          print 1,acc_scf
          print 2,ddEf
  1       format(' accuracy of scf cycle ',1p,E12.3) 
- 2       format(' accurace reached for deltaE ',1p,E12.3)
+ 2       format(' accuracy reached for deltaE ',1p,E12.3)
         end subroutine calc_check_scf
 
 

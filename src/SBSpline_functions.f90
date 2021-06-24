@@ -224,7 +224,7 @@
    real(8) function ImKs2(E,k)
     real(8)               :: E                                                     ! Energy vs EFermi
     integer               :: k
-    if(E >= Emin1(k) .and. E <= Emax1(k)) then
+    if(E >= Emin1 .and. E <= Emax1) then
      ImKs2 = ispline(E,Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1) 
     else
      ImKs2 = 1.d5
@@ -237,7 +237,7 @@
    real(8) function ImKHs2(E,k)                           ! heavy holes for Gamma only GaAs
     real(8)               :: E                                                     ! Energy vs EFermi
     integer               :: k
-    if(E >= Emin1(k) .and. E <= Emax1(k)) then
+    if(E >= Emin1 .and. E <= Emax1) then
      ImKHs2 = ispline(E,Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1) 
     else
      ImKHs2 = 1.d5
@@ -315,21 +315,23 @@
 
 
       subroutine calc_CBS_limits
-       real(8)                  :: X1,X2,X3
-       integer                  :: L
-       integer                  :: k
-       do k=1,Nk
-         Emin1(k) = Ef1(1)
-         Emax1(k) = Ef1(Npt1)
-       enddo
+   !    real(8)                  :: X1,X2,X3
+   !    integer                  :: L
+   !    integer                  :: k
+   !    do k=1,Nk
+         Emin1 = Ef1(1)
+         Emax1 = Ef1(Npt1)
+      ! enddo
+       if(L_debug) then
        print *
        print *,'calc_CBS_limits'
        print 2
-       do k=1,Nk
-        print 1,k,Emin1(k),Emax1(k)
-       enddo
- 1     format(I4,2E12.4)
- 2     format('     k        Emin1(k)           Emax1(k) ')
+      ! do k=1,Nk
+        print 1,Emin1,Emax1
+      ! enddo
+       endif
+ 1     format(2E12.4)
+ 2     format('     Emin1           Emax1 ')
       end subroutine calc_CBS_limits
  
 

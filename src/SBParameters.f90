@@ -48,7 +48,8 @@
       logical                :: L_scf  = .false.               ! divergency
       integer                :: Npt(Nk)                        ! number of points for each band of CBS     !*
       integer, parameter     :: Nptmxx = 200
-      real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
+!      real(8)                :: Emin1(Nk),Emax1(Nk)            ! CBS band limits
+      real(8)                :: Emin1,Emax1                    ! CBS limits
       integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
       integer, parameter     :: NE = 100                       ! number of points in E (for plotting)
       real(8)                :: V_el1(Nz)                      ! electrostatic potential 
@@ -84,7 +85,7 @@
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
       real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
-      integer                :: Nit                            ! number of iterations
+   !   integer                :: Nit                            ! number of iterations
       integer                :: Nitscf                         ! number of iterations for scf
       integer                :: Nitscf0                        ! number of iterations for initial search
       integer                :: Nitscf2                        ! number of iterations second loop
