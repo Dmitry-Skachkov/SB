@@ -131,18 +131,14 @@
 
 
 
-
-
-     subroutine calc_z_mesh                                     ! logarithmic z-mesh points
-      real(8)          :: dz
+     subroutine calc_z_mesh
       integer          :: i
       real(8)          :: pz,dp
-      dp = dfloat(Nz-1)*0.01d0/dfloat(Nz-1)
+      dp =(dlog10(Lsc)+1.d0)/dfloat(Nz-4)
       pz = -1.d0
-      print *
-      print *,'Z mesh:'
-      print *,'dp=',dp
-      Zz(1) = 0.d0
+      if(L_debug) print * 
+      if(L_debug) print *,'Z mesh:'
+      if(L_debug) print *,'dp=',dp
       do i=4,Nz
        Zz(i) = 10.d0**pz
        pz = pz + dp
@@ -150,12 +146,15 @@
       Zz(1) = 1.D-4
       Zz(2) = 1.D-3
       Zz(3) = 1.D-2
-      do i=1,Nz
-       print 2,i,Zz(i)
-      enddo
-1     format(2F17.5)
-2     format(I5,F12.3)
+      if(L_debug) then
+       do i=1,Nz
+        print 2,i,Zz(i)
+       enddo
+      endif
+2     format(I5,F15.3)
      end subroutine calc_z_mesh
+
+
 
 
 
