@@ -125,6 +125,9 @@
       real(8)                :: Lz                             ! length of the cell in the interface calculation (in A) 
       real(8)                :: Lz_int                         ! width of the interfacial layer (in A) 
       real(8)                :: Sig_gate                       ! surface charge on the gate (in cm-2)  
+      real(8)                :: Lsc                            ! the length of the SC
+      character(10)          :: LscA                           ! the length of the SC
+      logical                :: L_inf                          ! infinite or finite SC
       real(8)                :: E_00                           ! electric field close to SC surface
       real(8)                :: P_00                           ! polarization close to SC surface
       logical                :: L_debug                        ! for detailed printing
@@ -139,7 +142,24 @@
        subroutine read_data
         call getargR(1,Temp)                    ! temperature                                          
         call getargR(2,EFermi_input)            ! Fermi level                               
-        call getargR(3,Sig_gate)                ! charge density on the gate
+        call getarg(3,LscA)                     ! length of SC ('inf' or the value in A)
+        if(L_debug) print *,' LscA=',LscA
+        if(trim(adjustl(LscA)) == 'inf') then
+         L_inf = .true.
+         Lsc = 1.d6
+        else
+         L_inf = .false.
+         read(LscA,*) Lsc                       ! convert character(10) LscA to real(8) Lsc
+        endif  
+        if(Lsc < 10.d0) then
+         print *,'Length of SC Lsc < 10 A'
+         stop
+        endif
+        if(L_debug) print *,' Lsc=',Lsc
+        call getargR(4,Sig_gate)               ! gating charge density
+        if(L_inf) Sig_gate = 0.d0
+        if(L_debug) print *,' Sig_gate=',Sig_gate
+        Sig_gate = Sig_gate*1.D-16             ! convert to A^-2
         kbT = kb*Temp
         Calc = 's'
         if(Calc=='s') print *,'start calculations'
@@ -203,6 +223,9 @@
         Nitscf2 = 1                                      ! post scf cycle
         L_debug = .true.                                 ! print all intermediate results
        end subroutine read_data
+
+
+
 
 
 
