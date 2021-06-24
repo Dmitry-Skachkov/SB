@@ -13,16 +13,13 @@
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
       integer, parameter     :: Nptm = 10000                   ! max number of energy points
       integer                :: Nk                             ! number of k-points                    ! 27 for GaAs    121 for Si-Al
-!      real(8)                :: DOS_M(Nptm,Nk)                 ! DOS for interface (E,kx,ky)
       real(8), allocatable   :: DOS_M(:,:)                     ! DOS for interface (E,kx,ky)
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M
       real(8)                :: Ef_DOS_SC(Nptm)                ! E points for DOS_SC
-!      real(8)                :: PDOS3(Nptm,Nk),Efi3(Nptm)      ! for separation D_L and D_H
       real(8), allocatable   :: PDOS3(:,:)                     ! for separation D_L and D_H
       real(8)                :: Efi3(Nptm)                     ! for separation D_L and D_H
-!      real(8)                :: PDOS4(Nptm,Nk),Efi4(Nptm)
       real(8), allocatable   :: PDOS4(:,:)
       real(8)                :: Efi4(Nptm)
       real(8)                :: DOS0(Nptm),Efi0(Nptm)          ! PDOS of the surface
@@ -100,22 +97,16 @@
       real(8)                :: CNL                            ! charge neutrality level
       real(8)                :: SigmaS                         ! charge on the interface
       real(8)                :: SBH                            ! Schottky barrier height
-!      real(8)                :: kp(3,Nk)                       ! k-points for integration
       real(8), allocatable   :: kp(:,:)                        ! k-points for integration
-!      real(8)                :: wk(Nk)                         ! weights for k-space integration 
       real(8), allocatable   :: wk(:)                          ! weights for k-space integration 
       real(8)                :: sumk                           ! sum of wk(k)
       real(8)                :: a2p                            ! 2pi/a for CBS
       real(8)                :: alat                           ! lattice parameter (A)
       real(8)                :: b1(3),b2(3),b3(3)              ! reciprocal vectors
       real(8)                :: zconnect                       ! connection numerical and analytical solution
-!      integer, parameter     :: Npt1 = 50                      ! number of points for CBS
       integer                 :: Npt1                          ! number of points for CBS
-!      real(8)                :: ImKL1(Npt1,Nk)                 ! light holes
-!      real(8)                :: ImKH1(Npt1,Nk)                 ! heavy holes
       real(8), allocatable   :: ImKL1(:,:)                     ! light holes
       real(8), allocatable   :: ImKH1(:,:)                     ! heavy holes
-!      real(8)                :: Ef1(Npt1)                      ! energy points for CBS
       real(8), allocatable   :: Ef1(:)                      ! energy points for CBS
       real(8)                :: z3,z4                          ! 3d and 4th layers
       real(8)                :: za                             ! initial approximation (width)
