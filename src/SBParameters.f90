@@ -86,9 +86,12 @@
       integer                :: Nitscf0                        ! number of iterations for initial search
       integer                :: Nitscf2                        ! number of iterations second loop
       character(1)           :: Calc                           ! s - start; c - continue calculation
-      integer, parameter     :: Npol = 11                      ! number points for polarization
-      real(8)                :: dpol(Npol)                     ! polarization (a.u.)
-      real(8)                :: Epol(Npol)                     ! electric field points for polarization (a.u.)
+!      integer, parameter     :: Npol = 11                      ! number points for polarization
+      integer                :: Npol                           ! number points for polarization
+!      real(8)                :: dpol(Npol)                     ! polarization (a.u.)
+!      real(8)                :: Epol(Npol)                     ! electric field points for polarization (a.u.)
+      real(8), allocatable   :: dpol(:)                        ! polarization (a.u.)
+      real(8), allocatable   :: Epol(:)                        ! electric field points for polarization (a.u.)
       real(8)                :: El_f(Nz)                       ! gradients of potential (electric field)
       real(8)                :: El_f2(Nz)                      ! gradients of potential (electric field)   for TEST (from dipole contribution)
       real(8), parameter     :: Eau = 36.3609d0                ! 1 a.u. for electric field in V/Ang
@@ -552,6 +555,10 @@
      print *
      print *,'    E     polarization'
      open(unit=11,file='polarization.dat')
+     read(11,*) Npol
+     print *,'Npol=',Npol
+     allocate(Epol(Npol))
+     allocate(dpol(Npol))
      do i=1,Npol
       read(11,1) Epol(i),dpol(i)
       print 1,Epol(i),dpol(i)
