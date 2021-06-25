@@ -144,10 +144,8 @@
        call QSL3D(intpo26,z,Zz(Nz),F6,eps)
        intpo2 = intpo26
       endif
-      Vel = (1.d0/(er*e0)*intpo2) !+ (1.d0/(er*e0)*Sig_gate*(z-Lsc))
+      Vel = (1.d0/(er*e0)*intpo2)  + (1.d0/(er*e0)*Sig_gate*(z-Lsc))
      end function Vel
-
-
 
 
 
@@ -163,20 +161,22 @@
 
 
      subroutine calc_po00                                    ! charge density of doped SC
-      print *,'calc_po00:'
+      if(L_debug) print *,'calc_po00:'
       po00_h = poh0(0.d0)
       po00_e = poe0(0.d0)
       po00 =   po00_h + po00_e                           
-      if(L_n_type) then                       !EFermi1 > EFermi_00) then
+      if(L_n_type) then                       
        po00_e0 = po00
        po00_h0 = 0.d0
-      elseif(L_p_type) then                       !(EFermi1 < EFermi_00) then
+      elseif(L_p_type) then                   
        po00_h0 = po00
        po00_e0 = 0.d0
       endif
       if(dabs(EFermi1-EFermi_00) .lt. 0.1d0) print 9
-      print *,'   EFermi1     po_n'
-      print 88,EFermi1,po00*1.d24
+      if(L_super_debug) then
+       print *,'   EFermi1     po_n'
+       print 88,EFermi1,po00*1.d24
+      endif
 88    format(F12.3,E20.4)
  9    format(/'*** WARNING ***'/' This is too small doping concentration. Are you sure about the input parameters?'/)
      end subroutine calc_po00
@@ -220,6 +220,7 @@
       call QSL3D(R18,Exxe1(6),Exxe2(6),F2,eps)        
       poe0 = -(R13+R14+R15+R16+R17+R18)/V_DSC
      end function poe0
+
 
 
 
@@ -334,12 +335,12 @@
       if(z < 1000.d0) then                          
        call set_epsMIGS(z,eps)
        eVz = -Vels(z)
-       call QSL3D(R31,Exxm1(1)+eVz,Exxm2(1)+eVz,poMIGS_2,eps)              ! MIGS
-       call QSL3D(R32,Exxm1(2)+eVz,Exxm2(2)+eVz,poMIGS_2,eps)              ! MIGS
-       call QSL3D(R33,Exxm1(3)+eVz,Exxm2(3)+eVz,poMIGS_2,eps)              ! MIGS
+       call QSL3D(R31,Exxm1(1)+eVz,Exxm2(1)+eVz,poMIGS_2,eps)             
+       call QSL3D(R32,Exxm1(2)+eVz,Exxm2(2)+eVz,poMIGS_2,eps)         
+       call QSL3D(R33,Exxm1(3)+eVz,Exxm2(3)+eVz,poMIGS_2,eps)         
        R3 = (R31+R32+R33)
       else
-       R3 = 0.d0                                                           ! if z > 3*za 
+       R3 = 0.d0                                                           
       endif 
       poMIGS =   -R3/V_D0           
      end function poMIGS
@@ -388,7 +389,6 @@
        zconnect = 1.5d0
        if(E > 0.d0 .and. E < ECBM) then
         call separate(E,ImKHs2(E,k),ImKs2(E,k),DLDH)
-   !     DLDH = 1.d0
        elseif(E <= 0.d0) then
         DLDH = 1.0d0 
        elseif(E >= ECBM) then
@@ -408,16 +408,12 @@
        else
         DMIGS1 = 1.d20
        endif
-  !   if(.false.) then
        if(abs(zp) > 0.d0) then
         Imks2x = Imks2(E,1)
         DMIGS_G1 = DOS_Ms(E,1)*exp(-2.d0*Imks2x*ckA*abs(zp))*(Imks2x*ckA)/abs(zp)/(a2p**2)*(1.d0-exp(-((a2p**2)/(Imks2x*ckA))*abs(zp)))
        else
         DMIGS_G1 = DOS_Ms(E,1)
        endif
-  !   else
-  !     DMIGS_G1 = 0.d0
-  !   endif
        DMIGS_G1 = DMIGS_G1*DLDH
        if(zp < zconnect+0.5d0) then     
         if(DMIGS1 > DMIGS_G1) then                   ! to connect smoothly, Gaussian for small z may be larger
@@ -587,7 +583,7 @@
       endif
       call zero12(E1,E2,dEf,eps)
       if(dabs(dEf-0.2d0) .le. 0.001d0) then
-       print *,'calc_deltaE: increase searching range'
+       print *,'*** ERROR: calc_deltaE: increase searching range'
        stop
       endif
      end subroutine calc_deltaE    
@@ -648,10 +644,12 @@
 
      real(8) function F99(E)                                  
       real(8)        :: E
+      real(8)        :: dexpx
       if(L_n_type) then
        F99 = DOS0s(E)/( 1.d0+dexp((E-EFermi111)/kbT) )
       elseif(L_p_type) then
-       F99 = DOS0s(E)*( dexp((E-EFermi111)/kbT)/( 1.d0+dexp((E-EFermi111)/kbT) ) )
+       dexpx = dexp((E-EFermi111)/kbT)
+       F99 = DOS0s(E)*( dexpx/( 1.d0+dexpx ) )
       endif
      end function F99
 
@@ -662,14 +660,18 @@
 
        subroutine calc_zero_EF                                             ! calculate EFermi for intrinsic SC
         integer :: i
-        print *,'calc_zero_EF:'
-        print *,'looking for EF between EVBM=',EVBM,' and ECBM=',ECBM
+        if(L_debug) then
+         print *,'calc_zero_EF:'
+         print *,'looking for EF between EVBM=',EVBM,' and ECBM=',ECBM
+        endif
         call calc_EFermi(1.d-15)
-        print *
-        print *,'EFermi1=',EFermi1
-        print *,'po00=',po00                                               ! this should be close to zero
-        print *,'po00_h=',po00_h                                           ! h and e compensate each other
-        print *,'po00_e=',po00_e
+        if(L_debug) then
+         print *
+         print *,'EFermi1=',EFermi1
+         print *,'po00=',po00                                               ! this should be close to zero
+         print *,'po00_h=',po00_h                                           ! h and e compensate each other
+         print *,'po00_e=',po00_e
+        endif
         EFermi_00 = EFermi1
         print *,'Temperature =',Temp
         print *,'Fermi level for intrinsic SC =',EFermi1
@@ -694,7 +696,7 @@
        subroutine calc_EFermi(eps)
         real(8)    :: eps
         real(8)    :: a,b
-        print *,'calc_EFermi'
+        if(L_debug) print *,'calc_EFermi'
         a = 0.20d0                    ! EVBM
         b = 1.40d0     ! ECBM
         do while (dabs(a-b) > eps)
