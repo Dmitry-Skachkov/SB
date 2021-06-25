@@ -115,7 +115,7 @@
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
       print *,'3 N_DOS_M=',N_DOS_M
       do k=1,Nk
-       print *,'k=',k 
+       !print *,'k=',k 
        call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
        call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
       enddo
@@ -148,9 +148,9 @@
       real(8)          :: pz,dp
       dp =(dlog10(Lsc)+1.d0)/dfloat(Nz-4)
       pz = -1.d0
-      if(L_debug) print * 
-      if(L_debug) print *,'Z mesh:'
-      if(L_debug) print *,'dp=',dp
+      if(L_super_debug) print * 
+      if(L_super_debug) print *,'Z mesh:'
+      if(L_super_debug) print *,'dp=',dp
       do i=4,Nz
        Zz(i) = 10.d0**pz
        pz = pz + dp
@@ -158,7 +158,7 @@
       Zz(1) = 1.D-4
       Zz(2) = 1.D-3
       Zz(3) = 1.D-2
-      if(L_debug) then
+      if(L_super_debug) then
        do i=1,Nz
         print 2,i,Zz(i)
        enddo

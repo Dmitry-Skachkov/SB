@@ -81,15 +81,11 @@
       real(8)                :: poMe_max                       ! max of poSIGS_e(z)
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
-  !    real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
       integer                :: Nitscf                         ! number of iterations for scf
       integer                :: Nitscf0                        ! number of iterations for initial search
       integer                :: Nitscf2                        ! number of iterations second loop
       character(1)           :: Calc                           ! s - start; c - continue calculation
-!      integer, parameter     :: Npol = 11                      ! number points for polarization
       integer                :: Npol                           ! number points for polarization
-!      real(8)                :: dpol(Npol)                     ! polarization (a.u.)
-!      real(8)                :: Epol(Npol)                     ! electric field points for polarization (a.u.)
       real(8), allocatable   :: dpol(:)                        ! polarization (a.u.)
       real(8), allocatable   :: Epol(:)                        ! electric field points for polarization (a.u.)
       real(8)                :: El_f(Nz)                       ! gradients of potential (electric field)
@@ -131,6 +127,7 @@
       real(8)                :: E_00                           ! electric field close to SC surface
       real(8)                :: P_00                           ! polarization close to SC surface
       logical                :: L_debug                        ! for detailed printing
+      logical                :: L_super_debug                  ! for super detailed printing
      contains
 
 
@@ -151,10 +148,6 @@
          L_inf = .false.
          read(LscA,*) Lsc                       ! convert character(10) LscA to real(8) Lsc
         endif  
-     !   if(Lsc < 10.d0) then
-     !    print *,'Length of SC Lsc < 10 A'
-     !    stop
-     !   endif
         if(L_debug) print *,' Lsc=',Lsc
         call getargR(4,Sig_gate)               ! gating charge density
         if(L_inf) Sig_gate = 0.d0
@@ -190,6 +183,8 @@
          print *,'b3=',b3
          read(1,*) cz
          print *,'cz=',cz
+         read(1,*) V_DSC
+         print *,'V_DSC=',V_DSC
         close(unit=2)
         call calc_reciprocal_param
         call read_CBS_data    
@@ -221,7 +216,8 @@
         Nitscf  = 1                                      ! cycle over deltaE
         Nitscf0 = 3                                      ! pre scf cycle
         Nitscf2 = 1                                      ! post scf cycle
-        L_debug = .true.                                 ! print all intermediate results
+        L_debug = .false.                                 ! print all intermediate results
+        L_super_debug = .false.                          ! extreme printing
        end subroutine read_data
 
 
@@ -238,8 +234,10 @@
       endif
       open(unit=1,file='cbs.dat') 
        read(1,1) rNk,Npt1
-       print *,'Npt1=',Npt1
-       print *,'allocate arrays'
+       if(L_debug) then 
+        print *,'Npt1=',Npt1
+        print *,'allocate arrays'
+       endif
        allocate(ImKL1(Npt1,Nk))
        allocate(ImKH1(Npt1,Nk))
        allocate(Ef1(Npt1))
@@ -247,10 +245,6 @@
         print *,'ERROR with Nk'
         stop
        endif
-     !  if(rNpt1/=Npt1) then
-     !   print *,'ERROR with Npt1'
-     !   stop
-     !  endif
        do k=1,Nk
         read(1,2) k1
         if(k1/=k) then
@@ -259,11 +253,11 @@
         endif
         do i=1,Npt1
          read(1,3) Ef1(i),ImKL1(i,k),ImKH1(i,k)
-         print 3,Ef1(i),ImKL1(i,k),ImKH1(i,k)
+         if(L_debug) print 3,Ef1(i),ImKL1(i,k),ImKH1(i,k)
         enddo
        enddo
       close(unit=1)
-      ckA = 2.d0*pi/cz               ! coefficient for ImK to convert to 1/A
+      ckA = 2.d0*pi/cz                                    ! coefficient for ImK to convert to 1/A
  1    format(2I5)
  2    format(I5)
  3    format(3F14.6)
@@ -375,10 +369,10 @@
        subroutine read_k_mesh   
         integer      :: k
         real(8)      :: kr
-        print *,'open file k_mesh.dat'
+        if(L_debug) print *,'open file k_mesh.dat'
         open(unit=2,file='k_mesh.dat')
          read(2,*) Nk
-         print *,'Nk=',Nk
+         if(L_debug) print *,'Nk=',Nk
          allocate(kp(3,Nk))
          allocate(wk(Nk))
          kp(1:3,1:Nk) = 0.d0
@@ -386,17 +380,19 @@
           read(2,*) kp(1:2,k),wk(k)
          enddo
         close(unit=2)
-        print *,'read k-mesh with weights'
+        if(L_debug) print *,'read k-mesh with weights'
         sumk = 0.d0
         do k=1,Nk
          sumk = sumk + wk(k)
         enddo
-        print *,'TEST wk:', sumk
-        print *,'k kx ky kr'
-        do k=1,Nk
-         kr = dsqrt(kp(1,k)**2+kp(2,k)**2)
-         print 4,k,kp(1,k),kp(2,k),kr
-        enddo
+        if(L_debug) print *,'TEST wk:', sumk
+        if(L_debug) then
+         print *,'k kx ky kr'
+         do k=1,Nk
+          kr = dsqrt(kp(1,k)**2+kp(2,k)**2)
+          print 4,k,kp(1,k),kp(2,k),kr
+         enddo
+        endif
  1      format(20x,3F12.7,7x,F12.7)
  2      format(3F16.10)
  3      format(I5)
@@ -441,7 +437,7 @@
       call read_pdos_1(Efi3,PDOS3,3)       ! PDOS of 3d layer of interface
       call read_pdos_1(Efi4,PDOS4,4)       ! PDOS of 4th layer of interface
       call read_pdos_0                     ! PDOS of the surface
-      print *,'N_DOS_M=',N_DOS_M
+      if(L_debug) print *,'N_DOS_M=',N_DOS_M
       do k=1,Nk
        do j=1,N_DOS_M
         Ef_DOS_M(j) = Efi3(j)                  ! copy PDOS3
@@ -469,7 +465,8 @@
       print *,'read_PDOS: read ',N_DOS_SC,' points of bulk'
       EVBM    =  0.00d0                                                     ! VBM
       ECBM    =  1.42d0                                                     ! CBM
-      V_DSC = 304.8114d0*BohrA**3                                           ! volume of semiconductor in A^3 primitive cell
+!      V_DSC = 304.8114d0*BohrA**3                                           ! volume of semiconductor in A^3 primitive cell
+      V_DSC = V_DSC*BohrA**3                                           ! volume of semiconductor in A^3 primitive cell
       print *,'Volume of the cell for primitive cell of GaAs'
       print *,'V_DSC=',V_DSC,' A'
  1    format(15x,I4)
@@ -493,7 +490,7 @@
        read(2,*)
        if(k==1) then
         read(2,1) N_DOS_M
-        print *,'read N_DOS_M =',N_DOS_M
+        if(L_debug) print *,'read N_DOS_M =',N_DOS_M
        else
         read(2,*)
        endif    
@@ -520,10 +517,12 @@
        do j=1,N_DOS_M
         read(2,*) Efi0(j),DOS0(j)
        enddo
-       print *,'read_pdos_0: read ',N_DOS_M,' points of surface layer'
-       do j=1,N_DOS_M
-        print 11,Efi0(j),DOS0(j)
-       enddo
+       if(L_super_debug) then
+        print *,'read_pdos_0: read ',N_DOS_M,' points of surface layer'
+        do j=1,N_DOS_M
+         print 11,Efi0(j),DOS0(j)
+        enddo
+       endif
       close(unit=2)
  1    format(15x,I4)
 11    format(F14.5,E17.5)
@@ -579,12 +578,12 @@
      print *,'    E     polarization'
      open(unit=11,file='polarization.dat')
      read(11,*) Npol
-     print *,'Npol=',Npol
+     if(L_debug) print *,'Npol=',Npol
      allocate(Epol(Npol))
      allocate(dpol(Npol))
      do i=1,Npol
       read(11,1) Epol(i),dpol(i)
-      print 1,Epol(i),dpol(i)
+      if(L_super_debug) print 1,Epol(i),dpol(i)
      enddo
      close(unit=11)
      kappa = 0.d0

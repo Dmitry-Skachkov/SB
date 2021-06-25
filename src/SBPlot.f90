@@ -10,6 +10,23 @@
 
 
 
+     subroutine print_logo
+      print 1
+  1   format(///                                                                                           &
+             '   ************************************************************************************' /   &
+             '   *                                                                                  *' /   &
+             '   *                    First-Principles Method for Schottky Barrier                  *' /   &
+             '   *                                                                                  *' /   &
+             '   *                    The description of the method                                 *' /   &
+             '   *                                                                                  *' /   &
+             '   *                    https://arxiv.org/abs/2001.00710                              * '/   &
+             '   *                                                                                  *' /   &
+             '   *                    (C) 2021 M2QM                                                 *' /   &
+             '   *                                                                                  *' /   &
+             '   ************************************************************************************' ////)
+     end subroutine print_logo
+
+
 
      subroutine write_results
       integer       :: i
@@ -44,20 +61,30 @@
         elseif(L_p_type) then
          SBH = dabs(-V_eln(1))-dabs(dEf) + EFermi1
         endif
+        if(L_p_type) print 12
+        if(L_n_type) print 13
+        print 14,Temp
+        print 11,EFermi1
+        print 10,po00*1.d24
         print 9,SBH 
         print 7,Sig*1.d16 
         print 8,dEf
         print 5,E_00
         print 6,P_00
-1       format(/'  it    -eV(0)      Sig(po)     dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
-2       format(I4,F9.5,2E15.5,6E14.4,F12.4)
-3       format(I4,F9.5,'     divergency due to V'/'STOP')
+1       format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
+2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
+3       format(I4,F11.5,'     divergency due to V'/'STOP')
 4       format('We have reached convergency with respect to po')
 5       format(/' Electric field close to the surface of semiconductor'/' E(0)=',1p,E15.5,'  V/A')
 6       format(/' Polarization close to the surface of semiconductor'/' P(0)=',1p,E15.5,'  e/A^2')
 7       format(/' Charge on the interface'/'  Sig=',1p,E15.5,' cm-2')
 8       format(/' Energy filling level on the surface'/' delta E = ',1p,E15.4,' eV')
 9       format(/' Schottky barrier height'/' SBH = ',F12.5,' eV')
+10      format(/' Doping concentration'/' po00 =',1p,E15.4,' cm-3')
+11      format(/' Fermi level'/' EFermi =',F12.5,' eV')
+12      format(/' p-type doping')
+13      format(/' n-type doping')
+14      format(/' Temperature =',F12.3,' K')
       end subroutine print_results
 
 

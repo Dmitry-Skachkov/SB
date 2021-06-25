@@ -39,11 +39,9 @@
       El_f(Nz) = 0.d0
       El_f(1) = El_f(2) - (El_f(3) - El_f(2))*(Zz(2)-Zz(1))/(Zz(3)-Zz(2))    
       delta_V = 0.d0
-  !    delta_Vm = 0.d0
       do i=1,Nz
        delta_Vi = dabs(V_el1(i)-V_el0(i))
        delta_V = delta_V + delta_Vi**2
-   !    delta_Vm = dmax1(delta_Vm,delta_Vi)
       enddo
       delta_V = dsqrt(delta_V)/dfloat(Nz)
      end subroutine calc_elpot
@@ -55,14 +53,15 @@
 
 
 
-     subroutine calc_po1
+     subroutine calc_po1                                  ! calculate charge density on z-mesh points
       integer          :: i
-      real(8)          :: po2,po3,po4,po1Nz
+      real(8)          :: po2,po3,po4     
       poh_max = 0.d0
       poe_max = 0.d0
       poMe_max = 0.d0
       delta_po = 0.d0
-       do i=Nz,1,-1     ! going to z(1)
+       do i=1,Nz        
+        if(L_super_debug) print *,'calc_po1: i=',i 
         po2 = poh(Zz(i))
         po_h(i) = po2
         poh_max = dmax1(poh_max,po2)
@@ -72,14 +71,7 @@
         po4 = poMIGS(Zz(i))                  
         po_MIGS(i) = po4
         poMe_max = dmin1(poMe_max,po4)
-        po1(i) = po2 + po3 + po4 - po00 
-        if(i==Nz) po1Nz = po1(i)                  ! make po1(Nz) = 0, just to correct inaccuracy of calculations
-        if(i==Nz) then
-         if(dabs(po1(Nz)) > 1.d-24) then
-          print *,'po1(Nz)=',po1(Nz)
-         endif
-        endif
-        po1(i) = po1(i) - po1Nz                   ! make po1(Nz) = 0
+        po1(i) = po2 + po3 + po4 - po00                    ! h + e + MIGS + doping
         if(po_new(i)> 1.d-15) then
          delta_po = delta_po + (po1(i)-po_0(i))**2
         endif
@@ -98,6 +90,7 @@
      subroutine mixing_po
       integer         :: i
       real(8)         :: po2,po3,po4
+      if(L_super_debug) print *,'mixing_po:'
       do i=1,Nz                                                      ! mixing new and old densities
        po_new(i) = (1.d0-alfa)*po_0(i) + alfa*po1(i)
       enddo
@@ -165,12 +158,12 @@
       do i=1,Nz
        V_el0(i) = V_eln(i)
       enddo
-2     format(F17.5,F18.10,E17.5e3)
- 12    format(F17.5,F18.10,F18.10,F18.10,E17.5e3,E17.5e3)
-33    format(I5)
+ 2    format(F17.5,F18.10,E17.5e3)
  3    format('        z             V_el1(i)          V_el0(i)           dV(i)             ddV                F               dV1(i)           ddV1             V_eln         dV_eln/dz       dV/dz*(er*e0)')
  1    format(F12.4,8F18.8,2E15.5)
  7    format(F12.4,3F18.8,E18.5e3,F18.8,2E18.5e3,E15.5e3)
+12    format(F17.5,F18.10,F18.10,F18.10,E17.5e3,E17.5e3)
+33    format(I5)
      end subroutine mixing_V
 
 
@@ -199,6 +192,8 @@
         logical       :: Lsuc1,Lsuc2
         real(8)       :: diffV
         filen = 0
+        print 5
+        print 4
         call set_limits_zz1(zz1,zz2)                                   ! set initial limits for searching solution
         call set_initial_deltaE                                        ! set first approximation to deltaE
         do is = 1,Nitscf                                               ! scf cycle over deltaE
@@ -220,21 +215,19 @@
          L_pre = .false.
          call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
          if(Lsuc1 .and. Lsuc2) then
-          print 1,is0,filen
+          print 3,is0,filen
          else
           print 2
           stop
          endif
          call calc_charges                                              ! calculate charge on the interface
          call calc_deltaE                                               ! calculate filling level of the surface
-    !     if(L_n_type) then
-    !      SBH = -V_eln(1) + (ECBM - EFermi1)
-    !     elseif(L_p_type) then
-    !      SBH =  V_eln(1) + (EFermi1 - EVBM)
-    !     endif
         enddo
- 1      format(/' We have found the approximate solution at ',I3,' iteration of pre scf cycle using ',I4,' cycles')
+ 1      format(' We have found the approximate solution at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
  2      format(/' Please make limits in set_new_limits wider') 
+ 3      format(' We have found the accurate solution at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
+ 4      format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
+ 5      format(///' Start SCF cycle')
        end subroutine calc_scf
 
 
@@ -317,7 +310,7 @@
 
 
 
-       subroutine calc_look_po_z(Natmpt,za1,za2,Lsuc1,Lsuc2)                ! find za corresonding to -eV0 on the interval [za1,za2]
+       subroutine calc_look_po_z(Natmpt,za1,za2,Lsuc1,Lsuc2)                ! find za on the interval [za1,za2]
         real(8)        :: za1,za2   
         real(8)        :: eps
         real(8)        :: a,b
@@ -327,15 +320,14 @@
         eps = 0.0001d0                                                       ! 0.1 meV accuracy to find the Fermi level
         a = za1
         b = za2
-      !  filen = 0
         Lsuc1 = .true.
         Lsuc2 = .true.
         do while (dabs(a-b) > eps)
          filen = filen + 1
          za = (a+b)/2.d0
-         print *,'za=',za
+         if(L_super_debug) print *,'za=',za
          call calc_diff_eV0(diffV)
-         print *,'diffV=',diffV
+         if(L_super_debug) print *,'diffV=',diffV
         if(EFermi1 > CNL+dEf) then
          if(diffV > 0.d0) then
           b = za
@@ -353,12 +345,11 @@
         if( (dabs(za-za1).le.0.01d0) ) then
          if(.not.Natmpt==Nitscf0) print 1
          Lsuc1 = .false.
-         !stop
         elseif( (dabs(za-za2).le.0.01d0) ) then
          if(.not.Natmpt==Nitscf0) print 2
          Lsuc2 = .false.
         endif
-        if(L_debug) then
+        if(L_super_debug) then
          print *,'filen=',filen
          print *,'found za=',za
          print *,'-eV(0)=',-V_eln(1)
@@ -377,7 +368,7 @@
         subroutine calc_diff_eV0(diffV)
          real(8)         :: diffV
          integer         :: i
-         filen = filen + 1                                                    ! number of iteration
+    !     filen = filen + 1                                                    ! number of iteration
          call set_initial_po_V                                                ! calculate V(z)
          call spline_start_2                                                  ! spline coeff. for V_eln and po_new
          if(.not.L_pre) call calc_deltaE                                      ! calculate filling level of the surface
@@ -388,11 +379,13 @@
           call mixing_V                                                       ! spline coeff. for V_eln   (teper' i ne nuzhno!)
          enddo
          diffV = -V_eln(1) - (EFermi1 - (CNL+dEf))                            ! -eV(0) - (EFermi1 - (CNL+dEf))
-         print *,'-V_eln(1)=',-V_eln(1)
-   !      print *,'filling level=',dEf
-         print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
-        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
-2       format(I4,F9.5,2E15.5,6E14.4,F12.4)
+         if(L_super_debug) then
+          print *,'-V_eln(1)=',-V_eln(1)
+          print *,'filling level=',dEf
+          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
+         endif
+         print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+ 2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
 
 
