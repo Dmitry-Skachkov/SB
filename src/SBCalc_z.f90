@@ -39,11 +39,11 @@
       El_f(Nz) = 0.d0
       El_f(1) = El_f(2) - (El_f(3) - El_f(2))*(Zz(2)-Zz(1))/(Zz(3)-Zz(2))    
       delta_V = 0.d0
-      delta_Vm = 0.d0
+  !    delta_Vm = 0.d0
       do i=1,Nz
        delta_Vi = dabs(V_el1(i)-V_el0(i))
        delta_V = delta_V + delta_Vi**2
-       delta_Vm = dmax1(delta_Vm,delta_Vi)
+   !    delta_Vm = dmax1(delta_Vm,delta_Vi)
       enddo
       delta_V = dsqrt(delta_V)/dfloat(Nz)
      end subroutine calc_elpot
@@ -391,7 +391,7 @@
          print *,'-V_eln(1)=',-V_eln(1)
    !      print *,'filling level=',dEf
          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
-        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V,delta_Vm
+        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
 2       format(I4,F9.5,2E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
 

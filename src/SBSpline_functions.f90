@@ -38,16 +38,28 @@
     real(8)            :: r
     real(8)            :: er11                      ! dielectric constant
     real(8)            :: a_init
+    real(8)            :: V0_0
     er11 = er
     if(Calc=='s') then                              ! start new calculation
      a_init = 1.d0/za
-     V0 = -(EFermi1 - CNL) 
-     po0 = -V0*a_init**2*e0*er
-     do i=1,Nz
-      po_new(i) = po0*dexp(-a_init*Zz(i))
-      V_eln(i) = V0*dexp(-a_init*Zz(i))
-     enddo
-     Sig = -po0/a_init
+     V0_0 = -(EFermi1 - CNL) 
+     if(L_inf) then                                 ! semiinfinite semiconductor
+      V0 = V0_0
+      po0 = -V0*a_init**2*e0*er
+      do i=1,Nz
+       po_new(i) = po0*dexp(-a_init*Zz(i))
+       V_eln(i) = V0*dexp(-a_init*Zz(i))
+      enddo
+      Sig = -po0/a_init
+     else                                           ! finite semiconductor length Lsc
+      V0 = (V0_0 - Sig_gate*Lsc/e0)/(1.d0-(Lsc/za+1.d0)*dexp(-Lsc/za))
+      po0 = -V0*a_init**2*e0*er
+      do i=1,Nz
+       po_new(i) = po0*dexp(-a_init*Zz(i))
+       V_eln(i) = V0*(dexp(-a_init*Zz(i))-((Lsc/za)-(Zz(i)/za)+1.d0)*dexp(-Lsc/za))-Sig_gate/(e0*er)*(Zz(i)-Lsc)
+      enddo
+      Sig = -po0/a_init*(1.d0-dexp(-Lsc/za))
+     endif
     elseif(Calc=='c') then                           ! continue calculations
      call open_file(1,'filen.dat')
       read(1,*) filen                                ! read number of last iteration

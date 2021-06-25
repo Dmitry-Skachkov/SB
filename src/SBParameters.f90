@@ -81,7 +81,7 @@
       real(8)                :: poMe_max                       ! max of poSIGS_e(z)
       real(8)                :: delta_po                       ! delta (po_1 - po0)
       real(8)                :: delta_V                        ! delta (V_el1 - V_el0)
-      real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
+  !    real(8)                :: delta_Vm                       ! max (V_el1 - V_el0)
       integer                :: Nitscf                         ! number of iterations for scf
       integer                :: Nitscf0                        ! number of iterations for initial search
       integer                :: Nitscf2                        ! number of iterations second loop
@@ -151,10 +151,10 @@
          L_inf = .false.
          read(LscA,*) Lsc                       ! convert character(10) LscA to real(8) Lsc
         endif  
-        if(Lsc < 10.d0) then
-         print *,'Length of SC Lsc < 10 A'
-         stop
-        endif
+     !   if(Lsc < 10.d0) then
+     !    print *,'Length of SC Lsc < 10 A'
+     !    stop
+     !   endif
         if(L_debug) print *,' Lsc=',Lsc
         call getargR(4,Sig_gate)               ! gating charge density
         if(L_inf) Sig_gate = 0.d0
