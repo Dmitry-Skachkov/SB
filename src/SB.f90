@@ -18,6 +18,7 @@
         use SBCalc_z                                                ! module for calculation on z-mesh and scf cycle
         use SBSpline_functions                                      ! module with all spline functions
         use SBPlot                                                  ! module for printing and writing results into the output files
+        call print_logo                                             ! print common information about the method
         call read_data                                              ! read data from the command line and from input files
         call spline_start_1                                         ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
         call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs (stored in Efermi_00)

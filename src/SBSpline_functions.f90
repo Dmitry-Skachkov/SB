@@ -38,16 +38,28 @@
     real(8)            :: r
     real(8)            :: er11                      ! dielectric constant
     real(8)            :: a_init
+    real(8)            :: V0_0
     er11 = er
     if(Calc=='s') then                              ! start new calculation
      a_init = 1.d0/za
-     V0 = -(EFermi1 - CNL) 
-     po0 = -V0*a_init**2*e0*er
-     do i=1,Nz
-      po_new(i) = po0*dexp(-a_init*Zz(i))
-      V_eln(i) = V0*dexp(-a_init*Zz(i))
-     enddo
-     Sig = -po0/a_init
+     V0_0 = -(EFermi1 - CNL) 
+     if(L_inf) then                                 ! semiinfinite semiconductor
+      V0 = V0_0
+      po0 = -V0*a_init**2*e0*er
+      do i=1,Nz
+       po_new(i) = po0*dexp(-a_init*Zz(i))
+       V_eln(i) = V0*dexp(-a_init*Zz(i))
+      enddo
+      Sig = -po0/a_init
+     else                                           ! finite semiconductor length Lsc
+      V0 = (V0_0 - Sig_gate*Lsc/e0)/(1.d0-(Lsc/za+1.d0)*dexp(-Lsc/za))
+      po0 = -V0*a_init**2*e0*er
+      do i=1,Nz
+       po_new(i) = po0*dexp(-a_init*Zz(i))
+       V_eln(i) = V0*(dexp(-a_init*Zz(i))-((Lsc/za)-(Zz(i)/za)+1.d0)*dexp(-Lsc/za))-Sig_gate/(e0*er)*(Zz(i)-Lsc)
+      enddo
+      Sig = -po0/a_init*(1.d0-dexp(-Lsc/za))
+     endif
     elseif(Calc=='c') then                           ! continue calculations
      call open_file(1,'filen.dat')
       read(1,*) filen                                ! read number of last iteration
@@ -103,7 +115,7 @@
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
       print *,'3 N_DOS_M=',N_DOS_M
       do k=1,Nk
-       print *,'k=',k 
+       !print *,'k=',k 
        call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
        call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
       enddo
@@ -131,18 +143,14 @@
 
 
 
-
-
-     subroutine calc_z_mesh                                     ! logarithmic z-mesh points
-      real(8)          :: dz
+     subroutine calc_z_mesh
       integer          :: i
       real(8)          :: pz,dp
-      dp = dfloat(Nz-1)*0.01d0/dfloat(Nz-1)
+      dp =(dlog10(Lsc)+1.d0)/dfloat(Nz-4)
       pz = -1.d0
-      print *
-      print *,'Z mesh:'
-      print *,'dp=',dp
-      Zz(1) = 0.d0
+      if(L_super_debug) print * 
+      if(L_super_debug) print *,'Z mesh:'
+      if(L_super_debug) print *,'dp=',dp
       do i=4,Nz
        Zz(i) = 10.d0**pz
        pz = pz + dp
@@ -150,12 +158,15 @@
       Zz(1) = 1.D-4
       Zz(2) = 1.D-3
       Zz(3) = 1.D-2
-      do i=1,Nz
-       print 2,i,Zz(i)
-      enddo
-1     format(2F17.5)
-2     format(I5,F12.3)
+      if(L_super_debug) then
+       do i=1,Nz
+        print 2,i,Zz(i)
+       enddo
+      endif
+2     format(I5,F18.3)
      end subroutine calc_z_mesh
+
+
 
 
 

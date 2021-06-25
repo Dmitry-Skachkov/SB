@@ -25,10 +25,10 @@ OBJS = obj/SBMathLibrary.o \
        obj/SB.o
 
 schottky: $(OBJS)
-	mpif90 -o ~/bin/schottky_v1 $(OBJS)
+	mpif90 -o ~/bin/schottky $(OBJS)
 
 clean:
-	rm -rf ~/bin/schottky_v1 obj/*.o obj/*.mod
+	rm -rf ~/bin/schottky obj/*.o obj/*.mod
 
 SBSpline_functions.o: SBParameters.o SBMathLibrary.o
 SBCalc_i.o:           SBParameters.o SBMathLibrary.o   SBSpline_functions.o
