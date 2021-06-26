@@ -2,14 +2,14 @@
 !
 !      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
 !
-! (C)  Copyright 2021  Center for Molecular Magnetic Quantum Materials (M2QM),
+! Copyright (C) 2021   Center for Molecular Magnetic Quantum Materials (M2QM),
 !                      Quantum Theory Project (QTP),
 !                      Department of Physics, University of Florida, Gainesville, FL 32611, USA 
 !                      https://efrc.ufl.edu/
 !                      Description of the method:      https://arxiv.org/abs/2001.00710
 !                      Documentation and license:      https://github.com/m2qm-efrc/SB
-!                      Requests for contributing:      Dr. Hai-Ping Cheng m2qm.efrc@phys.ufl.edu
-!                      Questions regarding the code:   Dr. Dmitry Skachkov d.g.skachkov@gmail.com
+!                      Requests for contributing:      Dr. Hai-Ping Cheng <m2qm.efrc@phys.ufl.edu>
+!                      Questions regarding the code:   Dr. Dmitry Skachkov <d.g.skachkov@gmail.com>
 !
 
        Program SB                                                   ! calculate Schottky barrier parameters

@@ -3,9 +3,9 @@
 
 !      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
 !
-! (C)  Copyright 2021  Center for Molecular Magnetic Quantum Materials (M2QM),
+! Copyright (C) 2021   Center for Molecular Magnetic Quantum Materials (M2QM),
 !                      Quantum Theory Project (QTP),
-!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      Department of Physics, University of Florida, Gainesville, FL 32611, USA 
 !                      https://efrc.ufl.edu/
 
 

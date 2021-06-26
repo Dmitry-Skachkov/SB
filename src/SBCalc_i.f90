@@ -3,14 +3,14 @@
 
 !      Program Schottky Barrier to calculate Schottky contact parameters from first-principles
 !
-! (C)  Copyright 2021  Center for Molecular Magnetic Quantum Materials (M2QM),
+! Copyright (C) 2021   Center for Molecular Magnetic Quantum Materials (M2QM),
 !                      Quantum Theory Project (QTP),
-!                      Department of Physics, University of Florida, Gainesville, FL, USA 32611
+!                      Department of Physics, University of Florida, Gainesville, FL 32611, USA 
 !                      https://efrc.ufl.edu/
 
 
 
-     Module SBCalc_i                                           ! integration, calculate charge density and potential
+     Module SBCalc_i                                           ! Module integration, calculate charge density and potential
       use SBParameters
       use SBSpline_functions
       use SBMathLibrary
@@ -503,7 +503,7 @@
       real(8)            :: eps
       eps = 1.d-14
       call QSL3D(Sig2,0.d0,Zz(Nz),pos,eps)
-      Sig = -Sig2
+      Sig = -Sig2   - Sig_gate
      end subroutine calc_totq
 
 
