@@ -19,7 +19,7 @@
 !     In a case when the integration function has singularities and the necessary accuracy can not be achieved 
 !     the program may stop with the corresponding message.
 !
-! (C) Copyright 1974-2021 Library of the numerical analysis, Research Computing Center, 
+! Copyright (C) 1974-2021 Library of the numerical analysis, Research Computing Center, 
 !                         Lomonosov Moscow State University
 !                         http://num-anal.srcc.msu.ru/lib_na/libnal.htm
 !     The library can be used without any limitations only for non-commercial usage.
@@ -28,7 +28,7 @@
 !     Users or organizations have no right to transfer the programs of the Library or their modifications 
 !     to other persons or organizations for non-commercial usage without written permission 
 !     from the Research Computing Center of Moscow State University.
-!     For commercial usage please contact Research Computing Center at arush@srcc.msu.ru
+!     For commercial usage please contact Research Computing Center at <arush@srcc.msu.ru>
 !
       External F
       DIMENSION AY(7),BY(7),KSI(7),OM(3),D(3)
@@ -159,7 +159,7 @@
 !  
 !  Author: Alex Godunov, January 2010 
 !  https://ww2.odu.edu/~agodunov/computing/programs/
-!  spline.f90 program is based on NetLib.org fortran version of program spline.f
+!  spline.f90 program is based on http://netlib.org/ fortran version of program spline.f
 !  the accompanying function ispline can be used for interpolation
 !======================================================================
 integer     :: n
