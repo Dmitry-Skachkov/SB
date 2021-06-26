@@ -20,7 +20,6 @@
    real*8, allocatable, dimension(:)   :: bspl14,cspl14,dspl14                     ! PDOS4
    real(8), dimension(Nz)              :: bspl4,cspl4,dspl4                        ! spline coefficients for Vel (electrostatic potential)
    real(8), dimension(Nz)              :: bspl5,cspl5,dspl5                        ! spline coefficients for po (charge density)
-   real(8), dimension(Nz)              :: bspl7,cspl7,dspl7                        ! spline coefficients for El_f2
    real(8), dimension(Nz)              :: bspl15,cspl15,dspl15                     ! spline coefficients for po_MIGS
    real(8), dimension(Nz)              :: bspl16,cspl16,dspl16                     ! spline coefficients for po_e
    real(8), dimension(Nz)              :: bspl17,cspl17,dspl17                     ! spline coefficients for po_h
@@ -90,17 +89,18 @@
 
 
 
-    subroutine spline_start_1
-      integer           :: k     
-      print *
-      print *
-      print *
-      print *,'spline_start'
-      print *,'allocate'
-      print *,'Nk=',Nk
-      print *,'N_DOS_M=',N_DOS_M
-      print *,'N_DOS_SC=',N_DOS_SC
-      print *,'filen=',filen
+    subroutine spline_start
+      integer           :: k   
+      if(L_super_debug) then  
+       print *
+       print *
+       print *
+       print *,'spline_start'
+       print *,'allocate'
+       print *,'Nk=',Nk
+       print *,'N_DOS_M=',N_DOS_M
+       print *,'N_DOS_SC=',N_DOS_SC
+      endif
       allocate(bspl2(N_DOS_M,Nk),cspl2(N_DOS_M,Nk),dspl2(N_DOS_M,Nk))            ! DOS_M(E,k)
       allocate(bspl2t(N_DOS_M),cspl2t(N_DOS_M),dspl2t(N_DOS_M))                  ! DOS_Mtot(E)
       allocate(bspl20(N_DOS_M),cspl20(N_DOS_M),dspl20(N_DOS_M))                  ! DOS0(E)
@@ -115,7 +115,6 @@
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
       print *,'3 N_DOS_M=',N_DOS_M
       do k=1,Nk
-       !print *,'k=',k 
        call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
        call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
       enddo
@@ -127,7 +126,7 @@
       call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
       call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
       call calc_z_mesh
-    end subroutine spline_start_1
+    end subroutine spline_start
 
 
 
@@ -209,23 +208,6 @@
     po_hs = po_hs - po00_h0
    end function po_hs
 
-
-
-
-   real(8) function dpols(z)                               ! polarization
-    real(8)             :: z
-    real(8)             :: Ex                              ! electric field at point z
-    integer             :: i
-     Ex = El_f2s(z)
-     dpols = kappa*Ex
-   end function dpols
-
-
-
-   real(8) function El_f2s(z)
-    real(8)             :: z
-    El_f2s = ispline(z,Zz,El_f2,bspl7,cspl7,dspl7,Nz)
-   end function El_f2s
 
 
 
@@ -326,20 +308,13 @@
 
 
       subroutine calc_CBS_limits
-   !    real(8)                  :: X1,X2,X3
-   !    integer                  :: L
-   !    integer                  :: k
-   !    do k=1,Nk
-         Emin1 = Ef1(1)
-         Emax1 = Ef1(Npt1)
-      ! enddo
+       Emin1 = Ef1(1)
+       Emax1 = Ef1(Npt1)
        if(L_debug) then
        print *
        print *,'calc_CBS_limits'
        print 2
-      ! do k=1,Nk
-        print 1,Emin1,Emax1
-      ! enddo
+       print 1,Emin1,Emax1
        endif
  1     format(2E12.4)
  2     format('     Emin1           Emax1 ')

@@ -15,13 +15,9 @@
   1   format(///                                                                                           &
              '   ************************************************************************************' /   &
              '   *                                                                                  *' /   &
-             '   *                    First-Principles Method for Schottky Barrier                  *' /   &
-             '   *                                                                                  *' /   &
-             '   *                    The description of the method                                 *' /   &
-             '   *                                                                                  *' /   &
-             '   *                    https://arxiv.org/abs/2001.00710                              * '/   &
-             '   *                                                                                  *' /   &
-             '   *                    (C) 2021 M2QM                                                 *' /   &
+             '   *               Program SB: First-Principles Method for Schottky Barrier           *' /   &
+             '   *               This program is the open-source, please cite                       *' /   &
+             '   *               https://arxiv.org/abs/2001.00710                                   * '/   &
              '   *                                                                                  *' /   &
              '   ************************************************************************************' ////)
      end subroutine print_logo

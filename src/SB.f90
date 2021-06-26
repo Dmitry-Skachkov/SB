@@ -20,7 +20,7 @@
         use SBPlot                                                  ! module for printing and writing results into the output files
         call print_logo                                             ! print common information about the method
         call read_data                                              ! read data from the command line and from input files
-        call spline_start_1                                         ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
+        call spline_start                                           ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
         call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs (stored in Efermi_00)
         call calc_po00                                              ! check po_h and po_e on infinity
         call calc_DOS_int                                           ! calculate integral of DOS to check number of valence electrons
@@ -30,6 +30,8 @@
         call write_results                                          ! write density po and potential V into gthe files
         call print_results                                          ! print all SB parameters
        end program SB
+
+
 
 
 
