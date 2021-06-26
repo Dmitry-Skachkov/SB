@@ -30,6 +30,7 @@ schottky: $(OBJS)
 clean:
 	rm -rf ~/owens/bin/schottky_v1 obj/*.o obj/*.mod
 
+
 SBSpline_functions.o: SBParameters.o SBMathLibrary.o
 SBCalc_i.o:           SBParameters.o SBMathLibrary.o   SBSpline_functions.o
 SBCalc_z.o:           SBParameters.o SBCalc_i.o        SBSpline_functions.o
