@@ -465,7 +465,6 @@
       print *,'read_PDOS: read ',N_DOS_SC,' points of bulk'
       EVBM    =  0.00d0                                                     ! VBM
       ECBM    =  1.42d0                                                     ! CBM
-!      V_DSC = 304.8114d0*BohrA**3                                           ! volume of semiconductor in A^3 primitive cell
       V_DSC = V_DSC*BohrA**3                                           ! volume of semiconductor in A^3 primitive cell
       print *,'Volume of the cell for primitive cell of GaAs'
       print *,'V_DSC=',V_DSC,' A'

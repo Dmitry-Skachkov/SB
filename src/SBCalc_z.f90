@@ -154,7 +154,7 @@
        Fx = F1*dexp(-((Zz(i))/z01)**2) + F2*Bessel_j1(Zz(i))
       enddo
       call spline (Zz,V_eln,bspl4,cspl4,dspl4,Nz)                      ! calculate spline coefficients for Vel
-      call spline (Zz,El_f2,bspl7,cspl7,dspl7,Nz)                      ! calculate spline coefficients for El_f2
+   !   call spline (Zz,El_f2,bspl7,cspl7,dspl7,Nz)                      ! calculate spline coefficients for El_f2
       do i=1,Nz
        V_el0(i) = V_eln(i)
       enddo
@@ -414,7 +414,7 @@
    !      call calc_MIGS_q                                                     ! calculate equivalent charge due to MIGS
    !      call calc_h_q                                                        ! calculate equivalent charge due to holes
    !      call calc_e_q                                                        ! calculate equivalent charge due to electrons
-         print *,'Sig_total=',Sig
+          if(L_debug) print *,'Sig_total=',Sig
    !      print *,'SigMIGS=',SigMIGS
    !      print *,'Sig_e=',Sig_e
    !      print *,'Sig_h=',Sig_h
