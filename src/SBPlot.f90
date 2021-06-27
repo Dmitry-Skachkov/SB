@@ -19,7 +19,14 @@
              '   *               This program is the open-source, please cite                       *' /   &
              '   *               https://arxiv.org/abs/2001.00710                                   * '/   &
              '   *                                                                                  *' /   &
-             '   ************************************************************************************' ////)
+             '   *               Center for Molecular Magnetic Quantum Materials (M2QM)             *' /   &
+             '   *               Quantum Theory Project (QTP)                                       *' /   &
+             '   *               Department of Physics                                              *' /   &
+             '   *               University of Florida, Gainesville, FL 32611, USA                  *' /   &
+             '   *               https://efrc.ufl.edu/                                              *' /   &
+             '   *               For contributing please contact <m2qm.efrc@phys.ufl.edu>           *' /   &
+             '   *                                                                                  *' /   &
+             '   ************************************************************************************' /// )
      end subroutine print_logo
 
 
@@ -61,26 +68,32 @@
         if(L_n_type) print 13
         print 14,Temp
         print 11,EFermi1
+        print 16,EFermi_00
         print 10,po00*1.d24
         print 9,SBH 
+        print 15,Sig_gate*1.d16
         print 7,Sig*1.d16 
         print 8,dEf
         print 5,E_00
         print 6,P_00
+        print 17
 1       format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
 2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
 3       format(I4,F11.5,'     divergency due to V'/'STOP')
-4       format('We have reached convergency with respect to po')
-5       format(/' Electric field close to the surface of semiconductor'/' E(0)=',1p,E15.5,'  V/A')
-6       format(/' Polarization close to the surface of semiconductor'/' P(0)=',1p,E15.5,'  e/A^2')
-7       format(/' Charge on the interface'/'  Sig=',1p,E15.5,' cm-2')
-8       format(/' Energy filling level on the surface'/' delta E = ',1p,E15.4,' eV')
-9       format(/' Schottky barrier height'/' SBH = ',F12.5,' eV')
-10      format(/' Doping concentration'/' po00 =',1p,E15.4,' cm-3')
-11      format(/' Fermi level'/' EFermi =',F12.5,' eV')
-12      format(/' p-type doping')
-13      format(/' n-type doping')
-14      format(/' Temperature =',F12.3,' K')
+4       format(' We have reached convergency with respect to po')
+5       format(' Electric field close to the surface of semiconductor E(0) =',1p,E14.5,'  V/A')
+6       format(' Polarization close to the surface of semiconductor   P(0) =',1p,E14.5,'  e/A^2')
+7       format(' Charge on the interface                               Sig =',1p,E14.5,' cm-2')
+8       format(' Energy filling level on the surface               delta E =',1p,E14.4,' eV')
+9       format(' Schottky barrier height                               SBH =',   F14.5,' eV')
+10      format(' Doping concentration                                 po00 =',1p,E14.4,' cm-3')
+11      format(' Fermi level                                        EFermi =',   F14.5,' eV')
+12      format(///' p-type doping')
+13      format(///' n-type doping')
+14      format(' Temperature                                               =',   F14.3,' K')
+15      format(' Surface charge density of the gate electrode     Sig_gate =',1p,E14.4,' cm-2')
+16      format(' Fermi level for intrinsic semiconductor         EFermi_00 =',   F14.4,' eV')
+17      format(///' NORMAL TERMINATION'/)
       end subroutine print_results
 
 

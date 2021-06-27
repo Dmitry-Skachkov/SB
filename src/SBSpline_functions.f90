@@ -109,16 +109,12 @@
       allocate(bspl22(Npt1,Nk),cspl22(Npt1,Nk),dspl22(Npt1,Nk))                     ! CBS
       allocate(bspl13(N_DOS_M),cspl13(N_DOS_M),dspl13(N_DOS_M))                 ! CBS    k=1 Gamma for Heavy
       allocate(bspl14(N_DOS_M),cspl14(N_DOS_M),dspl14(N_DOS_M))                 ! CBS    k=1 Gamma for Heavy
-      print *,'1 N_DOS_M=',N_DOS_M
       call spline(Efi3(1:N_DOS_M), PDOS3(1:N_DOS_M,1),bspl13(1:N_DOS_M),cspl13(1:N_DOS_M),dspl13(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS3
-      print *,'2 N_DOS_M=',N_DOS_M
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
-      print *,'3 N_DOS_M=',N_DOS_M
       do k=1,Nk
        call spline(Ef1(1:Npt1),ImKL1(1:Npt1,k),bspl21(1:Npt1,k),cspl21(1:Npt1,k),dspl21(1:Npt1,k),Npt1)          ! calculate spline coefficients 
        call spline(Ef1(1:Npt1),ImKH1(1:Npt1,k),bspl22(1:Npt1,k),cspl22(1:Npt1,k),dspl22(1:Npt1,k),Npt1)          ! calculate spline coefficients 
       enddo
-      print *,'DOS_M'
       do k=1,Nk
        call spline(Ef_DOS_M,DOS_M(1:N_DOS_M,k),bspl2(1:N_DOS_M,k),cspl2(1:N_DOS_M,k),dspl2(1:N_DOS_M,k),N_DOS_M)    ! calculate spline coefficients for DOS_M
       enddo

@@ -582,6 +582,7 @@
        E2 =  0.0d0
       endif
       call zero12(E1,E2,dEf,eps)
+      if(L_debug) print *,'deltaE=',dEf
       if(dabs(dEf-0.2d0) .le. 0.001d0) then
        print *,'*** ERROR: calc_deltaE: increase searching range'
        stop
@@ -673,8 +674,8 @@
          print *,'po00_e=',po00_e
         endif
         EFermi_00 = EFermi1
-        print *,'Temperature =',Temp
-        print *,'Fermi level for intrinsic SC =',EFermi1
+  !      print *,'Temperature =',Temp
+      !  print 2,EFermi_00
         print *
         if(EFermi_input > EFermi_00) then                                  ! n-type
          L_n_type = .true.
@@ -687,6 +688,7 @@
          L_p_type = .false.
         endif
         EFermi1 = EFermi_input                                             ! set Fermi level for the system
+! 2      format(' Fermi level for intrinsic semiconductor  (EFermi_00) = ',   F12.4,' eV')
        end subroutine calc_zero_EF
 
 

@@ -23,7 +23,7 @@
         call spline_start                                           ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
         call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs (stored in Efermi_00)
         call calc_po00                                              ! check po_h and po_e on infinity
-        call calc_DOS_int                                           ! calculate integral of DOS to check number of valence electrons
+        if(L_debug) call calc_DOS_int                               ! calculate integral of DOS to check number of valence electrons
         call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
         call calc_scf                                               ! find SCF solution for the system M-SC
         call calc_check_scf                                         ! check accuracy of scf cycle

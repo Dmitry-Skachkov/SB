@@ -227,7 +227,7 @@
  2      format(/' Please make limits in set_new_limits wider') 
  3      format(' We have found the accurate solution at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
  4      format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
- 5      format(///' Start SCF cycle')
+ 5      format(//' Start SCF cycle')
        end subroutine calc_scf
 
 
@@ -325,9 +325,9 @@
         do while (dabs(a-b) > eps)
          filen = filen + 1
          za = (a+b)/2.d0
-         if(L_super_debug) print *,'za=',za
+         if(L_debug) print *,'za=',za
          call calc_diff_eV0(diffV)
-         if(L_super_debug) print *,'diffV=',diffV
+         if(L_debug) print *,'diffV=',diffV
         if(EFermi1 > CNL+dEf) then
          if(diffV > 0.d0) then
           b = za
@@ -349,7 +349,7 @@
          if(.not.Natmpt==Nitscf0) print 2
          Lsuc2 = .false.
         endif
-        if(L_super_debug) then
+        if(L_debug) then
          print *,'filen=',filen
          print *,'found za=',za
          print *,'-eV(0)=',-V_eln(1)
