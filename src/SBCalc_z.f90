@@ -186,22 +186,22 @@
 
 
 
-       subroutine calc_scf                                             ! find SCF solution for the system M-SC
+       subroutine calc_scf                                               ! find SCF solution for the system M-SC
         real(8)       :: zz1,zz2
-        integer       :: is,is0,is2
+        integer       :: is,is0,is1
         logical       :: Lsuc1,Lsuc2
         real(8)       :: diffV
         filen = 0
         print 5
         print 4
-        call set_limits_zz1(zz1,zz2)                                   ! set initial limits for searching solution
-        call set_initial_deltaE                                        ! set first approximation to deltaE
-        do is = 1,Nitscf                                               ! scf cycle over deltaE
+        call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
+        call set_initial_deltaE                                          ! set first approximation to deltaE
+        do is = 1,Nitscf                                                 ! scf cycle over deltaE
          Nitscf20 = 1
          L_pre = .true.
-         do is0 = 1,Nitscf0                                            ! pre cycle in order to find approximate solution
+         do is0 = 1,Nitscf0                                              ! pre cycle in order to find approximate solution
           call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
-          if(Lsuc1 .and. Lsuc2) then                                   ! if success
+          if(Lsuc1 .and. Lsuc2) then                                     ! if success
            print 1,is0,filen
            exit
           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is0==Nitscf0)) then ! not success
@@ -210,18 +210,23 @@
           endif
           call reset_zz(zz1,zz2,Lsuc1,Lsuc2)
          enddo
-         call set_new_limits(zz1,zz2)                                   ! narrow limits for next accurate scf
+         call set_new_limits(zz1,zz2)                                    ! narrow limits for next accurate scf
          Nitscf20 = Nitscf2
          L_pre = .false.
-         call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
-         if(Lsuc1 .and. Lsuc2) then
-          print 3,is0,filen
-         else
-          print 2
-          stop
-         endif
-         call calc_charges                                              ! calculate charge on the interface
-         call calc_deltaE                                               ! calculate filling level of the surface
+         do is1 = 1,Nitscf1                                              ! post scf cycle in order to find accurate solution
+          call calc_look_po_z(is1,zz1,zz2,Lsuc1,Lsuc2)                  
+          if(Lsuc1 .and. Lsuc2) then
+           print 3,is1,filen
+           exit
+          elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is1==Nitscf1)) then ! not success
+           call print_scf_error(is1,zz1,zz2,Lsuc1,Lsuc2)
+      !     print 2
+           stop
+          endif
+          call reset_zz2(zz1,zz2,Lsuc1,Lsuc2)
+         enddo
+         call calc_charges                                               ! calculate charge on the interface
+         call calc_deltaE                                                ! calculate filling level of the surface
         enddo
  1      format(' We have found the approximate solution at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
  2      format(/' Please make limits in set_new_limits wider') 
@@ -246,10 +251,7 @@
         if(L_p_type) print 7,dabs(EFermi1-EFermi_00)
         if(L_n_type) print 8,dabs(EFermi1-EFermi_00)
         print 5,po00*1.d24
-        if(dabs(EFermi1-EFermi_00) < 0.2d0) print 4,1.d6
  3      format(/' We made ',I4,' attempts to find the solution, unfortunately it is outside of the region')
- 4      format(' If you really need to calculate the solution for these parameters, then it is necessary to increase the "infinite" size of the system'/ &
-               ' The current numerical "infinite" size of the semiconductor is ',1p,E12.3,' A')
  5      format(' Doping concentration is ',1p,E12.3,' cm-3')
  6      format(' Fermi level =',F12.4,' eV')
  7      format(' p-type doped semiconductor with Fermi level of ',F12.4,' eV below the charge neutrality level for bulk')
@@ -262,7 +264,9 @@
 
 
 
-       subroutine reset_zz(zz1,zz2,Lsuc1,Lsuc2)
+
+
+       subroutine reset_zz(zz1,zz2,Lsuc1,Lsuc2)                  ! increase searching range
         real(8)       :: zz1,zz2
         logical       :: Lsuc1,Lsuc2
         if(.not.Lsuc1) then
@@ -271,6 +275,19 @@
          zz2 = 10.d0*zz2
         endif
        end subroutine reset_zz
+
+
+
+
+       subroutine reset_zz2(zz1,zz2,Lsuc1,Lsuc2)                 ! increase searching range
+        real(8)       :: zz1,zz2
+        logical       :: Lsuc1,Lsuc2
+        if(.not.Lsuc1) then
+         zz1 = 0.9d0*zz1
+        elseif(.not.Lsuc2) then
+         zz2 = 1.1d0*zz2
+        endif
+       end subroutine reset_zz2
 
 
 
@@ -298,10 +315,13 @@
 
 
        subroutine set_initial_deltaE                                        ! set first approximation to deltaE
+        real(8)          :: x
         if(L_n_type) then
-         dEf =  0.0008d0
+         x = (EFermi1 - EFermi_00)/(ECBM - EFermi_00)
+         dEf =  0.005d0*x**2
         elseif(L_p_type) then
-         dEf = -0.0008d0
+         x = (EFermi1 - EFermi_00)/(EVBM - EFermi_00)
+         dEf = -0.005d0*x**2
         else
          dEf = 0.d0
         endif
@@ -357,8 +377,8 @@
          print *,'CNL=',CNL
          print *,'EFermi1-(CNL+dEf)=',EFermi1-(CNL+dEf)
         endif
- 1      format(/'***** ERROR *****'/' za is too close to za1'/' Let us decrease the value za1 and try one more time')
- 2      format(/'***** ERROR *****'/' za is too close to za2'/' Let us increase the value za2 and try one more time')
+ 1      format(/'***** ERROR *****'/' za is too close to za1'/' Let us decrease the value za1 and try one more time'/)
+ 2      format(/'***** ERROR *****'/' za is too close to za2'/' Let us increase the value za2 and try one more time'/)
        end subroutine calc_look_po_z
 
 
@@ -368,7 +388,6 @@
         subroutine calc_diff_eV0(diffV)
          real(8)         :: diffV
          integer         :: i
-    !     filen = filen + 1                                                    ! number of iteration
          call set_initial_po_V                                                ! calculate V(z)
          call spline_start_2                                                  ! spline coeff. for V_eln and po_new
          if(.not.L_pre) call calc_deltaE                                      ! calculate filling level of the surface
