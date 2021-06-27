@@ -54,12 +54,12 @@
 
 
       subroutine print_results
-        if(L_scf) print 3,filen,V_eln(1)
+        if(L_scf) print 3,iter,V_eln(1)
         if(L_conv) print 4
         E_00 = -(V_eln(4)-V_eln(3))/(Zz(4)-Zz(3))
         P_00 = kappa*E_00
         print 1
-        print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+        print 2,iter,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
         if(L_n_type) then
          SBH = dabs(-V_eln(1))-dEf + (ECBM-EFermi1) 
         elseif(L_p_type) then
@@ -82,7 +82,7 @@
 1       format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
 2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
 3       format(I4,F11.5,'     divergency due to V'/'STOP')
-4       format(' We have reached convergency with respect to po')
+4       format(' We have reached convergency with respect to charge density')
 5       format(' Electric field close to the surface of semiconductor E(0) =',1p,E14.5,' V/A')
 6       format(' Polarization close to the surface of semiconductor   P(0) =',1p,E14.5,' e/A^2')
 7       format(' Charge on the interface                               Sig =',1p,E14.5,' cm-2')

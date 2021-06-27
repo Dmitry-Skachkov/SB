@@ -41,7 +41,7 @@
       integer                :: N_DOS_M                        ! number of points for DOS_M interface
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
       integer                :: Npol                           ! number points for polarization
-      integer                :: filen                          ! iteration number
+      integer                :: iter                          ! iteration number
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M

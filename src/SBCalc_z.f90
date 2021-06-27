@@ -191,7 +191,7 @@
         integer       :: is,is0,is1
         logical       :: Lsuc1,Lsuc2
         real(8)       :: diffV
-        filen = 0
+        iter = 0
         print 5
         print 4
         call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
@@ -202,7 +202,7 @@
          do is0 = 1,Nitscf0                                              ! pre cycle in order to find approximate solution
           call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
           if(Lsuc1 .and. Lsuc2) then                                     ! if success
-           print 1,is0,filen
+           print 1,is0,iter
            exit
           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is0==Nitscf0)) then ! not success
            call print_scf_error(is0,zz1,zz2,Lsuc1,Lsuc2)
@@ -216,7 +216,7 @@
          do is1 = 1,Nitscf1                                              ! post scf cycle in order to find accurate solution
           call calc_look_po_z(is1,zz1,zz2,Lsuc1,Lsuc2)                  
           if(Lsuc1 .and. Lsuc2) then
-           print 3,is1,filen
+           print 3,is1,iter
            exit
           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is1==Nitscf1)) then ! not success
            call print_scf_error(is1,zz1,zz2,Lsuc1,Lsuc2)
@@ -343,7 +343,7 @@
         Lsuc1 = .true.
         Lsuc2 = .true.
         do while (dabs(a-b) > eps)
-         filen = filen + 1
+         iter = iter + 1
          za = (a+b)/2.d0
          if(L_debug) print *,'za=',za
          call calc_diff_eV0(diffV)
@@ -370,7 +370,7 @@
          Lsuc2 = .false.
         endif
         if(L_debug) then
-         print *,'filen=',filen
+         print *,'iter=',iter
          print *,'found za=',za
          print *,'-eV(0)=',-V_eln(1)
          print *,'EFermi1=',EFermi1
@@ -403,7 +403,7 @@
           print *,'filling level=',dEf
           print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
          endif
-         print 2,filen,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+         print 2,iter,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
  2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
 

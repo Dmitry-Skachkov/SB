@@ -60,11 +60,11 @@
       Sig = -po0/a_init*(1.d0-dexp(-Lsc/za))
      endif
     elseif(Calc=='c') then                           ! continue calculations
-     call open_file(1,'filen.dat')
-      read(1,*) filen                                ! read number of last iteration
+     call open_file(1,'iter.dat')
+      read(1,*) iter                                ! read number of last iteration
      close(unit=1)
-     call open_file(2,'po_'//trim(adjustl(fstr(filen)))//'.dat')
-     call open_file(3,'elpot_'//trim(adjustl(fstr(filen)))//'.dat')
+     call open_file(2,'po_'//trim(adjustl(fstr(iter)))//'.dat')
+     call open_file(3,'elpot_'//trim(adjustl(fstr(iter)))//'.dat')
      do i=1,Nz
       read(2,*) Zz(i),r,r,r,po_new(i)
       read(3,*) Zz(i),V_eln(i)
