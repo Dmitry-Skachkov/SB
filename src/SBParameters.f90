@@ -11,9 +11,13 @@
       implicit none
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
+      integer, parameter     :: Nitscf  = 1                    ! number of cycles for scf deltaE 
+      integer, parameter     :: Nitscf0 = 4                    ! number of attempts to find the approximate solution
+      integer, parameter     :: Nitscf1 = 3                    ! number of attempts to find the accurate solution
+      integer, parameter     :: Nitscf2 = 1                    ! number of cycles for post scf
       logical, parameter     :: L_debug = .false.              ! for detailed printing
       logical, parameter     :: L_super_debug = .false.        ! for super detailed printing
-      real(8), parameter     :: Lsc_inf = 1.d6                 ! numerical length of semi-infinite semiconductor (in A)
+      real(8), parameter     :: Lsc_inf = 1.d8                 ! numerical length of semi-infinite semiconductor (in A)
       real*8,  parameter     :: kb=8.6173430060d-5             ! Boltsman const in eV/K
       real(8), parameter     :: e0_SI = 8.8541878128d-12       ! in C/(V*m)
       real(8), parameter     :: C1 = 6.24150975d18             ! 1 Coulomb in e
@@ -36,9 +40,6 @@
       integer                :: Npt1                           ! number of points for CBS
       integer                :: N_DOS_M                        ! number of points for DOS_M interface
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
-      integer                :: Nitscf                         ! number of iterations for scf
-      integer                :: Nitscf0                        ! number of iterations for initial search
-      integer                :: Nitscf2                        ! number of iterations second loop
       integer                :: Npol                           ! number points for polarization
       integer                :: filen                          ! iteration number
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
@@ -139,9 +140,9 @@
 
 
        subroutine read_data
-        Nitscf  = 1                                      ! cycle over deltaE
-        Nitscf0 = 3                                      ! pre scf cycle
-        Nitscf2 = 1                                      ! post scf cycle
+  !      Nitscf  = 1                                      ! cycle over deltaE
+  !      Nitscf0 = 4                                      ! pre scf cycle
+  !      Nitscf2 = 1                                      ! post scf cycle
         call getargR(1,Temp)                             ! temperature                                          
         call getargR(2,EFermi_input)                     ! Fermi level                               
         call getarg(3,LscA)                              ! length of SC ('inf' or the value in A)
@@ -598,28 +599,40 @@
      integer                :: i
      if(L_super_debug) then
       print *
+      print *,' open polarization.dat'
       print *,'    E     polarization'
      endif
      open(unit=11,file='polarization.dat')
-     read(11,*) Npol
-     if(L_debug) print *,'Npol=',Npol
-     allocate(Epol(Npol))
-     allocate(dpol(Npol))
-     do i=1,Npol
-      read(11,1) Epol(i),dpol(i)
-      if(L_super_debug) print 1,Epol(i),dpol(i)
-     enddo
+      read(11,*) Npol
+      if(Npol == 1) then
+       read(11,*) er
+       kappa = e0*(er-1.d0)
+      elseif(Npol > 1) then
+       if(L_debug) print *,'Npol=',Npol
+       allocate(Epol(Npol))
+       allocate(dpol(Npol))
+       do i=1,Npol
+        read(11,*) Epol(i),dpol(i)
+        if(L_super_debug) print 1,Epol(i),dpol(i)
+       enddo
+       kappa = 0.d0
+       do i=2,Npol
+        kappa = kappa + (dpol(i)/Epol(i))
+       enddo
+       kappa = 1.d0/dfloat(Npol)*kappa
+       if(L_debug) print *,'read_pol:   kappa=',kappa
+       if(L_debug) print *,'read_pol:   kappa/e0=',kappa/e0
+       er = kappa/e0 + 1.d0
+       deallocate(Epol)
+       deallocate(dpol)
+      else
+       print *,'read_pol: *ERROR* Npol = 0'
+       print *,'read_pol: no data in polarization.dat file'
+       stop
+      endif
      close(unit=11)
-     kappa = 0.d0
-     do i=2,Npol
-      kappa = kappa + (dpol(i)/Epol(i))
-     enddo
-     kappa = 1.d0/dfloat(Npol)*kappa
-     if(L_debug) print *,'read_pol:   kappa=',kappa
-     if(L_debug) print *,'read_pol:   kappa/e0=',kappa/e0
- 1   format(F11.6,F12.7)
-     er = kappa/e0 + 1.d0
      print 2,er
+ 1   format(F11.6,F12.7)
  2   format(' dielectric constant of the bulk                 (er) = ',   F12.4)
     end subroutine read_pol 
 
