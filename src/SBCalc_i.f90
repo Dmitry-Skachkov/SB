@@ -172,7 +172,7 @@
        po00_h0 = po00
        po00_e0 = 0.d0
       endif
-      if(dabs(EFermi1-EFermi_00) .lt. 0.1d0) print 9
+      if(dabs(EFermi1-EFermi_00) .lt. 0.01d0) print 9
       if(L_super_debug) then
        print *,'   EFermi1     po_n'
        print 88,EFermi1,po00*1.d24
@@ -180,6 +180,15 @@
 88    format(F12.3,E20.4)
  9    format(/'*** WARNING ***'/' This is too small doping concentration. Are you sure about the input parameters?'/)
      end subroutine calc_po00
+
+
+
+
+     subroutine calc_po00S                                    ! charge density of interface
+      if(L_debug) print *,'calc_po00S:'
+      po00_hS = poh0S(0.d0)
+      po00_eS = poe0S(0.d0)
+     end subroutine calc_po00S
 
 
 
@@ -210,15 +219,13 @@
      real(8) function poe0(z) 
       real(8)       :: eps
       real(8)       :: z
-      real(8)       :: R13,R14,R15,R16,R17,R18
+      real(8)       :: R13,R14,R15,R16   
       call set_eps(eps,'poe0')
       call QSL3D(R13,Exxe1(1),Exxe2(1),F2,eps)        
       call QSL3D(R14,Exxe1(2),Exxe2(2),F2,eps)        
       call QSL3D(R15,Exxe1(3),Exxe2(3),F2,eps)        
       call QSL3D(R16,Exxe1(4),Exxe2(4),F2,eps)        
-      call QSL3D(R17,Exxe1(5),Exxe2(5),F2,eps)        
-      call QSL3D(R18,Exxe1(6),Exxe2(6),F2,eps)        
-      poe0 = -(R13+R14+R15+R16+R17+R18)/V_DSC
+      poe0 = -(R13+R14+R15+R16)/V_DSC
      end function poe0
 
 
@@ -231,20 +238,41 @@
 
 
 
+     real(8) function poe0S(z) 
+      real(8)       :: eps
+      real(8)       :: z
+      real(8)       :: R11 !R13,R14,R15,R16   
+      call set_eps(eps,'poe0')
+      eps = 1.d-12
+      call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F2S,eps)        
+!      call QSL3D(R13,Exxe1(1),Exxe2(1),F2S,eps)        
+!      call QSL3D(R14,Exxe1(2),Exxe2(2),F2S,eps)        
+!      call QSL3D(R15,Exxe1(3),Exxe2(3),F2S,eps)        
+!      call QSL3D(R16,Exxe1(4),Exxe2(4),F2S,eps)        
+      poe0S = -(R11)/V_DSC
+     end function poe0S
+
+
+
+
+     real(8) function F2S(E)
+      real(8)              :: E
+      F2S = DOS0s(E)/(1.d0+dexp((E-EFermi1)/kbT))
+     end function F2S
+
+
+
 
      real(8) function poh0(z) 
       real(8)       :: eps
       real(8)       :: z
-      real(8)       :: R11,R12,R13,R14,R15,R16,R17
+      real(8)       :: R11,R12,R13,R14    
       call set_eps(eps,'poh0')
       call QSL3D(R11,Exxh1(1),Exxh2(1),F1,eps)        
       call QSL3D(R12,Exxh1(2),Exxh2(2),F1,eps)        
       call QSL3D(R13,Exxh1(3),Exxh2(3),F1,eps)        
       call QSL3D(R14,Exxh1(4),Exxh2(4),F1,eps)        
-      call QSL3D(R15,Exxh1(5),Exxh2(5),F1,eps)        
-      call QSL3D(R16,Exxh1(6),Exxh2(6),F1,eps)        
-      call QSL3D(R17,Exxh1(7),Exxh2(7),F1,eps)        
-      poh0 =  (R11+R12+R13+R14+R15+R16+R17)/V_DSC
+      poh0 =  (R11+R12+R13+R14)/V_DSC
      end function poh0
 
 
@@ -260,10 +288,37 @@
 
 
 
+     real(8) function poh0S(z) 
+      real(8)       :: eps
+      real(8)       :: z
+      real(8)       :: R11   !,R12,R13,R14    
+!      call set_eps(eps,'poh0')
+      eps = 1.d-12 
+      call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F1S,eps)        
+!      call QSL3D(R11,Exxh1(1),Exxh2(1),F1S,eps)        
+!      call QSL3D(R12,Exxh1(2),Exxh2(2),F1S,eps)        
+!      call QSL3D(R13,Exxh1(3),Exxh2(3),F1S,eps)        
+!      call QSL3D(R14,Exxh1(4),Exxh2(4),F1S,eps)        
+      poh0S =  (R11)/V_DSC
+     end function poh0S
 
-     real(8) function poh(z)                                    ! charge density of holes
+
+
+
+     real(8) function F1S(E)
+      real(8)              :: E
+      real(8)              :: dexpx
+      dexpx = dexp((E-EFermi1)/kbT)
+      F1S = (dexpx/(1.d0+dexpx))*DOS0s(E)
+     end function F1S
+
+
+
+
+
+     real(8) function poh(z)                                     ! charge density of holes
       real(8)        :: z
-      real(8)        :: R11,R12,R13,R14,R15,R16,R17
+      real(8)        :: R11,R12,R13,R14   
       real(8)        :: eps
       if(L_p_type) then
        call set_eps(eps,'poh')
@@ -275,10 +330,7 @@
       call QSL3D(R12,Exxh1(2)+eVz,Exxh2(2)+eVz,poh_2,eps)        
       call QSL3D(R13,Exxh1(3)+eVz,Exxh2(3)+eVz,poh_2,eps)        
       call QSL3D(R14,Exxh1(4)+eVz,Exxh2(4)+eVz,poh_2,eps)        
-      call QSL3D(R15,Exxh1(5)+eVz,Exxh2(5)+eVz,poh_2,eps)        
-      call QSL3D(R16,Exxh1(6)+eVz,Exxh2(6)+eVz,poh_2,eps)        
-      call QSL3D(R17,Exxh1(7)+eVz,Exxh2(7)+eVz,poh_2,eps)        
-      poh =  (R11+R12+R13+R14+R15+R16+R17)/V_DSC                ! devide by volume of DOS for semiconductor
+      poh =  (R11+R12+R13+R14)/V_DSC                             ! devide by volume of DOS for semiconductor
      end function poh
 
 
@@ -297,7 +349,7 @@
 
      real(8) function poe(z)                                     ! charge density of electrons
       real(8)        :: z
-      real(8)        :: R11,R12,R13,R14,R15,R16
+      real(8)        :: R11,R12,R13,R14    
       real(8)        :: eps
       if(L_n_type) then
        call set_eps(eps,'poe')
@@ -309,9 +361,7 @@
       call QSL3D(R12,Exxe1(2)+eVz,Exxe2(2)+eVz,poe_2,eps)        
       call QSL3D(R13,Exxe1(3)+eVz,Exxe2(3)+eVz,poe_2,eps)        
       call QSL3D(R14,Exxe1(4)+eVz,Exxe2(4)+eVz,poe_2,eps)        
-      call QSL3D(R15,Exxe1(5)+eVz,Exxe2(5)+eVz,poe_2,eps)        
-      call QSL3D(R16,Exxe1(6)+eVz,Exxe2(6)+eVz,poe_2,eps)        
-      poe =   -(R11+R12+R13+R14+R15+R16)/V_DSC                   ! devide by volume of DOS for semiconductor      
+      poe =   -(R11+R12+R13+R14)/V_DSC                           ! devide by volume of DOS for semiconductor      
      end function poe
 
 
@@ -517,10 +567,9 @@
 
 
      subroutine calc_DSC_int
-      real(8)            :: Ne21,Ne22,Ne23,Ne24,Ne25,Ne26,Ne27
-      real(8)            :: Ne31,Ne32,Ne33,Ne34,Ne35,Ne36
+      real(8)            :: Ne21,Ne22,Ne23,Ne24   
+      real(8)            :: Ne31,Ne32,Ne33,Ne34   
       real(8)            :: eps
-      real(8)            :: Exx1(5),Exx2(5)
       eps = 1.d-12
       print *
       print *,'Bulk'
@@ -528,19 +577,11 @@
       call QSL3D(Ne22,Exxh1(2),Exxh2(2),DOS_SCs,eps)
       call QSL3D(Ne23,Exxh1(3),Exxh2(3),DOS_SCs,eps)
       call QSL3D(Ne24,Exxh1(4),Exxh2(4),DOS_SCs,eps)
-      call QSL3D(Ne25,Exxh1(5),Exxh2(5),DOS_SCs,eps)
-      call QSL3D(Ne26,Exxh1(6),Exxh2(6),DOS_SCs,eps)
-      call QSL3D(Ne27,Exxh1(7),Exxh2(7),DOS_SCs,eps)
-
       call QSL3D(Ne31,Exxe1(1),Exxe2(1),DOS_SCs,eps)
       call QSL3D(Ne32,Exxe1(2),Exxe2(2),DOS_SCs,eps)
       call QSL3D(Ne33,Exxe1(3),Exxe2(3),DOS_SCs,eps)
       call QSL3D(Ne34,Exxe1(4),Exxe2(4),DOS_SCs,eps)
-      call QSL3D(Ne35,Exxe1(5),Exxe2(5),DOS_SCs,eps)
-      call QSL3D(Ne36,Exxe1(6),Exxe2(6),DOS_SCs,eps)
-
-      Nee1 = Ne21+Ne22+Ne23+Ne24+Ne25+Ne26+Ne27+ &
-             Ne31+Ne32+Ne33+Ne34+Ne35+Ne36
+      Nee1 = Ne21+Ne22+Ne23+Ne24+Ne31+Ne32+Ne33+Ne34
       print *,'Nee1=',Nee1
      end subroutine calc_DSC_int
 
@@ -555,8 +596,8 @@
       print *
       print *,'Interfacial layer'
       eps = 1.d-12
-      Emin = -12.55d0
-      Emax =  2.446d0 
+      Emin = EVBM-12.55d0
+      Emax = ECBM+2.446d0 
       call QSL3D(Nee2 ,Emin, Emax, DOS_Mtots,eps)
       print *,'Int over -inf to +inf    Nee2=',Nee2
       call QSL3D(NeC,EVBM,ECBM,DOS_Mtots,eps)
@@ -679,9 +720,6 @@
          print *,'po00_e=',po00_e
         endif
         EFermi_00 = EFermi1
-  !      print *,'Temperature =',Temp
-      !  print 2,EFermi_00
-        print *
         if(EFermi_input > EFermi_00) then                                  ! n-type
          L_n_type = .true.
          L_p_type = .false.
@@ -693,7 +731,6 @@
          L_p_type = .false.
         endif
         EFermi1 = EFermi_input                                             ! set Fermi level for the system
-! 2      format(' Fermi level for intrinsic semiconductor  (EFermi_00) = ',   F12.4,' eV')
        end subroutine calc_zero_EF
 
 
@@ -704,8 +741,8 @@
         real(8)    :: eps
         real(8)    :: a,b
         if(L_debug) print *,'calc_EFermi'
-        a = 0.20d0                    ! EVBM
-        b = 1.40d0     ! ECBM
+        a = EVBM+0.01d0
+        b = ECBM-0.01d0
         do while (dabs(a-b) > eps)
          EFermi1 = (a+b)/2.d0
          call calc_po00
@@ -716,6 +753,40 @@
          endif
         enddo
        end subroutine calc_EFermi
+
+
+
+
+       subroutine calc_CNL                                                  ! calculate CNL for interface
+        integer :: i
+        if(L_debug) print *,'calc_CNL:'
+        call calc_EFermiS(1.d-11)
+        CNL = EFermi1
+       end subroutine calc_CNL
+
+
+
+
+
+       subroutine calc_EFermiS(eps)
+        real(8)    :: eps
+        real(8)    :: a,b
+        if(L_debug) print *,'calc_EFermiS:'
+        a = EVBM+0.10d0 
+        b = ECBM-0.10d0
+        do while (dabs(a-b) > eps)
+         EFermi1 = (a+b)/2.d0
+!         print *,'EFermiS: EFermi1=',EFermi1
+         call calc_po00S
+!         print *,'po00_hS=',po00_hS
+!         print *,'po00_eS=',po00_eS
+         if(dabs(po00_hS) > dabs(po00_eS)) then
+          a = (a+b)/2.d0
+         else
+          b = (a+b)/2.d0
+         endif
+        enddo
+       end subroutine calc_EFermiS
 
 
 

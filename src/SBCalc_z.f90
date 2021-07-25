@@ -91,7 +91,7 @@
 
      subroutine mixing_po
       integer         :: i
-      real(8)         :: po2,po3,po4
+    !  real(8)         :: po2,po3,po4
       if(L_super_debug) print *,'mixing_po:'
       do i=1,Nz                                                      ! mixing new and old densities
        po_new(i) = (1.d0-alfa)*po_0(i) + alfa*po1(i)
@@ -493,6 +493,65 @@
 
 
 
+        subroutine calc_LW
+         call calc_DLW
+         call calc_ILW
+        end subroutine calc_LW
+
+
+        subroutine calc_ILW
+         real(8)     :: po0
+         integer     :: i,im
+         real(8)     :: s0,s1
+         if(L_p_type) then
+          po0 = po_e(1) 
+         elseif(L_n_type) then
+          po0 = po_h(1) 
+         endif
+         s0 = 1.d20
+         do i=1,Nz
+          if(L_p_type) then
+           s1 = dabs(po_e(i)-(po0/ee))
+           if(s1 < s0) then
+            im = i
+            s0 = s1
+           endif
+          elseif(L_n_type) then
+           s1 = dabs(po_h(i)-(po0/ee))
+           if(s1 < s0) then
+            im = i
+            s0 = s1
+           endif
+          endif
+         enddo
+         ILW = Zz(im)
+        end subroutine calc_ILW
+
+
+
+        subroutine calc_DLW
+         real(8)     :: po0
+         integer     :: i,im
+         real(8)     :: s0,s1
+         po0 = -po00 
+         s0 = 1.d20
+         do i=1,Nz
+          if(L_p_type) then
+           s1 = dabs((po_h(i)-po00)-(po0/ee))
+           if(s1 < s0) then
+            im = i
+            s0 = s1
+           endif
+          elseif(L_n_type) then
+           s1 = dabs((po_e(i)-po00)-(po0/ee))
+           if(s1 < s0) then
+            im = i
+            s0 = s1
+           endif
+          endif
+         enddo
+         DLW = Zz(im)
+        end subroutine calc_DLW
 
 
 
