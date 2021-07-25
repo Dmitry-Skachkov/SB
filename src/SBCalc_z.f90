@@ -30,6 +30,7 @@
       real(8)          :: V1(Nz-1),V2(Nz-1)
       real(8)          :: Vel11
       real(8)          :: Vtest(3)
+      if(L_super_debug) print *,'calc_elpot:'
       do i=1,Nz                                   
        V_el1(i) = Vel(Zz(i))
       enddo
@@ -56,6 +57,7 @@
      subroutine calc_po1                                  ! calculate charge density on z-mesh points
       integer          :: i
       real(8)          :: po2,po3,po4     
+      if(L_super_debug) print *,'calc_po1:'
       poh_max = 0.d0
       poe_max = 0.d0
       poMe_max = 0.d0
@@ -193,23 +195,27 @@
         real(8)       :: diffV
         iter = 0
         print 5
+        if(Calc == 'c') print 6
         print 4
+ if(.not.L_exp_scf) then
         call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
         call set_initial_deltaE                                          ! set first approximation to deltaE
         do is = 1,Nitscf                                                 ! scf cycle over deltaE
-         Nitscf20 = 1
-         L_pre = .true.
-         do is0 = 1,Nitscf0                                              ! pre cycle in order to find approximate solution
-          call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
-          if(Lsuc1 .and. Lsuc2) then                                     ! if success
-           print 1,is0,iter
-           exit
-          elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is0==Nitscf0)) then ! not success
-           call print_scf_error(is0,zz1,zz2,Lsuc1,Lsuc2)
-           stop
-          endif
-          call reset_zz(zz1,zz2,Lsuc1,Lsuc2)
-         enddo
+         if(Calc == 's') then                                            ! starting from scratch
+          Nitscf20 = 1
+          L_pre = .true.
+          do is0 = 1,Nitscf0                                             ! pre cycle in order to find approximate solution
+           call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
+           if(Lsuc1 .and. Lsuc2) then                                    ! if success
+            print 1,is0,iter
+            exit
+           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is0==Nitscf0)) then! not success
+            call print_scf_error(is0,zz1,zz2,Lsuc1,Lsuc2)
+            stop
+           endif
+           call reset_zz(zz1,zz2,Lsuc1,Lsuc2)
+          enddo
+         endif
          call set_new_limits(zz1,zz2)                                    ! narrow limits for next accurate scf
          Nitscf20 = Nitscf2
          L_pre = .false.
@@ -220,7 +226,6 @@
            exit
           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is1==Nitscf1)) then ! not success
            call print_scf_error(is1,zz1,zz2,Lsuc1,Lsuc2)
-      !     print 2
            stop
           endif
           call reset_zz2(zz1,zz2,Lsuc1,Lsuc2)
@@ -228,13 +233,17 @@
          call calc_charges                                               ! calculate charge on the interface
          call calc_deltaE                                                ! calculate filling level of the surface
         enddo
+ else
+        L_pre = .false.
+        call calc_exp_scf                                                ! do Nitscf3 cycles of scf
+ endif
  1      format(' We have found the approximate solution at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
  2      format(/' Please make limits in set_new_limits wider') 
  3      format(' We have found the accurate solution at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
- 4      format(/'  it    -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
+ 4      format(/'  it      SBH      -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
  5      format(//' Start SCF cycle')
+ 6      format(  ' from previous solution')
        end subroutine calc_scf
-
 
 
 
@@ -266,7 +275,7 @@
 
 
 
-       subroutine reset_zz(zz1,zz2,Lsuc1,Lsuc2)                  ! increase searching range
+       subroutine reset_zz(zz1,zz2,Lsuc1,Lsuc2)                  ! increase searching range by x10
         real(8)       :: zz1,zz2
         logical       :: Lsuc1,Lsuc2
         if(.not.Lsuc1) then
@@ -279,7 +288,7 @@
 
 
 
-       subroutine reset_zz2(zz1,zz2,Lsuc1,Lsuc2)                 ! increase searching range
+       subroutine reset_zz2(zz1,zz2,Lsuc1,Lsuc2)                 ! increase searching range by x0.1
         real(8)       :: zz1,zz2
         logical       :: Lsuc1,Lsuc2
         if(.not.Lsuc1) then
@@ -293,7 +302,7 @@
 
 
 
-       subroutine set_limits_zz1(zz1,zz2)
+       subroutine set_limits_zz1(zz1,zz2)                       ! set intial searching range for approximate solution
         real(8)     :: zz1,zz2
         real(8)     :: x,zz
         x = (EFermi1 - EFermi_00)/(ECBM - EFermi_00)
@@ -305,7 +314,7 @@
 
 
 
-       subroutine set_new_limits(zz1,zz2)                                   ! update limits for next iterations
+       subroutine set_new_limits(zz1,zz2)                       ! update limits for next iterations
         real(8)     :: zz1,zz2
         zz1 = za*0.9d0
         zz2 = za*1.1d0
@@ -314,7 +323,7 @@
 
 
 
-       subroutine set_initial_deltaE                                        ! set first approximation to deltaE
+       subroutine set_initial_deltaE                            ! set first approximation to deltaE
         real(8)          :: x
         if(L_n_type) then
          x = (EFermi1 - EFermi_00)/(ECBM - EFermi_00)
@@ -330,7 +339,7 @@
 
 
 
-       subroutine calc_look_po_z(Natmpt,za1,za2,Lsuc1,Lsuc2)                ! find za on the interval [za1,za2]
+       subroutine calc_look_po_z(Natmpt,za1,za2,Lsuc1,Lsuc2)                 ! find za on the interval [za1,za2]
         real(8)        :: za1,za2   
         real(8)        :: eps
         real(8)        :: a,b
@@ -344,6 +353,10 @@
         Lsuc2 = .true.
         do while (dabs(a-b) > eps)
          iter = iter + 1
+         if(iter > Nitmax) then
+          print 3,iter
+          stop
+         endif
          za = (a+b)/2.d0
          if(L_debug) print *,'za=',za
          call calc_diff_eV0(diffV)
@@ -379,6 +392,7 @@
         endif
  1      format(/'***** ERROR *****'/' za is too close to za1'/' Let us decrease the value za1 and try one more time'/)
  2      format(/'***** ERROR *****'/' za is too close to za2'/' Let us increase the value za2 and try one more time'/)
+ 3      format(/' Overcycling'/)
        end subroutine calc_look_po_z
 
 
@@ -403,9 +417,47 @@
           print *,'filling level=',dEf
           print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
          endif
-         print 2,iter,dabs(-V_eln(1))-dabs(dEf),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
- 2       format(I4,F11.5,2E15.5,6E14.4,F12.4)
+         if(L_n_type) then
+          SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
+         elseif(L_p_type) then
+          SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
+         endif
+         print 2,iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+ 2       format(I4,2F11.5,2E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
+
+
+
+        subroutine calc_exp_scf    
+         integer         :: i
+         call set_initial_from_prev                                                ! calculate V(z)
+         call spline_start_2                                                  ! spline coeff. for V_eln and po_new
+         if(.not.L_pre) call calc_deltaE                                      ! calculate filling level of the surface
+         do i=1,Nitscf3
+          iter = i
+         print *,'-V_eln(1)=',-V_eln(1)
+          call calc_po1                                                       ! calculate charge density po1 (po_h, po_e, and po_MIGS)
+          call mixing_po                                                      ! mixing new and old density (po_new = (1-a)po0+a*po1) + spline coeff. 
+          call calc_elpot                                                     ! calculate electrostatic potential using po_new
+          call mixing_V                                                       ! spline coeff. for V_eln   (teper' i ne nuzhno!)
+         call calc_charges                                               ! calculate charge on the interface
+         print *,'-V_eln(1)=',-V_eln(1)
+         if(L_n_type) then
+          SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
+         elseif(L_p_type) then
+          SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
+         endif
+          print 2,iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+         enddo
+         if(L_super_debug) then
+          print *,'-V_eln(1)=',-V_eln(1)
+          print *,'filling level=',dEf
+          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
+         endif
+ 2       format(I4,2F11.5,2E15.5,6E14.4,F12.4)
+        end subroutine calc_exp_scf
+
+
 
 
 

@@ -329,16 +329,21 @@
 
      real(8) function poMIGS(z)                                            ! charge density of MIGS
       real(8)        :: z
-      real(8)        :: R3,R31,R32,R33
+      real(8)        :: R3,R31,R32,R33,R34
       real(8)        :: eps
       zp = z
+      R31 = 0.d0
+      R32 = 0.d0
+      R33 = 0.d0
+      R34 = 0.d0
       if(z < 1000.d0) then                          
        call set_epsMIGS(z,eps)
        eVz = -Vels(z)
        call QSL3D(R31,Exxm1(1)+eVz,Exxm2(1)+eVz,poMIGS_2,eps)             
        call QSL3D(R32,Exxm1(2)+eVz,Exxm2(2)+eVz,poMIGS_2,eps)         
        call QSL3D(R33,Exxm1(3)+eVz,Exxm2(3)+eVz,poMIGS_2,eps)         
-       R3 = (R31+R32+R33)
+!       call QSL3D(R34,Exxm1(4)+eVz,Exxm2(4)+eVz,poMIGS_2,eps)         
+       R3 = (R31+R32+R33+R34)
       else
        R3 = 0.d0                                                           
       endif 

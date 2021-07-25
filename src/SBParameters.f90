@@ -12,9 +12,11 @@
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
       integer, parameter     :: Nitscf  = 1                    ! number of cycles for scf deltaE 
-      integer, parameter     :: Nitscf0 = 4                    ! number of attempts to find the approximate solution
-      integer, parameter     :: Nitscf1 = 3                    ! number of attempts to find the accurate solution
+      integer, parameter     :: Nitscf0 = 4                    ! number of attempts to find approximate solution
+      integer, parameter     :: Nitscf1 = 3                    ! number of attempts to find accurate solution
       integer, parameter     :: Nitscf2 = 1                    ! number of cycles for post scf
+      integer, parameter     :: Nitscf3 = 3                    ! number of cycles for experimental scf
+      integer, parameter     :: Nitmax  = 600                  ! max number of iterations
       logical, parameter     :: L_debug = .false.              ! for detailed printing
       logical, parameter     :: L_super_debug = .false.        ! for super detailed printing
       real(8), parameter     :: Lsc_inf = 1.d8                 ! numerical length of semi-infinite semiconductor (in A)
@@ -24,7 +26,7 @@
       real(8), parameter     :: e0 = e0_SI*C1*1.d-10           ! e0 in e/(V*Angstrom)
       real(8), parameter     :: BohrA = 0.52917721067121d0     ! Bohr to A
       real(8), parameter     :: Eau = 36.3609d0                ! 1 a.u. for electric field in V/Ang
-      integer, parameter     :: Nz = 704                       ! number of points in z (10-6, 10-5, 10-4, 10-3, 10-2, 0.1....)
+      integer, parameter     :: Nz = 704                       ! number of points in z (10-4, 10-3, 10-2, 0.1....)
       integer, parameter     :: Nptm = 10000                   ! max number of energy points
       real(8), allocatable   :: PDOS3(:,:)                     ! for separation D_L and D_H
       real(8), allocatable   :: PDOS4(:,:)
@@ -41,7 +43,7 @@
       integer                :: N_DOS_M                        ! number of points for DOS_M interface
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
       integer                :: Npol                           ! number points for polarization
-      integer                :: iter                          ! iteration number
+      integer                :: iter                           ! iteration number
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M
@@ -131,6 +133,7 @@
       logical                :: L_n_type                       ! n-type semiconductor
       logical                :: L_conv = .false.               ! reach convergency
       logical                :: L_scf  = .false.               ! divergency
+      logical                :: L_exp_scf  = .false.           ! experimental scf
      contains
 
 
@@ -140,9 +143,6 @@
 
 
        subroutine read_data
-  !      Nitscf  = 1                                      ! cycle over deltaE
-  !      Nitscf0 = 4                                      ! pre scf cycle
-  !      Nitscf2 = 1                                      ! post scf cycle
         call getargR(1,Temp)                             ! temperature                                          
         call getargR(2,EFermi_input)                     ! Fermi level                               
         call getarg(3,LscA)                              ! length of SC ('inf' or the value in A)
@@ -160,41 +160,31 @@
         if(L_debug) print *,' Sig_gate=',Sig_gate
         Sig_gate = Sig_gate*1.D-16                       ! convert to A^-2
         kbT = kb*Temp 
-        Calc = 's'
-        if(Calc=='s'.and.L_super_debug) print *,'start calculations'
-        if(Calc=='c'.and.L_super_debug) print *,'continue calculations from previous step'
-        call read_k_mesh      
-        if(L_super_debug) print *,'read input.dat'
-        open(unit=1,file='input.dat')    
-         read(1,*) V_D0
-         read(1,*) Lz
-         read(1,*) Lz_int
-         read(1,*) CNL
-         read(1,*) z3
-         read(1,*) z4
-         read(1,*) alat
-         read(1,*) b1(1:3)
-         read(1,*) b2(1:3)
-         read(1,*) b3(1:3)
-         read(1,*) cz
-         read(1,*) V_DSC
-         read(1,*) gap
-        close(unit=2)
-        EVBM    =  0.00d0                                          ! VBM
-        ECBM    =  gap                                             ! CBM
-        alat = alat*BohrA                                          ! convert to A
-        V_D0  = V_D0*BohrA**3                                      ! convert to A^3
-        Surface = V_D0/Lz                                          ! surface of the cell
-        V_D0  = V_D0/Lz*Lz_int                                     ! volume of the interfacial layer for PDOS (for MIGS)
-        V_DSC = V_DSC*BohrA**3                                     ! volume of semiconductor in A^3 primitive cell
-        ckA = 2.d0*pi/cz                                           ! coefficient for ImK to convert to 1/A
+        if(L_check_file('restart.dat')) then
+         Calc = 'c'                                                 ! continue from previous calculation
+         if(L_super_debug) print *,'continue calculations from previous step'
+         call read_restart_dat
+        else
+         Calc = 's'                                                 ! start from scratch
+         if(L_super_debug) print *,'start calculations'
+         call read_input_dat  
+         EVBM    =  0.00d0                                          ! VBM
+         ECBM    =  gap                                             ! CBM
+         alat = alat*BohrA                                          ! convert to A
+         V_D0  = V_D0*BohrA**3                                      ! convert to A^3
+         Surface = V_D0/Lz                                          ! surface of the cell
+         V_D0  = V_D0/Lz*Lz_int                                     ! volume of the interfacial layer for PDOS (for MIGS)
+         V_DSC = V_DSC*BohrA**3                                     ! volume of bulk semiconductor cell (in A^3) 
+         ckA = 2.d0*pi/cz                                           ! coefficient for ImK to convert to 1/A
+         call calc_reciprocal_param
+        endif
+        call read_k_mesh    
         call print_input_parameters
         call read_pol                                              ! read polarization data                                    
-        call calc_reciprocal_param
         call read_CBS_data    
-        call set_limits_GaAs                                       ! set limits for integration
+        call calc_CBS_limits                                       ! calculate energy limits for each CBS band (using spline functions)
+        call set_limits_DOS                                        ! set limits for integration
         call read_PDOS                                             ! read DOS of SC and PDOS of interfacial layer   
-!        call read_pol                                              ! read polarization data                                    
         EFermi2 = EFermi1
         alfa   = 1.0d0                                             ! mixing po
         alfa_MIGS = 1.d0
@@ -204,6 +194,80 @@
         alfa_V = 1.d0
         alfa_Sig = 1.d0  
        end subroutine read_data
+
+
+
+
+       subroutine read_input_dat
+        if(L_super_debug) print *,'read input.dat'
+        open(unit=1,file='input.dat')    
+         read(1,*) V_D0                                            ! V_D0 in a.u. (from QE output)
+         read(1,*) Lz                                              ! Lz (A)
+         read(1,*) Lz_int                                          ! Lz_int (A)
+         read(1,*) CNL                                             ! CNL (eV)
+         read(1,*) z3                                              ! z3 (A)
+         read(1,*) z4                                              ! z4 (A)
+         read(1,*) alat                                            ! alat (au from QE output) 
+         read(1,*) b1(1:3)                                         ! reciprocal vector b1 (in crystal representation from QE output)
+         read(1,*) b2(1:3)                                         !
+         read(1,*) b3(1:3)                                         !
+         read(1,*) cz                                              ! cz (A)
+         read(1,*) V_DSC                                           ! V_DSC volume of semiconductor in a.u. (from QE output)
+         read(1,*) gap                                             ! band gap of the bulk (eV)
+        close(unit=1)
+       end subroutine read_input_dat
+
+
+
+
+       subroutine read_restart_dat
+        if(L_super_debug) print *,'read restart.dat'
+        open(unit=1,file='restart.dat')    
+         read(1,*) V_D0                                          
+         read(1,*) Lz                                            
+         read(1,*) Lz_int                                        
+         read(1,*) CNL                                           
+         read(1,*) z3                                            
+         read(1,*) z4                                            
+         read(1,*) alat                                           
+         read(1,*) b1(1:3)                                       
+         read(1,*) b2(1:3)                                       
+         read(1,*) b3(1:3)                                       
+         read(1,*) cz                                            
+         read(1,*) V_DSC                                         
+         read(1,*) gap,EVBM,ECBM                                 
+         read(1,*) Surface
+         read(1,*) ckA
+         read(1,*) za
+         read(1,*) Sig
+        close(unit=1)
+        a2p = 2.d0*pi/alat 
+       end subroutine read_restart_dat
+
+
+
+       subroutine write_restart_dat
+        if(L_super_debug) print *,'read restart.dat'
+        open(unit=1,file='restart.dat')    
+         write(1,*) V_D0                                          
+         write(1,*) Lz                                            
+         write(1,*) Lz_int                                        
+         write(1,*) CNL                                           
+         write(1,*) z3                                            
+         write(1,*) z4                                            
+         write(1,*) alat                                           
+         write(1,*) b1(1:3)                                       
+         write(1,*) b2(1:3)                                       
+         write(1,*) b3(1:3)                                       
+         write(1,*) cz                                            
+         write(1,*) V_DSC                                         
+         write(1,*) gap,EVBM,ECBM                                 
+         write(1,*) Surface
+         write(1,*) ckA
+         write(1,*) za
+         write(1,*) Sig
+        close(unit=1)
+       end subroutine write_restart_dat
 
 
 
@@ -222,7 +286,7 @@
          print 19,Surface
          print 6,CNL
          print 7,z3
-         print 7,z4
+         print 8,z4
          print 9,alat
          print 11,cz
          print 12,V_DSC
@@ -304,7 +368,7 @@
 
 
 
-       subroutine set_limits_GaAs                               ! set limits for DOS
+       subroutine set_limits_DOS                               ! set limits for DOS
       Exxh1(1) = -6.900d0 
       Exxh2(1) = -6.561d0 
       Exxh1(2) = -6.561d0 
@@ -321,6 +385,17 @@
       Exxe2(2) =   5.370d0  
       Exxe1(3) =   5.370d0  
       Exxe2(3) =   7.8946d0  
+
+ !     Exxm1(1) = Emin1                          ! set limits for MIGS integration (4 intervals for accurate integration)
+ !     Exxm2(1) = EVBM
+ !     Exxm1(2) = EVBM  
+ !     Exxm2(2) = 0.5d0*(EVBM+ECBM)
+ !     Exxm1(3) = 0.5d0*(EVBM+ECBM)
+ !     Exxm2(3) = ECBM
+ !     Exxm1(4) = ECBM
+ !     Exxm2(4) = Emax1
+
+
       Exxm1(1) = EVBM    
       Exxm2(1) = 0.06762d0
       Exxm1(2) = 0.06762d0
@@ -331,7 +406,7 @@
       Exxm2(4) = 1.35238d0
       Exxm1(5) = 1.35238d0
       Exxm2(5) = ECBM     
-       end subroutine set_limits_GaAs
+       end subroutine set_limits_DOS
 
 
 
@@ -340,7 +415,6 @@
 
 
      subroutine calc_reciprocal_param
-      !print *,'alat=',alat
       a2p = 2.d0*pi/alat 
       b1 = b1*a2p
       b2 = b2*a2p
@@ -635,6 +709,25 @@
  1   format(F11.6,F12.7)
  2   format(' dielectric constant of the bulk                 (er) = ',   F12.4)
     end subroutine read_pol 
+
+
+
+
+
+      subroutine calc_CBS_limits
+       Emin1 = Ef1(1)
+       Emax1 = Ef1(Npt1)
+       if(L_debug) then
+       print *
+       print *,'calc_CBS_limits'
+       print 2
+       print 1,Emin1,Emax1
+       endif
+ 1     format(2E12.4)
+ 2     format('     Emin1           Emax1 ')
+      end subroutine calc_CBS_limits
+ 
+
 
 
 
