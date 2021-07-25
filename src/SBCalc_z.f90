@@ -240,7 +240,7 @@
  1      format(' We have found the approximate solution at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
  2      format(/' Please make limits in set_new_limits wider') 
  3      format(' We have found the accurate solution at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
- 4      format(/'  it      SBH      -eV(0)      Sig(po)       dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
+ 4      format(/'  it      SBH      -eV(0)     dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
  5      format(//' Start SCF cycle')
  6      format(  ' from previous solution')
        end subroutine calc_scf
@@ -422,8 +422,8 @@
          elseif(L_p_type) then
           SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
          endif
-         print 2,iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
- 2       format(I4,2F11.5,2E15.5,6E14.4,F12.4)
+         print 2,iter,SBH,dabs(-V_eln(1)),bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+ 2       format(I4,2F11.5,E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
 
 
