@@ -21,13 +21,14 @@
         call print_logo                                             ! print common information about the method
         call read_data                                              ! read data from the command line and from input files
         call spline_start                                           ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
-        call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs (stored in Efermi_00)
+        if(CNL==0.d0) call calc_CNL                                 ! calculate CNL for interface
+        call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs
         call calc_po00                                              ! check po_h and po_e on infinity
         if(L_debug) call calc_DOS_int                               ! calculate integral of DOS to check number of valence electrons
-        call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
         call calc_scf                                               ! find SCF solution for the system M-SC
         call calc_check_scf                                         ! check accuracy of scf cycle
-        call write_results                                          ! write density po and potential V into gthe files
+        call calc_LW                                                ! calculate DLW and ILW
+        call write_results                                          ! write density po and potential V into the files
         call print_results                                          ! print all SB parameters
        end program SB
 

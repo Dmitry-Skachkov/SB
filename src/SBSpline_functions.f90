@@ -39,7 +39,6 @@
     real(8)            :: a_init
     real(8)            :: V0_0
     er11 = er
-    if(Calc=='s') then                              ! start new calculation
      a_init = 1.d0/za
      V0_0 = -(EFermi1 - CNL) 
      if(L_inf) then                                 ! semiinfinite semiconductor
@@ -59,28 +58,40 @@
       enddo
       Sig = -po0/a_init*(1.d0-dexp(-Lsc/za))
      endif
-    elseif(Calc=='c') then                           ! continue calculations
-     call open_file(1,'filen.dat')
-      read(1,*) filen                                ! read number of last iteration
-     close(unit=1)
-     call open_file(2,'po_'//trim(adjustl(fstr(filen)))//'.dat')
-     call open_file(3,'elpot_'//trim(adjustl(fstr(filen)))//'.dat')
+    do i=1,Nz
+     V_el0(i) = V_eln(i)
+     po_0(i) = po_new(i)     
+    enddo
+ 2  format(F17.5,5E21.12e3)
+   end subroutine set_initial_po_V
+
+
+
+
+   subroutine set_initial_from_prev
+    integer            :: i
+    real(8)            :: r
+    real(8)            :: er11                      ! dielectric constant
+    er11 = er
+     call open_file(2,'po_.dat')
+     read(2,*)
+     read(2,*)
+     call open_file(3,'elpot_.dat')
      do i=1,Nz
       read(2,*) Zz(i),r,r,r,po_new(i)
       read(3,*) Zz(i),V_eln(i)
      enddo
      do i=1,Nz
       V_eln(i) = -V_eln(i)
+      po_new(i) = po_new(i)*1.D-24
      enddo
      close(unit=2)
      close(unit=3)
-    endif
     do i=1,Nz
      V_el0(i) = V_eln(i)
-     po_0(i) = po_new(i)
+     po_0(i) = po_new(i)     
     enddo
- 2  format(F17.5,5E21.12e3)
-   end subroutine set_initial_po_V
+   end subroutine set_initial_from_prev
 
 
 
@@ -292,30 +303,6 @@
     endif
    end function DOS_SCs
 
-
-
-
-
-
-
-
-
-
-
-
-      subroutine calc_CBS_limits
-       Emin1 = Ef1(1)
-       Emax1 = Ef1(Npt1)
-       if(L_debug) then
-       print *
-       print *,'calc_CBS_limits'
-       print 2
-       print 1,Emin1,Emax1
-       endif
- 1     format(2E12.4)
- 2     format('     Emin1           Emax1 ')
-      end subroutine calc_CBS_limits
- 
 
 
 
