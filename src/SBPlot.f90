@@ -48,7 +48,7 @@
       call write_restart_dat
  1    format(F17.5,4E21.12e3)
  2    format(F17.5,F18.10,E17.5e3)
- 3    format('VARIABLES = "z", "poh", "poe", "poMIGS", "po"'/'ZONE  I=',I4,' F=POINT')
+ 3    format(I5,'     !  "z", "poh", "poe", "poMIGS", "po"')
      end subroutine write_results
 
 

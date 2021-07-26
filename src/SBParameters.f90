@@ -554,9 +554,10 @@
       enddo
       call calc_DOS_Mtot(PDOS3)                ! calculate integrated DOS_M of interfacial layer
       call open_file(2,'dos_bulk_.dat')        ! DOS of bulk SC
-      read(2,*)
-      read(2,*)
-      read(2,2) N_DOS_SC
+    !  read(2,*)
+    !  read(2,*)
+      read(2,*) N_DOS_SC
+      if(L_debug) print *,'N_DOS_SC=',N_DOS_SC
       do j=1,N_DOS_SC
        read(2,*) Ef_DOS_SC(j),DOS_SC(j)
        if(DOS_SC(j) < 0.d0) then
@@ -565,8 +566,8 @@
       enddo
       close(unit=2)
       if(L_super_debug) print *,'read_PDOS: read ',N_DOS_SC,' points of bulk'
- 1    format(15x,I4)
- 2    format(19x,I4)
+! 1    format(15x,I4)
+! 2    format(19x,I4)
      end subroutine read_PDOS
 
 
@@ -577,26 +578,23 @@
      subroutine read_pdos_1(Efi,PDOS,ilayer)                                  ! read PDOS for layer 3(4)
       real(8)           :: PDOS(Nptm,Nk),Efi(Nptm)
       integer           :: ilayer
-      integer           :: k,j
+      integer           :: k,j,kr
       if(L_debug) print *,'read_PDOS:'
       call open_file(2,'kpdos_int_'//trim(adjustl(fstr(ilayer)))//'.dat')     ! PDOS of interface (E,k)
+      read(2,*) kr,N_DOS_M 
+      if(L_debug) print *,'read N_DOS_M =',N_DOS_M
       do k=1,Nk                                                               ! read Nk points
+  !     read(2,*)
+  !     read(2,*)
+  !     read(2,*)
        read(2,*)
-       read(2,*)
-       read(2,*)
-       if(k==1) then
-        read(2,1) N_DOS_M
-        if(L_debug) print *,'read N_DOS_M =',N_DOS_M
-       else
-        read(2,*)
-       endif    
        do j=1,N_DOS_M
         read(2,*) Efi(j),PDOS(j,k)
        enddo
       enddo
       if(L_debug) print *,'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
       close(unit=2)
- 1    format(15x,I4)
+! 1    format(15x,I4)
      end subroutine read_pdos_1
 
 
@@ -606,9 +604,9 @@
       integer           :: j
       if(L_debug) print *,'read_pdos_0:'
       call open_file(2,'DOStot.dat')    
-       read(2,*)
-       read(2,*)
-       read(2,*)
+   !    read(2,*)
+   !    read(2,*)
+   !    read(2,*)
        read(2,*) 
        do j=1,N_DOS_M
         read(2,*) Efi0(j),DOS0(j)
