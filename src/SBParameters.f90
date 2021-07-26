@@ -44,6 +44,7 @@
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
       integer                :: Npol                           ! number points for polarization
       integer                :: iter                           ! iteration number
+      integer                :: k9                             ! nearest k-point to Gamma
       real(8)                :: DOS_Mtot(Nptm)                 ! DOS for interface (E) integrated over kx,ky
       real(8)                :: DOS_Sc(Nptm)                   ! DOS for bulk semiconductor
       real(8)                :: Ef_DOS_M(Nptm)                 ! E points for DOS_M
@@ -470,6 +471,7 @@
        subroutine read_k_mesh   
         integer      :: k
         real(8)      :: kr
+        real(8)      :: kr9
         if(L_debug) print *,'open file k_mesh.dat'
         open(unit=2,file='k_mesh.dat')
          read(2,*) Nk
@@ -487,13 +489,16 @@
          sumk = sumk + wk(k)
         enddo
         if(L_debug) print *,'TEST wk:', sumk
-        if(L_debug) then
-         print *,'k kx ky kr'
-         do k=1,Nk
-          kr = dsqrt(kp(1,k)**2+kp(2,k)**2)
-          print 4,k,kp(1,k),kp(2,k),kr
-         enddo
-        endif
+        if(L_debug) print *,'k kx ky kr'
+        kr9 = 100.d0
+        do k=1,Nk
+         kr = dsqrt(kp(1,k)**2+kp(2,k)**2)
+         if(k > 1 .and. kr < kr9) then
+          k9 = k 
+          kr9 = kr
+         endif
+         if(L_debug) print 4,k,kp(1,k),kp(2,k),kr
+        enddo
  1      format(20x,3F12.7,7x,F12.7)
  2      format(3F16.10)
  3      format(I5)

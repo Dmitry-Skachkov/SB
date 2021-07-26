@@ -802,10 +802,9 @@
        real(8)      :: G1,G2
        real(8)      :: kvec(3)
        real(8)      :: kr2
-       integer      :: k9
        real(8)      :: logG2G1
        real(8)      :: Kz0,Kz9
-       k9 = 9                                                      ! k=9 and 16 point in k-mesh for 15x15 
+!       k9 = 9                                                      ! k=9 and 16 point in k-mesh for 15x15 
        G1 = DOS_Ms(Ex,1)                                           ! value of Di(E,k) at Gamma
        G2 = DOS_Ms(Ex,k9)                                          ! value of Di(E,k) at nearest point at Gamma-K pathway (no. 9 in 15x15 k-mesh) 
        kvec(1:3) = kp(1,k9)*b1(1:3) + kp(2,k9)*b2(1:3)             ! 1/A

@@ -16,8 +16,8 @@
              '   ************************************************************************************' /   &
              '   *                                                                                  *' /   &
              '   *               Program SB: First-Principles Method for Schottky Barrier           *' /   &
-             '   *               This program is the open-source, please cite                       *' /   &
-             '   *               https://arxiv.org/abs/2001.00710                                   * '/   &
+             '   *               This program is the open-source software, please cite              *' /   &
+             '   *               Phys. Rev. B, 2021                                                 * '/   &
              '   *                                                                                  *' /   &
              '   *               Center for Molecular Magnetic Quantum Materials (M2QM)             *' /   &
              '   *               Quantum Theory Project (QTP)                                       *' /   &
@@ -77,7 +77,7 @@
         print 20,ILW
         print 17
 3       format(I4,F11.5,'     divergency due to V'/'STOP')
-4       format(' We have reached convergence with respect to charge density')
+4       format(' Convergence with respect to charge density is reached')
 5       format(' Electric field close to the surface of semiconductor E(0) =',1p,E14.5,' V/A')
 6       format(' Polarization close to the surface of semiconductor   P(0) =',1p,E14.5,' e/A^2')
 7       format(' Charge on the interface                               Sig =',1p,E14.5,' cm-2')

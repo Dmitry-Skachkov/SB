@@ -237,9 +237,9 @@
         L_pre = .false.
         call calc_exp_scf                                                ! do Nitscf3 cycles of scf
  endif
- 1      format(' We have found the approximate solution at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
+ 1      format(' The approximate solution is found at ',I3,' cycle of pre scf cycle using ',I4,' iterations'/)
  2      format(/' Please make limits in set_new_limits wider') 
- 3      format(' We have found the accurate solution at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
+ 3      format(' The accurate solution is found at ',I3,' cycle of post scf cycle using ',I4,' iterations'/)
  4      format(/'  it      SBH      -eV(0)     dV/dz(er*e0)     poh_m          poe_m        poMe_m          po(0)      delta_po     delta_V')
  5      format(//' Start SCF cycle')
  6      format(  ' from previous solution')
