@@ -59,10 +59,10 @@ BibTex entry for the Github repository and the publications:
      title        = {First-Principles Theory for Schottky Barrier Physics},
      author       = {D. Skachkov and S.-L. Liu and Y. Wang and X.-G. Zhang and H.-P. Cheng},
      year         = 2021,
-     journal      = {ArXiv},
-     volume       = 2001,
-     pages        = {00710},
-     doi          = {}
+     journal      = {Physical Review B},
+     volume       = 104,
+     pages        = {045429},
+     doi          = {10.1103/PhysRevB.104.045429}
     }
    
 
