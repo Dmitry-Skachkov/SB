@@ -1,9 +1,9 @@
 
 # Installation
 
-Copy <arxive>.tar file with the archive into the selected folder. Untar the archive:
+Copy sb.tar file with the archive into the selected folder. Untar the archive:
 
-> tar -xvf <arxive>.tar
+> tar -xvf sb.tar
 
 Load the appropriate modules for Fortran compilers and compile the program:
 
