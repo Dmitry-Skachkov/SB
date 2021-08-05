@@ -12,10 +12,10 @@ OBJS = obj/SBMathLibrary.o \
        obj/SB.o
 
 schottky: $(OBJS)
-	$(FC) $(FFLAGS) -o ~/owens/bin/schottky_v3 $(OBJS)
+	$(FC) $(FFLAGS) -o ~/bin/schottky $(OBJS)
 
 clean:
-	rm -rf ~/owens/bin/schottky_v3 obj/*.o obj/*.mod
+	rm -rf ~/bin/schottky obj/*.o obj/*.mod
 
 SBSpline_functions.o: SBParameters.o  SBMathLibrary.o
 SBCalc_i.o:           SBParameters.o  SBMathLibrary.o   SBSpline_functions.o
