@@ -1,7 +1,7 @@
 default: schottky
 
-#include intel.make                  # use Intel compiler
-include gfortran.make                # use GNU compiler
+include intel.make                    # use Intel compiler
+#include gfortran.make                # use GNU compiler
 
 OBJS = obj/SBMathLibrary.o \
        obj/SBParameters.o  \
