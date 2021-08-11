@@ -1,0 +1,14 @@
+3979.4794d0                              ! V_D0 in a.u. (output from QE)
+40.0d0                                   ! Lz (A)
+3.23481d0                                ! Lz_int (A)
+0.68156d0                                ! CNL (eV)
+5.55369d0                                ! z3 (A)
+9.2278d0                                 ! z4 (A)
+15.1082d0                                ! alat (au)
+1.000000d0  0.577350d0  0.000000d0       ! reciprocal vector b1
+0.000000d0  1.154701d0  0.000000d0       ! b2
+0.000000d0  0.000000d0  0.136083d0       ! b3
+9.7917162d0                              ! cz
+304.8114d0                               ! V_DSC volume of semiconductor in a.u. (output from QE)
+1.42                                     ! gap of the bulk semiconductor
+

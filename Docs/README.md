@@ -1,13 +1,14 @@
 
 # Installation
 
-Copy sb_v1.0.tar file with the archive into the selected folder. Untar the archive:
+Copy sb.tar file with the archive into the selected folder. Untar the archive:
 
-> tar -xvf sb_v1.0.tar
+> tar -xvf sb.tar
 
-Load the appropriate modules for Fortran compilers and compile the program:
+Load the appropriate module for Fortran compiler. You can modify makefile in order to use the selected compiler. Currently GNU/4.8.5, Intel/19.0.5, and PGI NVIDIA/20.1 compilers are tested. Compile the program:
 
 > make
+  
 
 # Usage
 

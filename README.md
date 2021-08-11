@@ -27,7 +27,7 @@ Hai-Ping Cheng
 
 # License
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+[AFL 3.0 License](https://github.com/Dmitry-Skachkov/SB/blob/main/LICENSE.md) 
 
 # Contributing
 
@@ -38,7 +38,7 @@ For contributing please contact Dr. Hai-Ping Cheng at m2qm.efrc[at]phys.ufl.edu
 If you use the SB package in your research, please cite the following publications:
 
 * Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
-"First-Principles Theory for Schottky Barrier Physics"    
+"First-Principles Theory for Schottky Barrier Physics" Phys. Rev. B, 104, 045429 (2021) [DOI 10.1103/PhysRevB.104.045429](https://doi.org/10.1103/PhysRevB.104.045429)  
 [![arXiv](https://img.shields.io/badge/arXiv-2001.00710-b31b1b.svg?style=plastic)](https://arxiv.org/abs/2001.00710)
 
 
@@ -59,10 +59,10 @@ BibTex entry for the Github repository and the publications:
      title        = {First-Principles Theory for Schottky Barrier Physics},
      author       = {D. Skachkov and S.-L. Liu and Y. Wang and X.-G. Zhang and H.-P. Cheng},
      year         = 2021,
-     journal      = {ArXiv},
-     volume       = 2001,
-     pages        = {00710},
-     doi          = {}
+     journal      = {Physical Review B},
+     volume       = 104,
+     pages        = {045429},
+     doi          = {10.1103/PhysRevB.104.045429}
     }
    
 
