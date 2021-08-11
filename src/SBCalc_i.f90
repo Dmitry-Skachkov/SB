@@ -241,14 +241,10 @@
      real(8) function poe0S(z) 
       real(8)       :: eps
       real(8)       :: z
-      real(8)       :: R11 !R13,R14,R15,R16   
+      real(8)       :: R11    
       call set_eps(eps,'poe0')
       eps = 1.d-12
       call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F2S,eps)        
-!      call QSL3D(R13,Exxe1(1),Exxe2(1),F2S,eps)        
-!      call QSL3D(R14,Exxe1(2),Exxe2(2),F2S,eps)        
-!      call QSL3D(R15,Exxe1(3),Exxe2(3),F2S,eps)        
-!      call QSL3D(R16,Exxe1(4),Exxe2(4),F2S,eps)        
       poe0S = -(R11)/V_DSC
      end function poe0S
 
@@ -291,14 +287,9 @@
      real(8) function poh0S(z) 
       real(8)       :: eps
       real(8)       :: z
-      real(8)       :: R11   !,R12,R13,R14    
-!      call set_eps(eps,'poh0')
+      real(8)       :: R11       
       eps = 1.d-12 
       call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F1S,eps)        
-!      call QSL3D(R11,Exxh1(1),Exxh2(1),F1S,eps)        
-!      call QSL3D(R12,Exxh1(2),Exxh2(2),F1S,eps)        
-!      call QSL3D(R13,Exxh1(3),Exxh2(3),F1S,eps)        
-!      call QSL3D(R14,Exxh1(4),Exxh2(4),F1S,eps)        
       poh0S =  (R11)/V_DSC
      end function poh0S
 
@@ -436,26 +427,18 @@
       integer           :: k
       real(8)           :: Dx
       real(8)           :: DMIGS1,DMIGS_G1
-      real(8)           :: DLDH,cx,Imks2x
+      real(8)           :: DLDH1,cx,Imks2x
       if(zp < z3) then
        DMIGS = 0.d0
       else
 !      call calc_connection(E)                                 ! calculate z0 for connection analytical and numerical results
        zconnect = 1.5d0
-       if(E > 0.d0 .and. E < ECBM) then
-        call separate(E,ImKHs2(E,k),ImKs2(E,k),DLDH)
-       elseif(E <= 0.d0) then
-        DLDH = 1.0d0 
-       elseif(E >= ECBM) then
-        DLDH = 0.0d0 
-       endif
-       if(zp < zconnect) then                                 ! int dk is calculated only for small z
+       if(zp < zconnect) then                                  ! int dk is calculated only for small z
         Dx = 0.d0
-        do k=1,Nk                                             ! integrate over kx,ky
+        do k=1,Nk                                              ! integrate over kx,ky
+         call calc_sep(E,ImKHs2(E,k),ImKs2(E,k),cx)
          if(k==1) then
-          cx = DLDH
-         else
-          cx = 1.d0
+          DLDH1 = cx
          endif
          Dx = Dx + wk(k)*DOS_Ms(E,k)*exp(-2.d0*Imks2(E,k)*ckA*abs(zp))*cx
         enddo
@@ -469,7 +452,7 @@
        else
         DMIGS_G1 = DOS_Ms(E,1)
        endif
-       DMIGS_G1 = DMIGS_G1*DLDH
+       DMIGS_G1 = DMIGS_G1*DLDH1
        if(zp < zconnect+0.5d0) then     
         if(DMIGS1 > DMIGS_G1) then                   ! to connect smoothly, Gaussian for small z may be larger
          DMIGS = DMIGS_G1                            ! zconnect may be calculated inaccurate, and in order to avoid bigger DMIGS_G then DMIGS 
@@ -495,6 +478,21 @@
      endif
     end function DMIGS_G
 
+
+
+
+    subroutine calc_sep(E,ImKHs2k,ImKs2k,DLDH)
+      real(8)           :: E                               
+      real(8)           :: DLDH
+      real(8)           :: ImKHs2k,ImKs2k
+       if(E > 0.d0 .and. E < ECBM) then
+        call separate(E,ImKHs2k,ImKs2k,DLDH)
+       elseif(E <= 0.d0) then
+        DLDH = 1.0d0 
+       elseif(E >= ECBM) then
+        DLDH = 0.0d0 
+       endif
+    end subroutine calc_sep
 
 
 
@@ -558,7 +556,7 @@
       real(8)            :: eps
       eps = 1.d-14
       call QSL3D(Sig2,0.d0,Zz(Nz),pos,eps)
-      Sig = -Sig2   - Sig_gate
+      Sig = -Sig2   - Sig_gate                            ! sigma on interface
      end subroutine calc_totq
 
 
@@ -639,8 +637,8 @@
 
 
 
-     subroutine zero12(a,b,za,eps)                           ! search zero by 1/2 method
-      real(8)    :: a,b,za,eps
+       subroutine zero12(a,b,za,eps)                           ! search zero by 1/2 method
+        real(8)    :: a,b,za,eps
         do while (dabs(a-b) > eps)
          za = (a+b)/2.d0
         if(L_n_type) then
@@ -657,7 +655,7 @@
          endif
         endif
         enddo
-     end subroutine zero12
+       end subroutine zero12
 
 
 
@@ -776,10 +774,7 @@
         b = ECBM-0.10d0
         do while (dabs(a-b) > eps)
          EFermi1 = (a+b)/2.d0
-!         print *,'EFermiS: EFermi1=',EFermi1
          call calc_po00S
-!         print *,'po00_hS=',po00_hS
-!         print *,'po00_eS=',po00_eS
          if(dabs(po00_hS) > dabs(po00_eS)) then
           a = (a+b)/2.d0
          else
@@ -804,7 +799,6 @@
        real(8)      :: kr2
        real(8)      :: logG2G1
        real(8)      :: Kz0,Kz9
-!       k9 = 9                                                      ! k=9 and 16 point in k-mesh for 15x15 
        G1 = DOS_Ms(Ex,1)                                           ! value of Di(E,k) at Gamma
        G2 = DOS_Ms(Ex,k9)                                          ! value of Di(E,k) at nearest point at Gamma-K pathway (no. 9 in 15x15 k-mesh) 
        kvec(1:3) = kp(1,k9)*b1(1:3) + kp(2,k9)*b2(1:3)             ! 1/A

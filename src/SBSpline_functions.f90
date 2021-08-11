@@ -32,13 +32,13 @@
 
 
 
-   subroutine set_initial_po_V
-    integer            :: i
-    real(8)            :: r
-    real(8)            :: er11                      ! dielectric constant
-    real(8)            :: a_init
-    real(8)            :: V0_0
-    er11 = er
+    subroutine set_initial_po_V
+     integer            :: i
+     real(8)            :: r
+     real(8)            :: er11                      ! dielectric constant
+     real(8)            :: a_init
+     real(8)            :: V0_0
+     er11 = er
      a_init = 1.d0/za
      V0_0 = -(EFermi1 - CNL) 
      if(L_inf) then                                 ! semiinfinite semiconductor
@@ -50,29 +50,29 @@
       enddo
       Sig = -po0/a_init
      else                                           ! finite semiconductor length Lsc
-      V0 = (V0_0 - Sig_gate*Lsc/e0)/(1.d0-(Lsc/za+1.d0)*dexp(-Lsc/za))
+      V0 = (V0_0 + Sig_gate*Lsc/(e0*er))/(1.d0-(Lsc/za+1.d0)*dexp(-Lsc/za))
       po0 = -V0*a_init**2*e0*er
       do i=1,Nz
        po_new(i) = po0*dexp(-a_init*Zz(i))
-       V_eln(i) = V0*(dexp(-a_init*Zz(i))-((Lsc/za)-(Zz(i)/za)+1.d0)*dexp(-Lsc/za))-Sig_gate/(e0*er)*(Zz(i)-Lsc)
+       V_eln(i) = V0*(dexp(-a_init*Zz(i))-((Lsc/za)-(Zz(i)/za)+1.d0)*dexp(-Lsc/za))+Sig_gate/(e0*er)*(Zz(i)-Lsc)
       enddo
       Sig = -po0/a_init*(1.d0-dexp(-Lsc/za))
      endif
-    do i=1,Nz
-     V_el0(i) = V_eln(i)
-     po_0(i) = po_new(i)     
-    enddo
- 2  format(F17.5,5E21.12e3)
-   end subroutine set_initial_po_V
+     do i=1,Nz
+      V_el0(i) = V_eln(i)
+      po_0(i) = po_new(i)     
+     enddo
+ 2   format(F17.5,5E21.12e3)
+    end subroutine set_initial_po_V
 
 
 
 
-   subroutine set_initial_from_prev
-    integer            :: i
-    real(8)            :: r
-    real(8)            :: er11                      ! dielectric constant
-    er11 = er
+    subroutine set_initial_from_prev
+     integer            :: i
+     real(8)            :: r
+     real(8)            :: er11                      ! dielectric constant
+     er11 = er
      call open_file(2,'po_.dat')
      read(2,*)
      read(2,*)
@@ -87,11 +87,11 @@
      enddo
      close(unit=2)
      close(unit=3)
-    do i=1,Nz
-     V_el0(i) = V_eln(i)
-     po_0(i) = po_new(i)     
-    enddo
-   end subroutine set_initial_from_prev
+     do i=1,Nz
+      V_el0(i) = V_eln(i)
+      po_0(i) = po_new(i)     
+     enddo
+    end subroutine set_initial_from_prev
 
 
 
@@ -100,7 +100,7 @@
 
 
 
-    subroutine spline_start
+     subroutine spline_start
       integer           :: k   
       if(L_super_debug) then  
        print *
@@ -133,7 +133,7 @@
       call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
       call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
       call calc_z_mesh
-    end subroutine spline_start
+     end subroutine spline_start
 
 
 

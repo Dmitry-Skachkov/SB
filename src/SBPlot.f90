@@ -17,7 +17,8 @@
              '   *                                                                                  *' /   &
              '   *               Program SB: First-Principles Method for Schottky Barrier           *' /   &
              '   *               This program is the open-source software, please cite              *' /   &
-             '   *               Phys. Rev. B, 2021                                                 * '/   &
+             '   *               Phys. Rev. B, 104, 045429, 2021                                    *' /   &
+             '   *               https://doi.org/10.1103/PhysRevB.104.045429                        * '/   &
              '   *                                                                                  *' /   &
              '   *               Center for Molecular Magnetic Quantum Materials (M2QM)             *' /   &
              '   *               Quantum Theory Project (QTP)                                       *' /   &

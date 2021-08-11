@@ -54,14 +54,14 @@
 
 
 
-     subroutine calc_po1                                  ! calculate charge density on z-mesh points
-      integer          :: i
-      real(8)          :: po2,po3,po4     
-      if(L_super_debug) print *,'calc_po1:'
-      poh_max = 0.d0
-      poe_max = 0.d0
-      poMe_max = 0.d0
-      delta_po = 0.d0
+      subroutine calc_po1                                  ! calculate charge density on z-mesh points
+       integer          :: i
+       real(8)          :: po2,po3,po4     
+       if(L_super_debug) print *,'calc_po1:'
+       poh_max = 0.d0
+       poe_max = 0.d0
+       poMe_max = 0.d0
+       delta_po = 0.d0
        do i=1,Nz        
         if(L_super_debug) print *,'calc_po1: i=',i 
         po2 = poh(Zz(i))
@@ -79,8 +79,8 @@
         endif
        enddo
        delta_po = delta_po/dfloat(Nz)
-       po_MIGS(1) = po_MIGS(2)
-     end subroutine calc_po1
+  !     po_MIGS(1) = po_MIGS(2)
+      end subroutine calc_po1
 
 
 
@@ -435,18 +435,18 @@
          if(.not.L_pre) call calc_deltaE                                      ! calculate filling level of the surface
          do i=1,Nitscf3
           iter = i
-         print *,'-V_eln(1)=',-V_eln(1)
+          print *,'-V_eln(1)=',-V_eln(1)
           call calc_po1                                                       ! calculate charge density po1 (po_h, po_e, and po_MIGS)
           call mixing_po                                                      ! mixing new and old density (po_new = (1-a)po0+a*po1) + spline coeff. 
           call calc_elpot                                                     ! calculate electrostatic potential using po_new
           call mixing_V                                                       ! spline coeff. for V_eln   (teper' i ne nuzhno!)
-         call calc_charges                                               ! calculate charge on the interface
-         print *,'-V_eln(1)=',-V_eln(1)
-         if(L_n_type) then
-          SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
-         elseif(L_p_type) then
-          SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
-         endif
+          call calc_charges                                               ! calculate charge on the interface
+          print *,'-V_eln(1)=',-V_eln(1)
+          if(L_n_type) then
+           SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
+          elseif(L_p_type) then
+           SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
+          endif
           print 2,iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
          enddo
          if(L_super_debug) then
