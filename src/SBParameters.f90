@@ -176,12 +176,12 @@
          call read_input_dat  
          EVBM    =  0.00d0                                          ! VBM
          ECBM    =  gap                                             ! CBM
-         alat = alat*BohrA                                          ! convert to A
-         V_D0  = V_D0*BohrA**3                                      ! convert to A^3
+         alat    = alat*BohrA                                          ! convert to A
+         V_D0    = V_D0*BohrA**3                                      ! convert to A^3
          Surface = V_D0/Lz                                          ! surface of the cell
-         V_D0  = V_D0/Lz*Lz_int                                     ! volume of the interfacial layer for PDOS (for MIGS)
-         V_DSC = V_DSC*BohrA**3                                     ! volume of bulk semiconductor cell (in A^3) 
-         ckA = 2.d0*pi/cz                                           ! coefficient for ImK to convert to 1/A
+         V_D0    = V_D0/Lz*Lz_int                                     ! volume of the interfacial layer for PDOS (for MIGS)
+         V_DSC   = V_DSC*BohrA**3                                     ! volume of bulk semiconductor cell (in A^3) 
+         ckA     = 2.d0*pi/cz                                           ! coefficient for ImK to convert to 1/A
          call calc_reciprocal_param
         endif
         call read_k_mesh    
@@ -414,11 +414,6 @@
       b1 = b1*a2p
       b2 = b2*a2p
       b3 = b3*a2p
-!      print *,'reciprocal vectors (in 2*pi/alat)'
-!      print 1,b1
-!      print 1,b2
-!      print 1,b3
-! 1    format(3F15.4)
      end subroutine calc_reciprocal_param
 
 
@@ -554,8 +549,6 @@
       enddo
       call calc_DOS_Mtot(PDOS3)                ! calculate integrated DOS_M of interfacial layer
       call open_file(2,'dos_bulk_.dat')        ! DOS of bulk SC
-    !  read(2,*)
-    !  read(2,*)
       read(2,*) N_DOS_SC
       if(L_debug) print *,'N_DOS_SC=',N_DOS_SC
       do j=1,N_DOS_SC
@@ -566,8 +559,6 @@
       enddo
       close(unit=2)
       if(L_super_debug) print *,'read_PDOS: read ',N_DOS_SC,' points of bulk'
-! 1    format(15x,I4)
-! 2    format(19x,I4)
      end subroutine read_PDOS
 
 
@@ -584,9 +575,6 @@
       read(2,*) kr,N_DOS_M 
       if(L_debug) print *,'read N_DOS_M =',N_DOS_M
       do k=1,Nk                                                               ! read Nk points
-  !     read(2,*)
-  !     read(2,*)
-  !     read(2,*)
        read(2,*)
        do j=1,N_DOS_M
         read(2,*) Efi(j),PDOS(j,k)
@@ -594,7 +582,6 @@
       enddo
       if(L_debug) print *,'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
       close(unit=2)
-! 1    format(15x,I4)
      end subroutine read_pdos_1
 
 
@@ -604,9 +591,6 @@
       integer           :: j
       if(L_debug) print *,'read_pdos_0:'
       call open_file(2,'DOStot.dat')    
-   !    read(2,*)
-   !    read(2,*)
-   !    read(2,*)
        read(2,*) 
        do j=1,N_DOS_M
         read(2,*) Efi0(j),DOS0(j)
