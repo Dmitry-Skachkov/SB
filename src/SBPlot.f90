@@ -65,7 +65,11 @@
         print 14,Temp
         print 10,po00*1.d24
         print 11,EFermi1
-        print 21,CNL
+        if(SigS /= 0.d0) then
+         print 23,CNL
+        else
+         print 21,CNL
+        endif
         print 16,EFermi_00
         print 9,SBH 
         print 18,-V_eln(1)
@@ -98,6 +102,7 @@
 20      format(' Inversion layer width                                 ILW =',   F14.2,' A')
 21      format(' Charge neutrality level for interface vs VBM          CNL =',   F14.5,' eV')
 22      format(' Initial surface charge density of the interface      SigS =',1p,E14.4,' cm-2')
+23      format(' Fermi level at interface for zero doping              CNL =',   F14.5,' eV')
       end subroutine print_results
 
 
