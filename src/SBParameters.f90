@@ -93,7 +93,6 @@
       real(8)                :: po00_e                         ! density of electrons at +infinity
       real(8)                :: po00_h0                        ! density of holes at +infinity
       real(8)                :: po00_e0                        ! density of electrons at +infinity
-!      real(8)                :: po00S                          ! - doping concentration 
       real(8)                :: po00_hS                        ! density of holes at interface
       real(8)                :: po00_eS                        ! density of electrons at interface
       real(8)                :: Nee1                           ! norm for DOS_SC
@@ -133,8 +132,8 @@
       real(8)                :: gap                            ! band gap of semiconductor (eV)
       real(8)                :: DLW                            ! depletion layer width (DLW)
       real(8)                :: ILW                            ! inversion layer width (ILW)
-      character(1)           :: Calc                           ! s - start; c - continue calculation
       character(10)          :: LscA                           ! the length of the SC
+      logical                :: L_restart                      ! restart from previous solution
       logical                :: L_inf                          ! infinite or finite SC
       logical                :: L_p_type                       ! p-type semiconductor
       logical                :: L_n_type                       ! n-type semiconductor
@@ -166,26 +165,30 @@
         if(L_inf) Sig_gate = 0.d0
         if(L_debug) print *,' Sig_gate=',Sig_gate
         Sig_gate = Sig_gate*1.D-16                                  ! convert to A^-2
+        if(Temp == 0.d0) then
+         print *,'Please use nonzero temperature'
+         stop
+        endif
         kbT = kb*Temp 
         if(L_check_file('restart.dat')) then
-         Calc = 'c'                                                 ! continue from previous calculation
+         L_restart = .true.                                         ! continue from previous calculation
          if(L_super_debug) print *,'continue calculations from previous step'
          call read_restart_dat
         else
-         Calc = 's'                                                 ! start from scratch
-         if(L_super_debug) print *,'start calculations'
-         call read_input_dat  
-         SigS    =  SigS**1.D-16                                    ! convert to A^-2
-         EVBM    =  0.00d0                                          ! VBM
-         ECBM    =  gap                                             ! CBM
-         alat    =  alat*BohrA                                      ! convert to A
-         V_D0    =  V_D0*BohrA**3                                   ! convert to A^3
-         Surface =  V_D0/Lz                                         ! surface of the cell
-         V_D0    =  V_D0/Lz*Lz_int                                  ! volume of the interfacial layer for PDOS (for MIGS)
-         V_DSC   =  V_DSC*BohrA**3                                  ! volume of bulk semiconductor cell (in A^3) 
-         ckA     =  2.d0*pi/cz                                      ! coefficient for ImK to convert to 1/A
-         call calc_reciprocal_param
+         L_restart = .false.                                        ! start from scratch
+         if(L_super_debug) print *,'start calculation from scratch'
         endif
+        call read_input_dat  
+        SigS    =  SigS**1.D-16                                     ! convert to A^-2
+        EVBM    =  0.00d0                                           ! VBM
+        ECBM    =  gap                                              ! CBM
+        alat    =  alat*BohrA                                       ! convert to A
+        V_D0    =  V_D0*BohrA**3                                    ! convert to A^3
+        Surface =  V_D0/Lz                                          ! surface of the cell
+        V_D0    =  V_D0/Lz*Lz_int                                   ! volume of the interfacial layer for PDOS (for MIGS)
+        V_DSC   =  V_DSC*BohrA**3                                   ! volume of bulk semiconductor cell (in A^3) 
+        ckA     =  2.d0*pi/cz                                       ! coefficient for ImK to convert to 1/A
+        call calc_reciprocal_param
         call read_k_mesh    
         call read_pol                                               ! read polarization data                                    
         call print_input_parameters
@@ -230,28 +233,32 @@
 
 
        subroutine read_restart_dat
+        real(8)            :: Temp0,EFermi_input0,Lsc0,Sig_gate0
         if(L_super_debug) print *,'read restart.dat'
         open(unit=1,file='restart.dat')    
-         read(1,*) V_D0                                          
-         read(1,*) Lz                                            
-         read(1,*) Lz_int                                        
-         read(1,*) CNL                                           
-         read(1,*) z3                                            
-         read(1,*) z4                                            
-         read(1,*) alat                                           
-         read(1,*) b1(1:3)                                       
-         read(1,*) b2(1:3)                                       
-         read(1,*) b3(1:3)                                       
-         read(1,*) cz                                            
-         read(1,*) V_DSC                                         
-         read(1,*) gap,EVBM,ECBM                                 
-         read(1,*) Surface
-         read(1,*) ckA
          read(1,*) za
          read(1,*) Sig
-         read(1,*) SigS
+         read(1,*) Temp0
+         read(1,*) EFermi_input0
+         read(1,*) Lsc0
+         read(1,*) Sig_gate0
         close(unit=1)
-        a2p = 2.d0*pi/alat 
+        if(dabs((Temp0-Temp)/Temp) > 0.2d0) L_restart = .false.                  ! if Temp change more then 20% start from scratch
+        if(Sig_gate /= 0.d0 .and. Sig_gate0 /= 0.d0) then                       
+         if(dabs((Sig_gate0-Sig_gate)/Sig_gate) > 0.5d0) L_restart = .false.     ! if Sig_gate change more then 50% start from scratch
+        else
+         L_restart = .true.
+        endif
+        if(dabs(EFermi_input0-EFermi_input) > 0.25d0) L_restart = .false.        ! if EFermi change more then 0.25 eV start from scratch
+        if(trim(adjustl(LscA)) /= 'inf') then
+         if(Lsc <= 1.d5) then
+          if(dabs((Lsc0-Lsc)/Lsc) > 10.d0) L_restart = .false.                   ! if Lsc change more then x 10 start from scratch
+         else
+          L_restart = .true.
+         endif
+        endif
+        if(.not.L_restart) print 1
+ 1      format(/' Parameters of the systems are changed significantly from previous calculation'/' starting from scratch'/)
        end subroutine read_restart_dat
 
 
@@ -259,24 +266,12 @@
        subroutine write_restart_dat
         if(L_super_debug) print *,'read restart.dat'
         open(unit=1,file='restart.dat')    
-         write(1,*) V_D0                                          
-         write(1,*) Lz                                            
-         write(1,*) Lz_int                                        
-         write(1,*) CNL                                           
-         write(1,*) z3                                            
-         write(1,*) z4                                            
-         write(1,*) alat                                           
-         write(1,*) b1(1:3)                                       
-         write(1,*) b2(1:3)                                       
-         write(1,*) b3(1:3)                                       
-         write(1,*) cz                                            
-         write(1,*) V_DSC                                         
-         write(1,*) gap,EVBM,ECBM                                 
-         write(1,*) Surface
-         write(1,*) ckA
          write(1,*) za
          write(1,*) Sig
-         write(1,*) SigS
+         write(1,*) Temp
+         write(1,*) EFermi_input
+         write(1,*) Lsc
+         write(1,*) Sig_gate
         close(unit=1)
        end subroutine write_restart_dat
 
@@ -295,7 +290,6 @@
          print 3,Lz_int
          print 5,V_D0
          print 19,Surface
-!         print 6,CNL
          print 7,z3
          print 8,z4
          print 9,alat

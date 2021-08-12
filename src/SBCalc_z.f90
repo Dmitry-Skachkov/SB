@@ -79,7 +79,6 @@
         endif
        enddo
        delta_po = delta_po/dfloat(Nz)
-  !     po_MIGS(1) = po_MIGS(2)
       end subroutine calc_po1
 
 
@@ -91,7 +90,6 @@
 
      subroutine mixing_po
       integer         :: i
-    !  real(8)         :: po2,po3,po4
       if(L_super_debug) print *,'mixing_po:'
       do i=1,Nz                                                      ! mixing new and old densities
        po_new(i) = (1.d0-alfa)*po_0(i) + alfa*po1(i)
@@ -195,13 +193,13 @@
         real(8)       :: diffV
         iter = 0
         print 5
-        if(Calc == 'c') print 6
+        if(L_restart) print 6
         print 4
  if(.not.L_exp_scf) then
         call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
         call set_initial_deltaE                                          ! set first approximation to deltaE
         do is = 1,Nitscf                                                 ! scf cycle over deltaE
-         if(Calc == 's') then                                            ! starting from scratch
+         if(.not.L_restart) then                                            ! starting from scratch
           Nitscf20 = 1
           L_pre = .true.
           do is0 = 1,Nitscf0                                             ! pre cycle in order to find approximate solution
