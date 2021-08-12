@@ -70,6 +70,7 @@
         print 9,SBH 
         print 18,-V_eln(1)
         print 8,dEf
+        print 22,SigS*1.d16
         print 15,Sig_gate*1.d16
         print 7,Sig*1.d16 
         print 5,E_00
@@ -96,6 +97,7 @@
 19      format(' Depletion layer width                                 DLW =',   F14.2,' A')
 20      format(' Inversion layer width                                 ILW =',   F14.2,' A')
 21      format(' Charge neutrality level for interface vs VBM          CNL =',   F14.5,' eV')
+22      format(' Initial surface charge density of the interface      SigS =',1p,E14.4,' cm-2')
       end subroutine print_results
 
 

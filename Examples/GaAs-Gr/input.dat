@@ -11,4 +11,5 @@
 9.7917162d0                              ! cz
 304.8114d0                               ! V_DSC volume of semiconductor in a.u. (output from QE)
 1.42                                     ! gap of the bulk semiconductor
+0.                                       ! initial surface charge on interface
 

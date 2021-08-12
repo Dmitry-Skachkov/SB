@@ -53,6 +53,7 @@
       real(8)                :: Efi4(Nptm)                     !
       real(8)                :: DOS0(Nptm),Efi0(Nptm)          ! PDOS of the surface
       real(8)                :: Sig                            ! charge surface density on the interface (in e/Angstrom**2), see Eqn.(7)
+      real(8)                :: SigS                           ! initial surface charge on the interface
       real(8)                :: SigMIGS                        ! equivalent charge surface density of the MIGS (in e/Angstrom**2)
       real(8)                :: Sig_e                          ! equivalent charge surface density of the electrons (in e/Angstrom**2)
       real(8)                :: Sig_h                          ! equivalent charge surface density of the holes (in e/Angstrom**2)
@@ -174,14 +175,15 @@
          Calc = 's'                                                 ! start from scratch
          if(L_super_debug) print *,'start calculations'
          call read_input_dat  
+         SigS    =  SigS**1.D-16                                    ! convert to A^-2
          EVBM    =  0.00d0                                          ! VBM
          ECBM    =  gap                                             ! CBM
-         alat    = alat*BohrA                                          ! convert to A
-         V_D0    = V_D0*BohrA**3                                      ! convert to A^3
-         Surface = V_D0/Lz                                          ! surface of the cell
-         V_D0    = V_D0/Lz*Lz_int                                     ! volume of the interfacial layer for PDOS (for MIGS)
-         V_DSC   = V_DSC*BohrA**3                                     ! volume of bulk semiconductor cell (in A^3) 
-         ckA     = 2.d0*pi/cz                                           ! coefficient for ImK to convert to 1/A
+         alat    =  alat*BohrA                                      ! convert to A
+         V_D0    =  V_D0*BohrA**3                                   ! convert to A^3
+         Surface =  V_D0/Lz                                         ! surface of the cell
+         V_D0    =  V_D0/Lz*Lz_int                                  ! volume of the interfacial layer for PDOS (for MIGS)
+         V_DSC   =  V_DSC*BohrA**3                                  ! volume of bulk semiconductor cell (in A^3) 
+         ckA     =  2.d0*pi/cz                                      ! coefficient for ImK to convert to 1/A
          call calc_reciprocal_param
         endif
         call read_k_mesh    
@@ -220,6 +222,7 @@
          read(1,*) cz                                              ! cz (A)
          read(1,*) V_DSC                                           ! V_DSC volume of semiconductor in a.u. (from QE output)
          read(1,*) gap                                             ! band gap of the bulk (eV)
+         read(1,*) SigS                                            ! initial surface charge on interface (in cm-2)
         close(unit=1)
        end subroutine read_input_dat
 
@@ -246,6 +249,7 @@
          read(1,*) ckA
          read(1,*) za
          read(1,*) Sig
+         read(1,*) SigS
         close(unit=1)
         a2p = 2.d0*pi/alat 
        end subroutine read_restart_dat
@@ -272,6 +276,7 @@
          write(1,*) ckA
          write(1,*) za
          write(1,*) Sig
+         write(1,*) SigS
         close(unit=1)
        end subroutine write_restart_dat
 

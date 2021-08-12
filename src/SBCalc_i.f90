@@ -665,7 +665,6 @@
       real(8)            :: Nsigma,SInt
       real(8)            :: eps
       real(8)            :: E1,E2
-      real(8)            :: SigS                                            ! initial surface charge on the interface
       eps = 1.d-12
       EFermi111 = CNL + dE
       if(dE > 0.d0) then
@@ -679,8 +678,7 @@
        E2 = CNL
       endif
       call QSL3D(SInt,E1,E2,F99,eps)
-      SigS = 0.d-3                      ! 1E-3 in e/A^2     = 1E13 cm-2   (x1E16)
-      Nsigma = (dabs(Sig)+dabs(SigS))*Surface
+      Nsigma = (dabs(Sig+SigS))*Surface
       Fsigma = Sint - Nsigma 
      end function Fsigma
 
