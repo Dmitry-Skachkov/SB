@@ -9,7 +9,7 @@
 !                      Description of the method:      https://arxiv.org/abs/2001.00710
 !                      Documentation and license:      https://github.com/m2qm-efrc/SB
 !                      Requests for contributing:      Dr. Hai-Ping Cheng <m2qm.efrc@phys.ufl.edu>
-!                      Questions regarding the code:   Dr. Dmitry Skachkov <d.g.skachkov@gmail.com>
+!                      Questions regarding the code:   Dr. Dmitry Skachkov <dmitry.skachkov@dsedu.org>
 !
 
        Program SB                                                   ! calculate Schottky barrier parameters
