@@ -1,4 +1,4 @@
-#Examples how to run the SB program:
+Examples how to run the SB program:
 
 
 GaAs-Gr - example for GaAs-Graphene system
