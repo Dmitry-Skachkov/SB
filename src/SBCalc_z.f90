@@ -70,7 +70,11 @@
         po3 = poe(Zz(i))
         po_e(i) = po3
         poe_max = dmin1(poe_max,po3)
-        po4 = poMIGS(Zz(i))                  
+        if(lCBS) then
+         po4 = poMIGS(Zz(i))
+        else
+         po4 = 0.d0
+        endif 
         po_MIGS(i) = po4
         poMe_max = dmin1(poMe_max,po4)
         po1(i) = po2 + po3 + po4 - po00                    ! h + e + MIGS + doping
@@ -98,7 +102,7 @@
        po_0(i) = po_new(i)
       enddo
       call spline (Zz,po_new,bspl5,cspl5,dspl5,Nz)                    ! calculate spline coefficients for po_new
-      call spline (Zz,po_MIGS,bspl15,cspl15,dspl15,Nz)                ! calculate spline coefficients for po_new
+      if(lCBS) call spline (Zz,po_MIGS,bspl15,cspl15,dspl15,Nz)                ! calculate spline coefficients for po_new
       call spline (Zz,po_e,bspl16,cspl16,dspl16,Nz)                   ! calculate spline coefficients for po_e
       call spline (Zz,po_h,bspl17,cspl17,dspl17,Nz)                   ! calculate spline coefficients for po_h
      end subroutine mixing_po
