@@ -140,6 +140,7 @@
       logical                :: L_conv = .false.               ! reach convergency
       logical                :: L_scf  = .false.               ! divergency
       logical                :: L_exp_scf  = .false.           ! experimental scf
+      logical                :: lCBS                           ! use CBS or not
      contains
 
 
@@ -192,8 +193,10 @@
         call read_k_mesh    
         call read_pol                                               ! read polarization data                                    
         call print_input_parameters
-        call read_CBS_data    
-        call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
+        if(lCBS) then
+         call read_CBS_data    
+         call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
+        endif 
         call set_limits_DOS                                         ! set limits for integration
         call read_PDOS                                              ! read DOS of SC and PDOS of interfacial layer   
         EFermi2 = EFermi1 
@@ -210,22 +213,35 @@
 
 
        subroutine read_input_dat
+        character(5)         :: CBS
         if(L_super_debug) print *,'read input.dat'
         open(unit=1,file='input.dat')    
          read(1,*) V_D0                                            ! V_D0 in a.u. (from QE output)
          read(1,*) Lz                                              ! Lz (A)
          read(1,*) Lz_int                                          ! Lz_int (A)
          read(1,*) CNL                                             ! CNL (eV)
-         read(1,*) z3                                              ! z3 (A)
-         read(1,*) z4                                              ! z4 (A)
          read(1,*) alat                                            ! alat (au from QE output) 
          read(1,*) b1(1:3)                                         ! reciprocal vector b1 (in crystal representation from QE output)
          read(1,*) b2(1:3)                                         !
          read(1,*) b3(1:3)                                         !
-         read(1,*) cz                                              ! cz (A)
          read(1,*) V_DSC                                           ! V_DSC volume of semiconductor in a.u. (from QE output)
          read(1,*) gap                                             ! band gap of the bulk (eV)
          read(1,*) SigS                                            ! initial surface charge on interface (in cm-2)
+         read(1,*) CBS
+         if(trim(adjustl(CBS))=='CBS') then
+          lCBS = .true.
+         else 
+          lCBS = .false.
+         endif
+         if(lCBS) then
+          read(1,*) z3                                              ! z3 (A)
+          read(1,*) z4                                              ! z4 (A)
+          read(1,*) cz                                              ! cz (A)
+         else
+          z3 = 0.d0
+          z4 = 0.d0
+          cz = 0.d0
+         endif 
         close(unit=1)
        end subroutine read_input_dat
 
@@ -290,10 +306,7 @@
          print 3,Lz_int
          print 5,V_D0
          print 19,Surface
-         print 7,z3
-         print 8,z4
          print 9,alat
-         print 11,cz
          print 12,V_DSC
          print 15,EVBM
          print 16,ECBM
@@ -301,6 +314,12 @@
          print 18,Temp
          print 23,er
          print 10,b1,b2,b3
+         if(lCBS) then
+          print 24
+          print 7,z3
+          print 8,z4
+          print 11,cz
+         endif 
          if(L_debug) then
           print 13,e0
           print 14,ckA
@@ -325,6 +344,7 @@
 21       format(' length of the semiconductor                    (Lsc) = ',1p,E12.1,' A')
 22       format(' numerical length of "infinite" semiconductor   (Lsc) = ',1p,E12.1,' A')
 23       format(' dielectric constant of the bulk                 (er) = ',   F12.4)
+24       format(' Complex Band Structure included')
        end subroutine print_input_parameters
 
 
@@ -537,7 +557,13 @@
       allocate(PDOS4(Nptm,Nk))
       allocate(DOS_M(Nptm,Nk))
       call read_pdos_1(Efi3,PDOS3,3)           ! PDOS of 3d layer of interface
-      call read_pdos_1(Efi4,PDOS4,4)           ! PDOS of 4th layer of interface
+      if(lCBS) then
+   !    call read_pdos_1(Efi3,PDOS3,3)           ! PDOS of 3d layer of interface
+       call read_pdos_1(Efi4,PDOS4,4)           ! PDOS of 4th layer of interface
+      else
+!       PDOS3 = 0.d0
+       PDOS4 = 0.d0
+      endif 
       call read_pdos_0                         ! PDOS of the surface
       if(L_debug) print *,'N_DOS_M=',N_DOS_M
       do k=1,Nk
