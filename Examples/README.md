@@ -10,7 +10,7 @@
 # How to prepare for the calculation:
 
 1. Calculate DOS of the bulk
-2. Calculate PDOS with k-point separated of the interface. The interface is the contact of few layers of metal with few layers of the semiconductor H-terminated on the surface exposed to vacuum.
+2. Calculate PDOS with k-point separated for each layer of the interface. The interface is the contact of few layers of metal with few layers of the semiconductor H-terminated on the surface exposed to vacuum.
 3. If it is necessary to include CBS effects, then to calculate CBS with QE and prepare cbs.dat file with two columns for light and heavy complex bands. See [cbs.dat](GaAs-Gr/cbs.dat) example. 
 
 
