@@ -65,7 +65,7 @@ BibTex entry for the Github repository and the publications:
      doi          = {10.1103/PhysRevB.104.045429}
     }
    
-
+## For information about versions and updates see [VERSION.md](VERSION.md) 
 
 
 
