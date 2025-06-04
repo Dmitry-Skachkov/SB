@@ -4,6 +4,16 @@
 ## Run example:
 > schottky 300. 1.42 inf 0. > output.txt
 
+here
+
+300 - temperature (K)
+
+1.42 - Fermi level (eV)
+
+inf - length of the semiinfinite semiconductor (A)
+
+0. - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density = 0.
+
 ## Input files:
 
 input.dat - input parameters of the system
