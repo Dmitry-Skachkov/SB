@@ -1,6 +1,6 @@
 #  Version 1.2
 [2025.06.01] *What's new:*
-- Added possibility to not include CBS effects 
+- Added possibility to calculate SB without CBS effects 
 
 #  Version 1.1
 [2021.08.01] *What's new:*
