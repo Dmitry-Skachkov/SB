@@ -20,7 +20,7 @@ Please see [Docs](Docs) folder for instructions how to install the code and [Exa
 
 # Authors
 
-Dmitry Skachkov
+[Dmitry Skachkov]()
 
 Xiao-Guang Znang
 
