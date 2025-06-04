@@ -8,6 +8,6 @@
 0.000000d0  0.000000d0  0.136083d0       ! b3
 304.8114d0                               ! V_DSC - volume of semiconductor in a.u. (output from QE)
 1.42                                     ! gap of the bulk semiconductor (eV)
-0.                                       ! initial surface charge on interface
+0.                                       ! initial surface charge on interface (cm-2)
 noCBS                                    ! do not include CBS effects
 
