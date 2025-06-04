@@ -12,7 +12,7 @@ here
 
 inf - length of the semiinfinite semiconductor (A)
 
-0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density = 0.
+0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density will set to zero.
 
 ## Input files:
 
