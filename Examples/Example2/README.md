@@ -24,7 +24,7 @@ DOStot.dat - DOS of the surface
 
 k_mesh.dat - mesh of k-points
 
-kpdos_int_3.dat - PDOS separated by k-points for 3d layer of the interface
+kpdos_int_3.dat - PDOS separated by k-points for third layer of the semiconductor in the interface
 
 polarization.dat - contains dielectric constant for the bulk semiconductor or P(E). In this example, this file contains only one number for static dielectric constant. In [GaAs-Gr](https://github.com/Dmitry-Skachkov/SB/tree/main/Examples/GaAs-Gr) example, this file contains the set of calculated values of polarization with respect to electric field P(E).   
 
