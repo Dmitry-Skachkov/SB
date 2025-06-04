@@ -6,7 +6,7 @@ There is necessary to do several DFT (or any first-principles) calculations and 
 * input file *dos_bulk_.dat*. DFT calculation for the bulk of semiconductor in order to prepare density of states (DOS) file, energies should be shifted with respect to valence band maximum (VBM)
 * to calculate projected density of states (PDOS) separated by k-points for interface system containing the metal surface and six layers of the semiconductor, and prepare the files *k_pdos_int_0.dat*, *k_pdos_int_3.dat*, and *k_pdos_int_4.dat* for surface layer and for third and fourth layers of the semiconductor. Energies should be shifted with respect to VBM of the bulk     
 * input file *cbs.dat* containing the decaying rates of complex band structure (CBS) separated by light and heavy holes bands. k-point mesh for CBS calculation should corresponds to interface calculation
-* input file *polarization.dat* containing the polarization of the bulk semiconductor with respect to electric field
+* input file *polarization.dat* containing the polarization of the bulk semiconductor with respect to electric field. It may contain only one number for static dielectric function (see [Example2])
 * input file *k_mesh.dat* containing k-mesh points from interface calculation in crystal representation
 * input file *input.dat* containing the following information:
   - V_D0 in a.u. (output from QE),  
