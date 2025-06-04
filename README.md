@@ -1,10 +1,10 @@
 # First-Principles Method for Schottky Barrier
 
-* [Abstract](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#abstract)
-* [Usage](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#usage)
-* [Authors](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#authors)
-* [License](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#license)
-* [Contributing](https://github.com/Dmitry-Skachkov/SB/blob/main/README.md#contributing)
+* [Abstract](README.md#abstract)
+* [Usage](README.md#usage)
+* [Authors](README.md#authors)
+* [License](README.md#license)
+* [Contributing](README.md#contributing)
 * [How to cite](README.md#how-to-cite)
 * [Versions](VERSION.md)
 
