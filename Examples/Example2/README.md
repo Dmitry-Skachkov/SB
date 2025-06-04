@@ -26,7 +26,7 @@ k_mesh.dat - mesh of k-points
 
 kpdos_int_3.dat - PDOS separated by k-points for 3d layer of the interface
 
-polarization.dat - contains dielectric constant for the bulk semiconductor
+polarization.dat - contains dielectric constant for the bulk semiconductor. In this example, this file contains only one number for static dielectric constant. 
 
 ## Compare with the original output
 > diff output.txt output_orig_noCBS.txt
