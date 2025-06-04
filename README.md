@@ -22,7 +22,7 @@ Please see [Docs](Docs) folder for instructions how to install the code and [Exa
 
 [Dmitry Skachkov](mailto:dmitry.skachkov@dsedu.org)
 
-[Xiao-Guang Znang](mailto:)
+[Xiao-Guang Znang](mailto:xgz@ufl.edu)
 
 [Hai-Ping Cheng](mailto:ha.cheng@northeastern.edu)
 
