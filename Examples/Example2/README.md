@@ -10,7 +10,7 @@ here
 
 1.42 - Fermi level (eV)
 
-inf - length of the semiinfinite semiconductor (A)
+inf - length of the semiinfinite semiconductor (inf or length in A)
 
 0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density will set to zero.
 
