@@ -20,7 +20,7 @@ input.dat - input parameters of the system
 
 dos_bulk_.dat - DOS of the bulk semiconductor
 
-DOStot.dat - DOS of the surface
+DOStot.dat - DOS of the surface containing one layer of metal and first layer of the semiconductor
 
 k_mesh.dat - mesh of k-points
 
