@@ -2,7 +2,7 @@
 
 
 ## Run example:
-> schottky 300. 1.42 inf 0. > output.txt
+> schottky 300. 1.42 inf 0.0 > output.txt
 
 here
 
@@ -12,7 +12,7 @@ here
 
 inf - length of the semiconductor (inf or length in A, inf means semiinfinite)
 
-0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density will set to zero.
+0.0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density will set to zero.
 
 ## Input files:
 
