@@ -1,7 +1,7 @@
 3979.4794d0                              ! V_D0 - volume of the interface in a.u. (output from QE)
 40.0d0                                   ! Lz - length of the cell in the interface calculation (A)
 3.23481d0                                ! Lz_int - width of the interfacial layer (A)
-0.68156d0                                ! CNL - charge neutrality level (eV). If zero, then it will be calcculated
+0.68156d0                                ! CNL - charge neutrality level (eV). If zero, then it will be calculated
 15.1082d0                                ! alat - lattice parameter (a.u.)
 1.000000d0  0.577350d0  0.000000d0       ! b1 reciprocal vectors (from QE)
 0.000000d0  1.154701d0  0.000000d0       ! b2
