@@ -6,7 +6,7 @@
 
 ### 2 - semiconductor with charged surface in contact with metal surface or another semiconductor
 
-### 3 - finite semiconductor with gate electrode
+### 3 - finite semiconductor with gate electrode in contact with metal surface or another semiconductor
 
 ## SB program can calculate:
 
