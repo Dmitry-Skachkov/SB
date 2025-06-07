@@ -17,6 +17,6 @@
  * Charge neutrality level for interface vs VBM
  * Fermi level for intrinsic semiconductor
  * Energy filling level on the surface
- * Charge on the interface
+ * Charge on the interface accumulated due to charge redistribution
  * Electric field close to the surface of semiconductor
  * Polarization close to the surface of semiconductor  
