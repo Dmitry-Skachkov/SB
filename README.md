@@ -7,6 +7,7 @@
 * [Contributing](README.md#contributing)
 * [How to cite](README.md#how-to-cite)
 * [Versions](VERSION.md)
+* [Features](FEATURES.md)
 
 # Abstract
 
@@ -67,6 +68,8 @@ BibTex entry for the Github repository and the publications:
     }
    
 ## For information about versions and updates see [VERSION.md](VERSION.md) 
+
+## For features of the SB program see [FEATURES.md](FEATURES.md) 
 
 
 
