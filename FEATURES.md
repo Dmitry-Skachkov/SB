@@ -21,3 +21,4 @@
  * Electric field close to the surface of semiconductor
  * Polarization close to the surface of semiconductor
  * charge distribution due to metal induced gap states (MIGS)
+ * electrostatic potential (Schottky potential) and electric field due to charge redistribution
