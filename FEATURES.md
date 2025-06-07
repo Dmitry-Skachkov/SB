@@ -2,11 +2,11 @@
 
 ![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_features.jpg)
 
-1 - semiinfinite semiconductor in contact with metal surface or another semiconductor
+### 1 - semiinfinite semiconductor in contact with metal surface or another semiconductor
 
-2 - charged surface of the semiconductor 
+### 2 - charged surface of the semiconductor 
 
-3 - finite semiconductor with gate electrode
+### 3 - finite semiconductor with gate electrode
 
 ## SB program can calculate:
 
