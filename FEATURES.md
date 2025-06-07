@@ -19,4 +19,5 @@
  * Energy filling level on the surface
  * Charge on the interface accumulated due to charge redistribution
  * Electric field close to the surface of semiconductor
- * Polarization close to the surface of semiconductor  
+ * Polarization close to the surface of semiconductor
+ * distribution of charge due to metal induced gap states (MIGS)
