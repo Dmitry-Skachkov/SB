@@ -14,12 +14,12 @@ here
 
 1e7 - gating charge density (cm<sup>-2</sup>)
 
-Run several calculations for gating surface charges 0, 10<sup>^6</sup>, 10<sup>^7</sup> cm<sup>-2</sup>
+Run several calculations for gating surface charges 0, 10<sup>6</sup>, 10<sup>7</sup> cm<sup>-2</sup>
 ```
 Sigma_g (cm-2)   DLW (A)
 0                1322
 10^6             1435
-10^7             4394
+10<sup>7</sup>             4394
 ```
 
 
