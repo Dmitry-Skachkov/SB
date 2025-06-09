@@ -29,7 +29,7 @@ kpdos_int_4.dat - PDOS separated by k-points for fourth layer of the semiconduct
 
 cbs.dat - file containing CBS with light and heavy complex bands
 
-polarization.dat - this file contains the set of calculated values of polarization with respect to electric field P(E). This file may contain only one number, the static dielectric constant, see [Example2](https://github.com/Dmitry-Skachkov/SB/tree/main/Examples/Example2).   
+polarization.dat - this file contains the set of calculated values of polarization with respect to electric field P(E). This file may contain only one number, the static dielectric constant, see [Example_1](https://github.com/Dmitry-Skachkov/SB/tree/main/Examples/Example_1).   
 
 ## Compare the results with the original:
 > diff output output_orig
