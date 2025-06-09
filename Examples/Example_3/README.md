@@ -12,7 +12,7 @@ here
 
 1e4 - length of the semiconductor (A), 1 micron
 
-1e7 - gating charge density (cm-2)
+1e7 - gating charge density (cm<sup>-2</sup>)
 
 Run several calculations for gating surface charges 0, 10^6, 10^7 cm-2
 ```
