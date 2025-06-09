@@ -2,7 +2,7 @@
 
 
 ## Run example:
-> schottky 300. 1.42 1e4 0.0 > output.txt
+> schottky 300. 1.42 1e4 1e7 > output.txt
 
 here
 
