@@ -10,9 +10,9 @@ here
 
 1.42 - Fermi level (eV)
 
-1e4 - length of the semiconductor (A), 1 micron
+1e4 - length of the semiconductor (10<sup>4</sup> A = 1 micron)
 
-1e7 - gating charge density (cm<sup>-2</sup>)
+1e7 - gating charge density (10<sup>7</sup> cm<sup>-2</sup>)
 
 Run several calculations for gating surface charges 0, 10<sup>6</sup>, 10<sup>7</sup> cm<sup>-2</sup>
 ```
