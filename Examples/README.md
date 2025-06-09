@@ -4,6 +4,8 @@
 
 [Example_2](Example_2) - GaAs-Graphene system, including CBS effects
 
+[Example_3](Example_3) - calculate Schottky barrier with gate electrode
+
 
 
 # How to prepare for the calculation:
