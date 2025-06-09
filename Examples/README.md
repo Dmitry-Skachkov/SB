@@ -1,9 +1,8 @@
 # Examples how to run the SB program:
 
+[Example_1](Example_1) - GaAs-Graphene system, calculating Schottky barrier parameters without including complex band structure (CBS) effects 
 
-[GaAs-Gr](GaAs-Gr) - example for GaAs-Graphene system
-
-[Example2](Example2) - the same system but without including complex band structure (CBS) effects 
+[Example_2](Example_2) - GaAs-Graphene system, including CBS effects
 
 
 
