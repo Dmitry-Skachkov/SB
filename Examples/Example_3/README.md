@@ -12,9 +12,9 @@ here
 
 1e4 - length of the semiconductor (A), 1 micron
 
-0.0 - gating charge density (cm-2)
+1e7 - gating charge density (cm-2)
 
-Run several calculations for gating surface charges 10^6, 10^7 cm^-2
+Run several calculations for gating surface charges 0, 10^6, 10^7 cm-2
 ```
 Sg (cm-2)     DLW (A)
 0             1322
