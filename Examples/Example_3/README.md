@@ -1,4 +1,4 @@
-# Example how to calculate Shottky Barrier without CBS effects
+# Shottky Barrier for finite length semiconductor
 
 
 ## Run example:
