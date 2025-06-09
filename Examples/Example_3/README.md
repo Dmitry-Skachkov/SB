@@ -12,7 +12,7 @@ here
 
 1e4 - length of the semiconductor (A), 1 micron
 
-0.0 - gating charge density (cm-2). If length of the semiconductor is infinite, then gating charge density will set to zero.
+0.0 - gating charge density (cm-2)
 
 Run several calculations for gating surface charges 10^6, 10^7 cm^-2
 
