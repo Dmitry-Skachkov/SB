@@ -596,10 +596,12 @@
       eps = 1.d-12
       Emin = EVBM-12.55d0
       Emax = ECBM+2.446d0 
-      call QSL3D(Nee2 ,Emin, Emax, DOS_Mtots,eps)
-      print *,'Int over -inf to +inf    Nee2=',Nee2
-      call QSL3D(NeC,EVBM,ECBM,DOS_Mtots,eps)
-      print *,'Int over EVBM to ECBM    NeC=',NeC
+      if(lCBS) then
+       call QSL3D(Nee2 ,Emin, Emax, DOS_Mtots,eps)
+       print *,'Int over -inf to +inf    Nee2=',Nee2
+       call QSL3D(NeC,EVBM,ECBM,DOS_Mtots,eps)
+       print *,'Int over EVBM to ECBM    NeC=',NeC
+      endif 
       call QSL3D(NeC,EVBM,ECBM,DOS0s,eps)
       print *,'Int over EVBM to ECBM for DOS0  NeC=',NeC
       DS0 = NeC/(ECBM-EVBM)/V_D0                             ! density of states 

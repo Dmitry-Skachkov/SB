@@ -17,8 +17,8 @@
       integer, parameter     :: Nitscf2 = 1                    ! number of cycles for post scf
       integer, parameter     :: Nitscf3 = 3                    ! number of cycles for experimental scf
       integer, parameter     :: Nitmax  = 600                  ! max number of iterations
-      logical, parameter     :: L_debug = .true.              ! for detailed printing
-      logical, parameter     :: L_super_debug = .true.        ! for super detailed printing
+      logical, parameter     :: L_debug = .false.              ! for detailed printing
+      logical, parameter     :: L_super_debug = .false.        ! for super detailed printing
       real(8), parameter     :: Lsc_inf = 1.d8                 ! numerical length of semi-infinite semiconductor (in A)
       real*8,  parameter     :: kb=8.6173430060d-5             ! Boltsman const in eV/K
       real(8), parameter     :: e0_SI = 8.8541878128d-12       ! in C/(V*m)
@@ -317,8 +317,8 @@
          print 18,Temp
          print 23,er
          if(lCBS) then
-          print 10,b1,b2,b3
           print 24
+          print 10,b1,b2,b3
           print 7,z3
           print 8,z4
           print 11,cz
@@ -347,7 +347,7 @@
 21       format(' length of the semiconductor                    (Lsc) = ',1p,E12.1,' A')
 22       format(' numerical length of "infinite" semiconductor   (Lsc) = ',1p,E12.1,' A')
 23       format(' dielectric constant of the bulk                 (er) = ',   F12.4)
-24       format(' Complex Band Structure included')
+24       format(' Complex Band Structure (CBS) is included')
        end subroutine print_input_parameters
 
 
