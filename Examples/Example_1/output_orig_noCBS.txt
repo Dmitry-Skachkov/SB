@@ -22,7 +22,7 @@
  length of the semiconductor                    (Lsc) =      infinity
  length of the cell in the interface calculation (Lz) =      40.0000 A
  width of the interfacial layer              (Lz_int) =       3.2348 A
- volume of the interfacial layer               (V_D0) =      47.6890 A^3
+ volume of the interfacial layer               (V_D0) =     589.6980 A^3
  Surface of interface cell                  (Surface) =      14.7425 A^2
  crystal parameter                             (alat) =       7.9949 A
  volume of the cell of the bulk semiconductor (V_DSC) =      45.1684 A^3
@@ -31,11 +31,6 @@
  Fermi level for the system                  (EFermi) =       1.4200 eV
  Temperature                                   (Temp) =     300.0000 K
  dielectric constant of the bulk                 (er) =      15.6461
- reciprocal vectors (in 2*pi/alat)
-          0.786          0.454          0.000
-          0.000          0.907          0.000
-          0.000          0.000          0.107
-
 
 
  Start SCF cycle
