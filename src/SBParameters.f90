@@ -12,13 +12,13 @@
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
       integer, parameter     :: Nitscf  = 1                    ! number of cycles for scf deltaE 
-      integer, parameter     :: Nitscf0 = 4                    ! number of attempts to find approximate solution
-      integer, parameter     :: Nitscf1 = 3                    ! number of attempts to find accurate solution
+      integer, parameter     :: Nitscf0 = 7                    ! number of attempts to find approximate solution
+      integer, parameter     :: Nitscf1 = 7                    ! number of attempts to find accurate solution
       integer, parameter     :: Nitscf2 = 1                    ! number of cycles for post scf
       integer, parameter     :: Nitscf3 = 3                    ! number of cycles for experimental scf
       integer, parameter     :: Nitmax  = 600                  ! max number of iterations
-      logical, parameter     :: L_debug = .false.              ! for detailed printing
-      logical, parameter     :: L_super_debug = .false.        ! for super detailed printing
+      logical, parameter     :: L_debug = .true.              ! for detailed printing
+      logical, parameter     :: L_super_debug = .true.        ! for super detailed printing
       real(8), parameter     :: Lsc_inf = 1.d8                 ! numerical length of semi-infinite semiconductor (in A)
       real*8,  parameter     :: kb=8.6173430060d-5             ! Boltsman const in eV/K
       real(8), parameter     :: e0_SI = 8.8541878128d-12       ! in C/(V*m)
@@ -40,7 +40,8 @@
       real(8), allocatable   :: Ef1(:)                         ! energy points for CBS
       integer                :: Nk                             ! number of k-points                  
       integer                :: Npt1                           ! number of points for CBS
-      integer                :: N_DOS_M                        ! number of points for DOS_M interface
+      integer                :: N_DOS_M                        ! number of points for DOS_M interface (3d and 4th layers)
+      integer                :: N_DOS_M0                       ! number of points for DOS_M interface (metal layer + 1st layer of SC)
       integer                :: N_DOS_SC                       ! number of points for DOS_SC semiconductor
       integer                :: Npol                           ! number points for polarization
       integer                :: iter                           ! iteration number
@@ -186,16 +187,18 @@
         alat    =  alat*BohrA                                       ! convert to A
         V_D0    =  V_D0*BohrA**3                                    ! convert to A^3
         Surface =  V_D0/Lz                                          ! surface of the cell
-        V_D0    =  V_D0/Lz*Lz_int                                   ! volume of the interfacial layer for PDOS (for MIGS)
         V_DSC   =  V_DSC*BohrA**3                                   ! volume of bulk semiconductor cell (in A^3) 
-        ckA     =  2.d0*pi/cz                                       ! coefficient for ImK to convert to 1/A
-        call calc_reciprocal_param
-        call read_k_mesh    
         call read_pol                                               ! read polarization data                                    
         call print_input_parameters
         if(lCBS) then
+         call calc_reciprocal_param
+         call read_k_mesh    
          call read_CBS_data    
          call calc_CBS_limits                                        ! calculate energy limits for each CBS band (using spline functions)
+         ckA     =  2.d0*pi/cz                                       ! coefficient for ImK to convert to 1/A
+         V_D0    =  V_D0/Lz*Lz_int                                   ! volume of the interfacial layer for PDOS (for MIGS)
+    !    else
+    !     N_DOS_M = 4331
         endif 
         call set_limits_DOS                                         ! set limits for integration
         call read_PDOS                                              ! read DOS of SC and PDOS of interfacial layer   
@@ -221,9 +224,6 @@
          read(1,*) Lz_int                                          ! Lz_int (A)
          read(1,*) CNL                                             ! CNL (eV)
          read(1,*) alat                                            ! alat (au from QE output) 
-         read(1,*) b1(1:3)                                         ! reciprocal vector b1 (in crystal representation from QE output)
-         read(1,*) b2(1:3)                                         !
-         read(1,*) b3(1:3)                                         !
          read(1,*) V_DSC                                           ! V_DSC volume of semiconductor in a.u. (from QE output)
          read(1,*) gap                                             ! band gap of the bulk (eV)
          read(1,*) SigS                                            ! initial surface charge on interface (in cm-2)
@@ -234,6 +234,9 @@
           lCBS = .false.
          endif
          if(lCBS) then
+          read(1,*) b1(1:3)                                         ! reciprocal vector b1 (in crystal representation from QE output)
+          read(1,*) b2(1:3)                                         !
+          read(1,*) b3(1:3)                                         !
           read(1,*) z3                                              ! z3 (A)
           read(1,*) z4                                              ! z4 (A)
           read(1,*) cz                                              ! cz (A)
@@ -313,8 +316,8 @@
          print 17,EFermi_input
          print 18,Temp
          print 23,er
-         print 10,b1,b2,b3
          if(lCBS) then
+          print 10,b1,b2,b3
           print 24
           print 7,z3
           print 8,z4
@@ -553,26 +556,30 @@
      subroutine read_PDOS   
       integer       :: j                       ! energy 
       integer       :: k                       ! k-points
-      allocate(PDOS3(Nptm,Nk))
-      allocate(PDOS4(Nptm,Nk))
-      allocate(DOS_M(Nptm,Nk))
-      call read_pdos_1(Efi3,PDOS3,3)           ! PDOS of 3d layer of interface
       if(lCBS) then
-   !    call read_pdos_1(Efi3,PDOS3,3)           ! PDOS of 3d layer of interface
+       allocate(PDOS3(Nptm,Nk))
+       allocate(PDOS4(Nptm,Nk))
+       allocate(DOS_M(Nptm,Nk))
+      endif 
+      if(lCBS) then
+       call read_pdos_1(Efi3,PDOS3,3)           ! PDOS of 3d layer of interface
        call read_pdos_1(Efi4,PDOS4,4)           ! PDOS of 4th layer of interface
-      else
-!       PDOS3 = 0.d0
-       PDOS4 = 0.d0
+      !else
+      ! PDOS3 = 0.d0
+      ! PDOS4 = 0.d0
       endif 
       call read_pdos_0                         ! PDOS of the surface
       if(L_debug) print *,'N_DOS_M=',N_DOS_M
+      if(L_debug) print *,'N_DOS_M0=',N_DOS_M0
+      if(lCBS) then
       do k=1,Nk
        do j=1,N_DOS_M
         Ef_DOS_M(j) = Efi3(j)                  ! copy PDOS3
         DOS_M(j,k) = PDOS3(j,k)
        enddo
       enddo
-      call calc_DOS_Mtot(PDOS3)                ! calculate integrated DOS_M of interfacial layer
+      endif
+      if(lCBS) call calc_DOS_Mtot(PDOS3)                ! calculate integrated DOS_M of interfacial layer
       call open_file(2,'dos_bulk_.dat')        ! DOS of bulk SC
       read(2,*) N_DOS_SC
       if(L_debug) print *,'N_DOS_SC=',N_DOS_SC
@@ -614,15 +621,22 @@
 
      subroutine read_pdos_0                    ! read PDOS for surface (1st layer + metal surface)
       integer           :: j
+   !   integer           :: Nnnx
       if(L_debug) print *,'read_pdos_0:'
       call open_file(2,'DOStot.dat')    
-       read(2,*) 
-       do j=1,N_DOS_M
+!       read(2,*) Nnnx
+       read(2,*) N_DOS_M0
+      if(L_debug) print *,'read ',N_DOS_M0,' values'
+    !   if(Nnnx/=N_DOS_M) then
+    !    print *,'N_DOS_M=',N_DOS_M
+    !    print *,'but file contains ',Nnnx,' values'
+    !   endif
+       do j=1,N_DOS_M0
         read(2,*) Efi0(j),DOS0(j)
        enddo
        if(L_super_debug) then
-        print *,'read_pdos_0: read ',N_DOS_M,' points of surface layer'
-        do j=1,N_DOS_M
+        print *,'read_pdos_0: read ',N_DOS_M0,' points of surface layer'
+        do j=1,N_DOS_M0
          print 11,Efi0(j),DOS0(j)
         enddo
        endif

@@ -12,17 +12,18 @@
    use SBParameters
    use SBMathLibrary
    implicit none
-   real*8, allocatable, dimension(:,:) :: bspl2,cspl2,dspl2                        ! spline coefficients for DOS_M(E,k)
-   real*8, allocatable, dimension(:)   :: bspl2t,cspl2t,dspl2t                     ! spline coefficients for DOS_Mtot(E)
    real*8, allocatable, dimension(:)   :: bspl20,cspl20,dspl20                     ! spline coefficients for DOS0(E)
    real*8, allocatable, dimension(:)   :: bspl3,cspl3,dspl3                        ! spline coefficients for DOS_SC
-   real*8, allocatable, dimension(:)   :: bspl13,cspl13,dspl13                     ! PDOS3
-   real*8, allocatable, dimension(:)   :: bspl14,cspl14,dspl14                     ! PDOS4
    real(8), dimension(Nz)              :: bspl4,cspl4,dspl4                        ! spline coefficients for Vel (electrostatic potential)
    real(8), dimension(Nz)              :: bspl5,cspl5,dspl5                        ! spline coefficients for po (charge density)
-   real(8), dimension(Nz)              :: bspl15,cspl15,dspl15                     ! spline coefficients for po_MIGS
    real(8), dimension(Nz)              :: bspl16,cspl16,dspl16                     ! spline coefficients for po_e
    real(8), dimension(Nz)              :: bspl17,cspl17,dspl17                     ! spline coefficients for po_h
+! MIGS
+   real*8, allocatable, dimension(:,:) :: bspl2,cspl2,dspl2                        ! spline coefficients for DOS_M(E,k)
+   real*8, allocatable, dimension(:)   :: bspl2t,cspl2t,dspl2t                     ! spline coefficients for DOS_Mtot(E)
+   real*8, allocatable, dimension(:)   :: bspl13,cspl13,dspl13                     ! PDOS3
+   real*8, allocatable, dimension(:)   :: bspl14,cspl14,dspl14                     ! PDOS4
+   real(8), dimension(Nz)              :: bspl15,cspl15,dspl15                     ! spline coefficients for po_MIGS
    real*8, allocatable, dimension(:,:) :: bspl21,cspl21,dspl21                     ! spline coefficients for ImKL1
    real*8, allocatable, dimension(:,:) :: bspl22,cspl22,dspl22                     ! spline coefficients for ImKH1
   contains
@@ -110,16 +111,22 @@
        print *,'allocate'
        print *,'Nk=',Nk
        print *,'N_DOS_M=',N_DOS_M
+       print *,'N_DOS_M0=',N_DOS_M0
        print *,'N_DOS_SC=',N_DOS_SC
       endif
-      allocate(bspl2(N_DOS_M,Nk),cspl2(N_DOS_M,Nk),dspl2(N_DOS_M,Nk))            ! DOS_M(E,k)
-      allocate(bspl2t(N_DOS_M),cspl2t(N_DOS_M),dspl2t(N_DOS_M))                  ! DOS_Mtot(E)
-      allocate(bspl20(N_DOS_M),cspl20(N_DOS_M),dspl20(N_DOS_M))                  ! DOS0(E)
+      call calc_z_mesh
+      allocate(bspl20(N_DOS_M0),cspl20(N_DOS_M0),dspl20(N_DOS_M0))                  ! DOS0(E)
       allocate(bspl3(N_DOS_SC),cspl3(N_DOS_SC),dspl3(N_DOS_SC))
+      call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M0)                        ! calculate spline coefficients 
+      call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
+! MIGS
+ if(lCBS) then
       allocate(bspl21(Npt1,Nk),cspl21(Npt1,Nk),dspl21(Npt1,Nk))                     ! CBS
       allocate(bspl22(Npt1,Nk),cspl22(Npt1,Nk),dspl22(Npt1,Nk))                     ! CBS
       allocate(bspl13(N_DOS_M),cspl13(N_DOS_M),dspl13(N_DOS_M))                 ! CBS    k=1 Gamma for Heavy
       allocate(bspl14(N_DOS_M),cspl14(N_DOS_M),dspl14(N_DOS_M))                 ! CBS    k=1 Gamma for Heavy
+      allocate(bspl2(N_DOS_M,Nk),cspl2(N_DOS_M,Nk),dspl2(N_DOS_M,Nk))            ! DOS_M(E,k)
+      allocate(bspl2t(N_DOS_M),cspl2t(N_DOS_M),dspl2t(N_DOS_M))                  ! DOS_Mtot(E)
       call spline(Efi3(1:N_DOS_M), PDOS3(1:N_DOS_M,1),bspl13(1:N_DOS_M),cspl13(1:N_DOS_M),dspl13(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS3
       call spline(Efi4(1:N_DOS_M), PDOS4(1:N_DOS_M,1),bspl14(1:N_DOS_M),cspl14(1:N_DOS_M),dspl14(1:N_DOS_M),N_DOS_M)       ! calculate spline coefficients for PDOS4
       do k=1,Nk
@@ -130,9 +137,8 @@
        call spline(Ef_DOS_M,DOS_M(1:N_DOS_M,k),bspl2(1:N_DOS_M,k),cspl2(1:N_DOS_M,k),dspl2(1:N_DOS_M,k),N_DOS_M)    ! calculate spline coefficients for DOS_M
       enddo
       call spline(Ef_DOS_M, DOS_Mtot,bspl2t,cspl2t,dspl2t,N_DOS_M)                ! calculate spline coefficients 
-      call spline(Efi0, DOS0,bspl20,cspl20,dspl20,N_DOS_M)                        ! calculate spline coefficients 
-      call spline(Ef_DOS_SC,DOS_SC, bspl3, cspl3, dspl3, N_DOS_SC)                ! calculate spline coefficients 
-      call calc_z_mesh
+ endif
+! MIGS
      end subroutine spline_start
 
 
@@ -278,10 +284,10 @@
 
    real(8) function DOS0s(E)                ! DOS_Mtot     integrated over kx,ky DOS of interfacial layer  
     real(8)               :: E                                                     ! Energy vs VBM
-    if(E < Efi0(1) .or. E > Efi0(N_DOS_M)) then
+    if(E < Efi0(1) .or. E > Efi0(N_DOS_M0)) then
      DOS0s = 0.d0
     else
-     DOS0s = ispline(E,Efi0,DOS0,bspl20,cspl20,dspl20,N_DOS_M) 
+     DOS0s = ispline(E,Efi0,DOS0,bspl20,cspl20,dspl20,N_DOS_M0) 
     endif
     if(DOS0s < 0.d0) then
      DOS0s = 0.d0
