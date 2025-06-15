@@ -1,3 +1,7 @@
+#  Version 1.3
+[2025.06.15] *What's new:*
+- To calculate SB without CBS effects now need only DOS on interface and DOS in bulk, the parameters from CBS are separated 
+
 #  Version 1.2
 [2025.06.01] *What's new:*
 - Added possibility to calculate SB without CBS effects 
