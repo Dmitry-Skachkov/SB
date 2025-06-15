@@ -18,7 +18,7 @@ Run several calculations for gating surface charges 0, 10<sup>6</sup>, 10<sup>7<
 ```
 Sigma_g (cm-2)   DLW (A)
 0                1322
-10^6             1435
+10^6             1484
 10^7             4394
 -10^7             984
 ```
