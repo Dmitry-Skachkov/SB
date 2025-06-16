@@ -1,8 +1,8 @@
 default: schottky
 
-include intel.make                    # use Intel compiler
-#include gfortran.make                # use GNU compiler
-#include pgi.make                     # use PGI NVIDIA compiler
+include make.intel                    # use Intel compiler
+#include make.gfortran                # use GNU compiler
+#include make.pgi                     # use PGI NVIDIA compiler
 
 OBJS = obj/SBMathLibrary.o \
        obj/SBParameters.o  \
