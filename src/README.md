@@ -4,7 +4,7 @@ Clone the SB program
 
 > git clone https://github.com/Dmitry-Skachkov/SB.git
 
-or copy SB-main.zip file with the archive into the selected folder and unzip:
+or copy [SB-main.zip](https://github.com/Dmitry-Skachkov/SB/archive/refs/heads/main.zip) file with the archive into the selected folder and unzip:
 
 > unzip SB-main.zip
 
