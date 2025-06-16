@@ -42,7 +42,7 @@ If you use the SB package in your research, please cite the following publicatio
 * Dmitry Skachkov, Shuang-Long Liu, Yan Wang, Xiao-Guang Zhang, Hai-Ping Cheng  
 "First-Principles Theory for Schottky Barrier Physics" Phys. Rev. B, 104, 045429 (2021) [DOI 10.1103/PhysRevB.104.045429](https://doi.org/10.1103/PhysRevB.104.045429)  
 [![arXiv](https://img.shields.io/badge/arXiv-2001.00710-b31b1b.svg?style=plastic)](https://arxiv.org/abs/2001.00710)
-* D. Skachkov, X.-G. Zhang, H.-P. Cheng (2021) SB: First-Principles Method for Schottky Barrier. GitHub 
+* D. Skachkov, X.-G. Zhang, H.-P. Cheng (2021) SB: First-Principles Method for Schottky Barrier. GitHub https://github.com/m2qm-efrc/SB  
 
 See [BibTex](BibTex.md) entry for the Github repository and the publications
   
