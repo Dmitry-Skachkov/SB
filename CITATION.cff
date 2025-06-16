@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Skachkov"
+  given-names: "Dmitry"
+  orcid: "http://orcid.org/0000-0002-8943-7668"
+- family-names: "Zhang"
+  given-names: "Xiao-Guang"
+- family-names: "Cheng"
+  given-names: "Hai-Ping"
+title: "SB: First-Principles Method for Schottky Barrier"
+date-released: 2021-07-01
+url: "https://github.com/m2qm-efrc/SB"
