@@ -1,8 +1,8 @@
 # Installation
 
-Clone the program
+Clone the SB program
 
-> git clone 
+> git clone https://github.com/Dmitry-Skachkov/SB.git
 
 or copy sb.tar file with the archive into the selected folder. Unzip:
 
