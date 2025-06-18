@@ -221,7 +221,6 @@
         open(unit=1,file='input.dat')    
          read(1,*) V_D0                                            ! V_D0 in a.u. (from QE output)
          read(1,*) Lz                                              ! Lz (A)
-         read(1,*) Lz_int                                          ! Lz_int (A)
          read(1,*) CNL                                             ! CNL (eV)
          read(1,*) alat                                            ! alat (au from QE output) 
          read(1,*) V_DSC                                           ! V_DSC volume of semiconductor in a.u. (from QE output)
@@ -237,6 +236,7 @@
           read(1,*) b1(1:3)                                         ! reciprocal vector b1 (in crystal representation from QE output)
           read(1,*) b2(1:3)                                         !
           read(1,*) b3(1:3)                                         !
+          read(1,*) Lz_int                                          ! Lz_int (A)
           read(1,*) z3                                              ! z3 (A)
           read(1,*) z4                                              ! z4 (A)
           read(1,*) cz                                              ! cz (A)
