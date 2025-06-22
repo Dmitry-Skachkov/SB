@@ -1,6 +1,6 @@
 # Features of SB program
 
-![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_features.jpg)
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_features3.jpg)
 
 ### 1 - semiinfinite semiconductor in contact with metal surface or another semiconductor
 
