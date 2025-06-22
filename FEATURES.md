@@ -19,7 +19,7 @@
 
 ### 1 - semiinfinite semiconductor in contact with metal surface or another semiconductor
 
-### 2 - semiconductor with charged surface in contact with metal surface or another semiconductor
+### 2 - semiconductor with charged surface in contact with metal surface or another semiconductor<sup>*</sup>
 
 ### 3 - finite length semiconductor with gate electrode in contact with metal surface or another semiconductor
 
