@@ -25,3 +25,6 @@
 
 ### 4 - finite length semiconductor with charged surface in contact with metal surface or another semiconductor and gate electrode<sup>*</sup>  
 
+<sup>*</sup>Charged surface of the semiconductor is implemented but not tested. 
+
+#### For  
