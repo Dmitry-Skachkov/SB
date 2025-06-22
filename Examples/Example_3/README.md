@@ -1,6 +1,6 @@
 # Shottky Barrier for finite length semiconductor
 
-https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_gate.jpg
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_gate.jpg)
 
 ## Run example:
 > schottky 300. 1.42 1e4 1e7 > output.txt
