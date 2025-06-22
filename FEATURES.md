@@ -27,7 +27,7 @@
 
 <sup>*</sup>Charged surface of the semiconductor is implemented but not tested. 
 
-### For development of the SB program:
+### For inquaries related to development of the SB program:
 * implementing spin-dependent Schottky barrier
 * testing charged semiconductors
 
