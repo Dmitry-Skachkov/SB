@@ -23,3 +23,5 @@
 
 ### 3 - finite length semiconductor with gate electrode in contact with metal surface or another semiconductor
 
+### 4 - finite length semiconductor with charged surface in contact with metal surface or another semiconductor and gate electrode 
+
