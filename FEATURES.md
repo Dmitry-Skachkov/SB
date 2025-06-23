@@ -11,6 +11,7 @@
  * Charge on the interface accumulated due to charge redistribution
  * Electric field close to the surface of semiconductor
  * Polarization close to the surface of semiconductor
+ * charge redistribution for conducting electrons and holes
  * charge distribution due to metal induced gap states (MIGS)
  * electrostatic potential (Schottky potential) and electric field due to charge redistribution
 
@@ -32,5 +33,7 @@
 * testing charged semiconductors
 
 please contact [Dr. Xiao-Guang Zhang](<mailto:xgz@ufl.edu?subject=SB code development>) or [Dr. Hai-Ping Cheng](<mailto:ha.cheng@northeastern.edu?subject=SB code development>). 
+
+For collaboration inquaries please contact [Dr. Hai-Ping Cheng](<mailto:ha.cheng@northeastern.edu?subject=Collaboration on Schottky barrier project>).
 
 For questions related to the code please contact [Dr. Dmitry Skachkov](<mailto:dmitry.skachkov@DSedu.org?subject=SB code on GitHub>). 
