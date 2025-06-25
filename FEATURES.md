@@ -16,7 +16,7 @@
  * electrostatic potential (Schottky potential) and electric field due to charge redistribution
 
 ## Geometry
-![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_features3.jpg)
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_features4.jpg)
 
 ### 1 - semiinfinite semiconductor in contact with metal surface or another semiconductor
 
