@@ -1,4 +1,4 @@
-# Shottky Barrier for finite length semiconductor
+# Shottky Barrier for finite length semiconductor with gate electrode
 
 ![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_geometry_3.jpg)
 
