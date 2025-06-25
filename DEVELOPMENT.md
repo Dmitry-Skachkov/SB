@@ -1,4 +1,4 @@
-# Development of the SB program
+# Available topics for development of the SB program
 * implementing spin-dependent Schottky barrier
 * testing semiconductors with charged surfaces and defects
 * considering electron tunneling
