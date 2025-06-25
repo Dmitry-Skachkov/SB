@@ -6,8 +6,10 @@ authors:
   orcid: "http://orcid.org/0000-0002-8943-7668"
 - family-names: "Zhang"
   given-names: "Xiao-Guang"
+  orcid: "https://orcid.org/0000-0003-0092-5006"
 - family-names: "Cheng"
   given-names: "Hai-Ping"
+  orcid: "https://orcid.org/0000-0001-5990-1725"
 title: "SB: First-Principles Method for Schottky Barrier"
 date-released: 2021-07-01
 url: "https://github.com/m2qm-efrc/SB"
