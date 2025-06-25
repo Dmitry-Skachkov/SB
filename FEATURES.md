@@ -32,7 +32,7 @@
 
 ### 7 - finite length semiconductor with gate electrode
 
-### 8 - finite length semiconductor with charged surface with gate electrode<sup>*</sup>  
+### 8 - finite length semiconductor with charged surface and gate electrode<sup>*</sup>  
 
 <sup>*</sup>Charged surface of the semiconductor is implemented but not tested. 
 
