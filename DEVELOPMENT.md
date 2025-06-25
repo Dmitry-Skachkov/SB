@@ -1,6 +1,6 @@
 # Available topics for development of the SB program
 * implementing spin-dependent Schottky barrier
-* testing semiconductors with charged surfaces and defects
+* testing semiconductors with charged surface and defects
 * considering electron tunneling
 * considering thermionic field emmision effects
 
