@@ -1,16 +1,5 @@
 # First-Principles Method for Schottky Barrier
 
-* [Abstract](README.md#abstract)
-* [Usage](README.md#usage)
-* [Authors](README.md#authors)
-* [License](README.md#license)
-* [Contributing](DEVELOPMENT.md)
-* [How to cite](README.md#how-to-cite)
-* [Versions](VERSION.md)
-* [Features](FEATURES.md)
-
-# Abstract
-
 We develop a first-principles method for calculating Schottky barrier parameters. The Poisson equation is solved self-consistently with the electrostatic charge density over the entire barrier using the density functional theory (DFT) electronic structure converged locally, allowing computation of a Schottky barrier entirely from DFT involving thousands of atomic layers in the semiconductor. The induced charge in the bulk consists of conduction and valence band charges from doping and band bending, as well as charge from the evanescent states in the gap of the semiconductor. The Schottky barrier height is determined when the induced charge density and the induced electrostatic potential reach self-consistency. The Schottky barrier height, width, along with depletion and inversion layers obtained self-consistently as functions of temperature and bulk doping.
 
 ![GitHub Logo](Docs/logo.jpg)
@@ -45,6 +34,8 @@ See [BibTex](BibTex.md) entry for the Github repository and the publications
 ## For information about versions and updates see [VERSION.md](VERSION.md) 
 
 ## For features of the SB program see [FEATURES.md](FEATURES.md) 
+
+## For development of the SB program see [DEVELOPMENT.md](DEVELOPMENT.md) 
 
 
 
