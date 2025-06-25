@@ -40,3 +40,5 @@
 * spin-dependent effects on Schottky barrier
 * electron tunneling
 * thermionic field emmision effects
+
+## For development of the SB program see [DEVELOPMENT.md](DEVELOPMENT.md) 
