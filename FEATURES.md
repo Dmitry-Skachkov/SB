@@ -36,3 +36,7 @@
 
 <sup>*</sup>Charged surface of the semiconductor is implemented but not tested. 
 
+## What is not included in the SB program
+* spin-dependent effects on Schottky barrier
+* electron tunneling
+* thermionic field emmision effects
