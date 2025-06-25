@@ -26,6 +26,14 @@
 
 ### 4 - finite length semiconductor with charged surface in contact with metal surface or another semiconductor and gate electrode<sup>*</sup>  
 
+### 5 - semiinfinite or finite length semiconductor
+
+### 6 - semiconductor with charged surface<sup>*</sup>
+
+### 7 - finite length semiconductor with gate electrode
+
+### 8 - finite length semiconductor with charged surface with gate electrode<sup>*</sup>  
+
 <sup>*</sup>Charged surface of the semiconductor is implemented but not tested. 
 
 ### For inquaries related to development of the SB program:
