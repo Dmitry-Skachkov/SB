@@ -1,6 +1,7 @@
 
 # Example how to calculate Shottky Barrier without CBS effects
 
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_geometry_1.jpg)
 
 ## Run example:
 > schottky 300. 1.42 inf 0.0 > output.txt
