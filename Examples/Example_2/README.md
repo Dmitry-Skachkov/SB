@@ -1,5 +1,7 @@
 # GaAs-Graphene
 
+![GitHub Logo](https://github.com/Dmitry-Skachkov/SB/blob/main/Docs/SB_geometry_1.jpg)
+
 ## To run the example:
 > schottky 300. 1.42 inf 0. > output
 
