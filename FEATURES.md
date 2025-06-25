@@ -12,7 +12,7 @@
  * Electric field close to the surface of semiconductor
  * Polarization close to the surface of semiconductor
  * charge redistribution for conducting electrons and holes
- * charge distribution due to metal induced gap states (MIGS)
+ * charge distribution due to metal induced gap states (MIGS) and surface induced gap states (SIGS) 
  * electrostatic potential (Schottky potential) and electric field due to charge redistribution
 
 ## Geometry
