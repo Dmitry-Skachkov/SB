@@ -2,13 +2,8 @@
     prefix = 'd'
     calculation = 'scf'
     restart_mode = 'from_scratch'
-    pseudo_dir = '/users/PDS0145/cwr0464/qe-gipaw-6.1/pseudo'
+    pseudo_dir = './'
     outdir = './'
-    etot_conv_thr = 1.0e-4
-    forc_conv_thr = 1.0e-4
-    nstep = 500
-    tstress = .true.
-    tprnfor = .true.
     verbosity = 'high'
  /
  &system
@@ -25,12 +20,6 @@
     smearing='gauss',
     degauss=0.006
     nbnd = 50
-!    occupations = 'fixed'
-!    occupations = 'from_input'
-!    lda_plus_u = .TRUE.
-!    lda_plus_u_kind = 0
-!    Hubbard_U(1) = 4.
-!    Hubbard_U(2) = 0.
  /
  &electrons
     diagonalization = 'david'
@@ -40,7 +29,6 @@
     conv_thr =  1e-9
     electron_maxstep = 200
     diago_full_acc = .true.
-    startingpot = 'file'
  /
 ATOMIC_SPECIES
 Ga  69.7200   Ga.pbe-tm-semi-gipaw-dc.UPF
