@@ -20,19 +20,21 @@
     smearing='gauss',
     degauss=0.006
     nbnd = 50
+    noncolin = .TRUE.
+    lspinorb = .TRUE.
  /
  &electrons
     diagonalization = 'david'
     diago_thr_init = 1e-6
     mixing_mode = 'plain'
-    mixing_beta = 0.2
+    mixing_beta = 0.7
     conv_thr =  1e-9
     electron_maxstep = 200
     diago_full_acc = .true.
  /
 ATOMIC_SPECIES
-Ga  69.7200   Ga.pbe-tm-semi-gipaw-dc.UPF
-As  74.9200   As.pbe-tm-semi-gipaw-dc.UPF
+Ga  69.7200   Ga.UPF
+As  74.9200   As.UPF
 
 CELL_PARAMETERS angstrom
     3.9974514    0.0000000    0.0000000
