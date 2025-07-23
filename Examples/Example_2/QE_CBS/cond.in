@@ -1,0 +1,15 @@
+ &inputcond
+    outdir='./'
+    prefixl='d'
+    band_file='bands.GaAs'
+    ikind=0
+    energy0=0.55d0
+    denergy=-0.02d0
+    ewind=8.d0
+    epsproj=1.d-6
+    nz1=20
+    cutplot = 5.d0
+ /
+   1
+    0.3333333000    0.3333333000    1
+    50

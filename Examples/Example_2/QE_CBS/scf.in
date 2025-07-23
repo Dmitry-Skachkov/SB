@@ -1,0 +1,63 @@
+ &control
+    prefix = 'd'
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    pseudo_dir = '/users/PDS0145/cwr0464/qe-gipaw-6.1/pseudo'
+    outdir = './'
+    etot_conv_thr = 1.0e-4
+    forc_conv_thr = 1.0e-4
+    nstep = 500
+    tstress = .true.
+    tprnfor = .true.
+    verbosity = 'high'
+ /
+ &system
+    ibrav = 0
+    nat = 6
+    ntyp = 2
+    ecutwfc = 80
+    ecutrho = 400
+    nspin = 1
+    tot_charge = 0
+    spline_ps = .true.
+    input_dft='pbe'
+    occupations='smearing',
+    smearing='gauss',
+    degauss=0.006
+    nbnd = 50
+!    occupations = 'fixed'
+!    occupations = 'from_input'
+!    lda_plus_u = .TRUE.
+!    lda_plus_u_kind = 0
+!    Hubbard_U(1) = 4.
+!    Hubbard_U(2) = 0.
+ /
+ &electrons
+    diagonalization = 'david'
+    diago_thr_init = 1e-6
+    mixing_mode = 'plain'
+    mixing_beta = 0.2
+    conv_thr =  1e-9
+    electron_maxstep = 200
+    diago_full_acc = .true.
+    startingpot = 'file'
+ /
+ATOMIC_SPECIES
+Ga  69.7200   Ga.pbe-tm-semi-gipaw-dc.UPF
+As  74.9200   As.pbe-tm-semi-gipaw-dc.UPF
+
+CELL_PARAMETERS angstrom
+    3.9974514    0.0000000    0.0000000
+   -1.9987257    3.4618945    0.0000000
+    0.0000000    0.0000000    9.7917162
+
+ATOMIC_POSITIONS (angstrom)
+As          5.99617712          3.46189447          0.00000000
+As          3.99745141          2.30792965          3.26390541
+As          1.99872571          1.15396482          6.52781082
+Ga          3.99745141          2.30792965          0.81597635
+Ga          1.99872571          1.15396482          4.07988176
+Ga          0.00000000          0.00000000          7.34378717
+
+K_POINTS (automatic)
+ 15 15 15 0 0 0
