@@ -311,6 +311,15 @@
         zz = 1.d0/(0.00000001d0*x + 0.000001d0*x**2 + 0.00001d0*x**3 + 0.0010d0*x**4)
         zz1 = 0.1d0*zz
         zz2 = 10.d0*zz
+
+        if(EFermi_input>=4.5d0.and.EFermi_input<4.7d0) then
+         zz1 = 0.1d0*zz1
+         zz2 = 0.1d0*zz2
+        elseif(EFermi_input>=4.7d0.and.EFermi_input<=4.82d0) then
+         zz1 = 0.01d0*zz1
+         zz2 = 0.01d0*zz2
+        endif
+
        end subroutine set_limits_zz1
 
 
