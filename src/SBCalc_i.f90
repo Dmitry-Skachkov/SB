@@ -620,6 +620,10 @@
       if(L_n_type) then
        E1 =  0.d0
        E2 =  0.2d0
+       if(EFermi_input>=4.5d0.and.EFermi_input<=4.82d0) then
+        E1 = 0.d0
+        E2 = 0.5d0
+       endif
       elseif(L_p_type) then
        E1 = -0.2d0
        E2 =  0.0d0
