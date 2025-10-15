@@ -312,12 +312,21 @@
         zz1 = 0.1d0*zz
         zz2 = 10.d0*zz
 
-        if(EFermi_input>=4.5d0.and.EFermi_input<4.7d0) then
+        if(EFermi_input>=4.5d0.and.EFermi_input<4.55d0) then
          zz1 = 0.1d0*zz1
          zz2 = 0.1d0*zz2
-        elseif(EFermi_input>=4.7d0.and.EFermi_input<=4.82d0) then
+        elseif(EFermi_input>=4.55d0.and.EFermi_input<4.65d0) then
+         zz1 = 0.05d0*zz1
+         zz2 = 0.05d0*zz2
+        elseif(EFermi_input>=4.65d0.and.EFermi_input<4.70d0) then
+         zz1 = 0.03d0*zz1
+         zz2 = 0.03d0*zz2
+        elseif(EFermi_input>=4.7d0.and.EFermi_input<4.76d0) then
          zz1 = 0.01d0*zz1
          zz2 = 0.01d0*zz2
+        elseif(EFermi_input>=4.76d0.and.EFermi_input<=4.82d0) then
+         zz1 = 0.001d0*zz1
+         zz2 = 0.001d0*zz2
         endif
 
        end subroutine set_limits_zz1
