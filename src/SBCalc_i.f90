@@ -633,7 +633,7 @@
       endif
       call zero12(E1,E2,dEf,eps)
       if(L_debug) print *,'deltaE=',dEf
-      if(dabs(dEf-0.2d0) .le. 0.001d0) then
+      if(dabs(dEf-E2) .le. 0.001d0) then
        print *,'*** ERROR: calc_deltaE: increase searching range'
        stop
       endif
