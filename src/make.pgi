@@ -1,4 +1,4 @@
-FC = pgfortran
+FC = mpifort
 FFLAGS = 
 
 obj/SBMathLibrary.o: SBMathLibrary.f90
