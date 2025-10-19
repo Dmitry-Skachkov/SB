@@ -1,8 +1,10 @@
 FC = mpifort
 FFLAGS = 
 
-obj/SBMathLibrary.o: SBMathLibrary.f90
+obj/SBmpi.o: SBmpi.f90
 	@mkdir -p obj
+	$(FC) $(FFLAGS) -c SBmpi.f90              -o obj/SBmpi.o                 -module obj
+obj/SBMathLibrary.o: SBMathLibrary.f90
 	$(FC) $(FFLAGS) -c SBMathLibrary.f90      -o obj/SBMathLibrary.o         -module obj
 obj/SBParameters.o: SBParameters.f90
 	$(FC) $(FFLAGS) -c SBParameters.f90       -o obj/SBParameters.o          -module obj
