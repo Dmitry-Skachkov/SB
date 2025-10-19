@@ -23,34 +23,16 @@
         call P_calc_group(Nz)                                       !
         call print_logo                                             ! print common information about the method
         call read_data                                              ! read data from the command line and from input files
-! call P_wait
-!        write(iPrint,*) 'Spline_start'
         call spline_start                                           ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
         if(CNL==0.d0) call calc_CNL                                 ! calculate CNL for interface
-! call P_wait
-!        write(iPrint,*) 'calc_zero_EF'
         call calc_zero_EF                                           ! calculate EFermi corresponding to undopped GaAs
-! call P_wait
-!        write(iPrint,*) 'calc_po00'
         call calc_po00                                              ! check po_h and po_e on infinity
         if(L_debug) call calc_DOS_int                               ! calculate integral of DOS to check number of valence electrons
-!        write(iPrint,*) ' calc_scf'
-! call P_wait
         call calc_scf                                               ! find SCF solution for the system M-SC
-!        write(iPrint,*) ' calc_check_scf'
-! call P_wait
         call calc_check_scf                                         ! check accuracy of scf cycle
-!        write(iPrint,*) ' calc_LW'
-! call P_wait
         call calc_LW                                                ! calculate DLW and ILW
-!        write(iPrint,*) ' write_results'
-! call P_wait
         call write_results                                          ! write density po and potential V into the files
-!        write(iPrint,*) ' print_results'
-! call P_wait
         call print_results                                          ! print all SB parameters
-!        write(iPrint,*) ' P_stop'
-! call P_wait
         call P_stop
        end program SB
 
