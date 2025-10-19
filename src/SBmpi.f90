@@ -198,6 +198,7 @@
      deallocate(A3)
      deallocate(A4)   
      close(unit=iPrint)  
+     call MSGT('Finish parallel calculation on '//Pfstr(Numnodes)//' cores    ')
      call MPI_FINALIZE(MPIerror)
      if(MPIerror/=0) print *,' P_stop: error in MPI_FINALIZE'
    end subroutine P_stop
