@@ -1,6 +1,7 @@
 #  Version 1.4
 [2025.10.18] *What's new:*
-- added MPI parallelization 
+- added MPI parallelization
+  to run: mpirun -n 4  
 
 #  Version 1.3
 [2025.06.15] *What's new:*
