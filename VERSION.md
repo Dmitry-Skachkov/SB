@@ -1,3 +1,7 @@
+#  Version 1.4
+[2025.10.18] *What's new:*
+- added MPI parallelization 
+
 #  Version 1.3
 [2025.06.15] *What's new:*
 - To calculate SB without CBS effects now need only DOS on interface and DOS in bulk, the parameters from CBS are separated 
