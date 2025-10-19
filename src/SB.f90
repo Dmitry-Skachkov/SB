@@ -19,8 +19,8 @@
         use SBCalc_z                                                ! module for calculation on z-mesh and scf cycle
         use SBSpline_functions                                      ! module with all spline functions
         use SBPlot                                                  ! module for printing and writing results into the output files
-        call P_start                                                !
-        call P_calc_group(Nz)                                       !
+        call P_start                                                ! start MPI parallel calculation
+        call P_calc_group(Nz)                                       ! separate Nz points between cores
         call print_logo                                             ! print common information about the method
         call read_data                                              ! read data from the command line and from input files
         call spline_start                                           ! calculate spline coefficients for ImKs,DOS_Ms,DOS_SCs,pos
@@ -33,7 +33,7 @@
         call calc_LW                                                ! calculate DLW and ILW
         call write_results                                          ! write density po and potential V into the files
         call print_results                                          ! print all SB parameters
-        call P_stop
+        call P_stop                                                 ! finalize MPI parallel calculation
        end program SB
 
 
