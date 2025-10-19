@@ -152,7 +152,11 @@
     integer :: ist,ngr,Nn                         ! parallel calculation from ist+1 to ist+ngr
     integer :: ifin
     ngr = Nn/NumNodes                             ! number of group of points for calculation
-    if(mod(Nn,NumNodes) /= 0) ngr = ngr + 1
+    if(mod(Nn,NumNodes) /= 0) then
+     ngr = ngr + 1
+     call P_print_error_MPI(Nn)
+     STOP
+    endif
     ist = Process*ngr                             ! starting point
     ifin = ist + ngr                              ! finil point
     if(ifin > Nn) ngr = Nn - ist                  ! correct number of group for last process
@@ -164,6 +168,17 @@
     allocate(A4(P_MPI_group))
    ! print *,'Process=',Process,' ist=',ist,' ngr=',ngr
    end subroutine P_calc_group
+
+
+   subroutine P_print_error_MPI(Nn)
+    integer     :: Nn
+    if(Process==0) print 1,Nn
+    if(Process==0) print 2
+    if(Process==0) print 3
+ 1  format(' MPI parallelization for Nz=',I4,' can be done only for number of cores:')
+ 2  format('  2  4  8  16 32 64')
+ 3  format('  11 22 44 88 176 352 704')
+   end  subroutine P_print_error_MPI
 
 
    subroutine MSG(comment)
