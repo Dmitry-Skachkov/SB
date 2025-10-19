@@ -1,6 +1,7 @@
 #  Version 1.4
 [2025.10.18] *What's new:*
 - added MPI parallelization
+
   to run in parallel: mpirun -n 4 schottky_mpi 300. 1.42 inf 0.0  
 
 #  Version 1.3
