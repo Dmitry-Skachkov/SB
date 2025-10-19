@@ -614,28 +614,26 @@
 
      subroutine calc_deltaE                                  ! calculate filling level of the surface
       real(8)            :: eps
-      real(8)            :: E1,E2,E0
+      real(8)            :: E1,E2
       dEf1 = dEf                                             ! store previous value
       eps = 0.000001d0
       if(L_n_type) then
        E1 =  0.d0
        E2 =  0.2d0
-       if(EFermi_input>=4.5d0.and.EFermi_input<=4.82d0) then
+       if(EFermi_input>=4.5d0.and.EFermi_input<4.82d0) then
         E1 = 0.d0
         E2 = 0.5d0
-       endif
-       E0 = E2
+       endif 
       elseif(L_p_type) then
        E1 = -0.2d0
        E2 =  0.0d0
-       E0 = E1
       else
        E1 =  0.0d0
        E2 =  0.0d0
       endif
       call zero12(E1,E2,dEf,eps)
       if(L_debug) print *,'deltaE=',dEf
-      if(dabs(dEf-E0) .le. 0.001d0) then
+      if(dabs(dEf-0.2d0) .le. 0.001d0) then
        print *,'*** ERROR: calc_deltaE: increase searching range'
        stop
       endif

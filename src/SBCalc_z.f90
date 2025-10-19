@@ -12,6 +12,7 @@
 
 
      Module SBCalc_z                                           ! calculate density and V on z-mesh points and do scf cycle
+      use SBmpi
       use SBParameters
       use SBCalc_i
       use SBSpline_functions
@@ -27,13 +28,13 @@
      subroutine calc_elpot                                     ! calculate Schottky potential
       integer          :: i,j
       real(8)          :: delta_Vi
-      real(8)          :: V1(Nz-1),V2(Nz-1)
-      real(8)          :: Vel11
-      real(8)          :: Vtest(3)
-      if(L_super_debug) print *,'calc_elpot:'
-      do i=1,Nz                                   
-       V_el1(i) = Vel(Zz(i))
+      if(L_super_debug) write(iPrint,*) 'calc_elpot:'
+
+      do i=1,P_MPI_group      
+       A1(i) = Vel(Zz(P_MPI_start + i))  ! calculate part of the array
       enddo
+      call P_combine_R(A1,V_el1,Nz)  ! combine all parts into V_el1
+
       do i=2,Nz-1                                              ! calculate derivative
        El_f(i) = -(V_el1(i+1)-V_el1(i-1))/(Zz(i+1)-Zz(i-1))    ! V/Ang             
       enddo
@@ -56,32 +57,55 @@
 
       subroutine calc_po1                                  ! calculate charge density on z-mesh points
        integer          :: i
-       real(8)          :: po2,po3,po4     
-       if(L_super_debug) print *,'calc_po1:'
-       poh_max = 0.d0
-       poe_max = 0.d0
-       poMe_max = 0.d0
-       delta_po = 0.d0
-       do i=1,Nz        
-        if(L_super_debug) print *,'calc_po1: i=',i 
-        po2 = poh(Zz(i))
-        po_h(i) = po2
-        poh_max = dmax1(poh_max,po2)
-        po3 = poe(Zz(i))
-        po_e(i) = po3
-        poe_max = dmin1(poe_max,po3)
+       real(8)          :: po2,po3,po4 
+       integer          :: ist,ngr    
+       if(L_super_debug) write(iPrint,*) 'calc_po1:'
+     !  poh_max = 0.d0
+     !  poe_max = 0.d0
+     !  poMe_max = 0.d0
+     !  delta_po = 0.d0
+       R1 = 0.d0
+       R2 = 0.d0
+       R3 = 0.d0
+       R4 = 0.d0
+
+       do i=1,P_MPI_group       
+        if(L_super_debug) write(iPrint,*) 'calc_po1: i=',i 
+        po2 = poh(Zz(P_MPI_start + i))
+      !  po_h(i) = po2
+        A1(i) = po2
+       ! poh_max = dmax1(poh_max,po2)
+        R1 = dmax1(R1,po2)
+        po3 = poe(Zz(P_MPI_start + i))
+      !  po_e(i) = po3
+        A2(i) = po3
+       ! poe_max = dmin1(poe_max,po3)
+        R2 = dmin1(R2,po3)
         if(lCBS) then
-         po4 = poMIGS(Zz(i))
+         po4 = poMIGS(Zz(P_MPI_start + i))
         else
          po4 = 0.d0
         endif 
-        po_MIGS(i) = po4
-        poMe_max = dmin1(poMe_max,po4)
-        po1(i) = po2 + po3 + po4 - po00                    ! h + e + MIGS + doping
+       ! po_MIGS(i) = po4
+        A3(i) = po4
+       ! poMe_max = dmin1(poMe_max,po4)
+        R3 = dmin1(R3,po4)
+       ! po1(i) = po2 + po3 + po4 - po00                    ! h + e + MIGS + doping
+        A4(i) = po2 + po3 + po4 - po00                    ! h + e + MIGS + doping
         if(po_new(i)> 1.d-15) then
-         delta_po = delta_po + (po1(i)-po_0(i))**2
+       !  delta_po = delta_po + (po1(i)-po_0(i))**2
+         R4 = R4 + (A4(i)-po_0(i))**2
         endif
        enddo
+       call P_combine_R(A1,po_h,Nz)
+       call P_combine_R(A2,po_e,Nz)
+       call P_combine_R(A3,po_MIGS,Nz)
+       call P_combine_R(A4,po1,Nz)
+       call P_max_R(R1,poh_max)
+       call P_min_R(R2,poe_max)
+       call P_min_R(R3,poMe_max)
+       call P_sum_R(R4,delta_po)
+
        delta_po = delta_po/dfloat(Nz)
       end subroutine calc_po1
 
@@ -92,9 +116,10 @@
 
 
 
+
      subroutine mixing_po
       integer         :: i
-      if(L_super_debug) print *,'mixing_po:'
+      if(L_super_debug) write(iPrint,*) 'mixing_po:'
       do i=1,Nz                                                      ! mixing new and old densities
        po_new(i) = (1.d0-alfa)*po_0(i) + alfa*po1(i)
       enddo
@@ -143,9 +168,9 @@
       do i=1,Nz                                                      ! mixing new and old V with correction
 !       Fx = F1*dexp(-((Zz(i))/z01)**2) + F2*Bessel_j1(10.d0*Zz(i))
 !       if(dabs(Fx) > 10.d0) then
-!        print *
-!        print *,'Problems with the correction scheme: '
-!        print *,'Fx =',Fx
+!        write(iPrint,*)*
+!        write(iPrint,*)*,'Problems with the correction scheme: '
+!        write(iPrint,*)*,'Fx =',Fx
 !        stop
 !       endif
 !       dV1(i) = dV(i) - Fx 
@@ -196,11 +221,12 @@
         logical       :: Lsuc1,Lsuc2
         real(8)       :: diffV
         iter = 0
-        print 5
-        if(L_restart) print 6
-        print 4
+        write(iPrint,5)
+        if(L_restart) write(iPrint,6)
+        write(iPrint,4)
  if(.not.L_exp_scf) then
-        call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
+ ! write(iPrint,*) 'L_restart=',L_restart
+         call set_limits_zz1(zz1,zz2)                                     ! set initial limits for searching solution
         call set_initial_deltaE                                          ! set first approximation to deltaE
         do is = 1,Nitscf                                                 ! scf cycle over deltaE
          if(.not.L_restart) then                                            ! starting from scratch
@@ -209,7 +235,7 @@
           do is0 = 1,Nitscf0                                             ! pre cycle in order to find approximate solution
            call calc_look_po_z(is0,zz1,zz2,Lsuc1,Lsuc2)                  
            if(Lsuc1 .and. Lsuc2) then                                    ! if success
-            print 1,is0,iter
+            write(iPrint,1) is0,iter
             exit
            elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is0==Nitscf0)) then! not success
             call print_scf_error(is0,zz1,zz2,Lsuc1,Lsuc2)
@@ -224,7 +250,7 @@
          do is1 = 1,Nitscf1                                              ! post scf cycle in order to find accurate solution
           call calc_look_po_z(is1,zz1,zz2,Lsuc1,Lsuc2)                  
           if(Lsuc1 .and. Lsuc2) then
-           print 3,is1,iter
+           write(iPrint,3) is1,iter
            exit
           elseif((.not.Lsuc1 .or. .not.Lsuc2) .and. (is1==Nitscf1)) then ! not success
            call print_scf_error(is1,zz1,zz2,Lsuc1,Lsuc2)
@@ -254,14 +280,14 @@
         real(8)        :: za1,za2   
         integer        :: Natmpt
         logical        :: Lsuc1,Lsuc2
-        print 3,Natmpt
-        if(.not.Lsuc1) print 10,za1
-        if(.not.Lsuc2) print 11,za2
-        print 9
-        print 6,EFermi1
-        if(L_p_type) print 7,dabs(EFermi1-EFermi_00)
-        if(L_n_type) print 8,dabs(EFermi1-EFermi_00)
-        print 5,po00*1.d24
+        write(iPrint,3) Natmpt
+        if(.not.Lsuc1) write(iPrint,10) za1
+        if(.not.Lsuc2) write(iPrint,11) za2
+        write(iPrint,9)
+        write(iPrint,6) EFermi1
+        if(L_p_type) write(iPrint,7) dabs(EFermi1-EFermi_00)
+        if(L_n_type) write(iPrint,8) dabs(EFermi1-EFermi_00)
+        write(iPrint,5) po00*1.d24
  3      format(/' We made ',I4,' attempts to find the solution, unfortunately it is outside of the region')
  5      format(' Doping concentration is ',1p,E12.3,' cm-3')
  6      format(' Fermi level =',F12.4,' eV')
@@ -373,14 +399,14 @@
         Lsuc2 = .true.
         do while (dabs(a-b) > eps)
          iter = iter + 1
-         if(iter > Nitmax) then
-          print 3,iter
+         if(iter > Nitmax.and.Process==1) then
+          write(iPrint,3) iter
           stop
          endif
          za = (a+b)/2.d0
-         if(L_debug) print *,'za=',za
+         if(L_debug) write(iPrint,*) 'za=',za
          call calc_diff_eV0(diffV)
-         if(L_debug) print *,'diffV=',diffV
+         if(L_debug) write(iPrint,*) 'diffV=',diffV
         if(EFermi1 > CNL+dEf) then
          if(diffV > 0.d0) then
           b = za
@@ -396,19 +422,19 @@
         endif
         enddo
         if( (dabs(za-za1).le.0.01d0) ) then
-         if(.not.Natmpt==Nitscf0) print 1
+         if(.not.Natmpt==Nitscf0) write(iPrint,1)
          Lsuc1 = .false.
         elseif( (dabs(za-za2).le.0.01d0) ) then
-         if(.not.Natmpt==Nitscf0) print 2
+         if(.not.Natmpt==Nitscf0) write(iPrint,2)
          Lsuc2 = .false.
         endif
         if(L_debug) then
-         print *,'iter=',iter
-         print *,'found za=',za
-         print *,'-eV(0)=',-V_eln(1)
-         print *,'EFermi1=',EFermi1
-         print *,'CNL=',CNL
-         print *,'EFermi1-(CNL+dEf)=',EFermi1-(CNL+dEf)
+         write(iPrint,*) 'iter=',iter
+         write(iPrint,*) 'found za=',za
+         write(iPrint,*) '-eV(0)=',-V_eln(1)
+         write(iPrint,*) 'EFermi1=',EFermi1
+         write(iPrint,*) 'CNL=',CNL
+         write(iPrint,*) 'EFermi1-(CNL+dEf)=',EFermi1-(CNL+dEf)
         endif
  1      format(/'***** ERROR *****'/' za is too close to za1'/' Let us decrease the value za1 and try one more time'/)
  2      format(/'***** ERROR *****'/' za is too close to za2'/' Let us increase the value za2 and try one more time'/)
@@ -432,17 +458,17 @@
           call mixing_V                                                       ! spline coeff. for V_eln   (teper' i ne nuzhno!)
          enddo
          diffV = -V_eln(1) - (EFermi1 - (CNL+dEf))                            ! -eV(0) - (EFermi1 - (CNL+dEf))
-         if(L_super_debug) then
-          print *,'-V_eln(1)=',-V_eln(1)
-          print *,'filling level=',dEf
-          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
+         if(L_super_debug.and.Process==1) then
+          write(iPrint,*) '-V_eln(1)=',-V_eln(1)
+          write(iPrint,*) 'filling level=',dEf
+          write(iPrint,*) '(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
          endif
          if(L_n_type) then
           SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
          elseif(L_p_type) then
           SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
          endif
-         print 2,iter,SBH,dabs(-V_eln(1)),bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+         write(iPrint,2) iter,SBH,dabs(-V_eln(1)),bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
  2       format(I4,2F11.5,E15.5,6E14.4,F12.4)
         end subroutine calc_diff_eV0
 
@@ -455,24 +481,24 @@
          if(.not.L_pre) call calc_deltaE                                      ! calculate filling level of the surface
          do i=1,Nitscf3
           iter = i
-          print *,'-V_eln(1)=',-V_eln(1)
+          write(iPrint,*) '-V_eln(1)=',-V_eln(1)
           call calc_po1                                                       ! calculate charge density po1 (po_h, po_e, and po_MIGS)
           call mixing_po                                                      ! mixing new and old density (po_new = (1-a)po0+a*po1) + spline coeff. 
           call calc_elpot                                                     ! calculate electrostatic potential using po_new
           call mixing_V                                                       ! spline coeff. for V_eln   (teper' i ne nuzhno!)
           call calc_charges                                               ! calculate charge on the interface
-          print *,'-V_eln(1)=',-V_eln(1)
+          write(iPrint,*) '-V_eln(1)=',-V_eln(1)
           if(L_n_type) then
            SBH = dabs(-V_eln(1)) + ECBM - EFermi1 
           elseif(L_p_type) then
            SBH = dabs(-V_eln(1)) + EFermi1 - EVBM
           endif
-          print 2,iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
+          write(iPrint,2) iter,SBH,dabs(-V_eln(1)),Sig,bspl4(1)*er*e0,poh_max*1.d24,poe_max*1.d24,poMe_max*1.d24,po_new(1)*1.d24,delta_po*1.d24,delta_V
          enddo
          if(L_super_debug) then
-          print *,'-V_eln(1)=',-V_eln(1)
-          print *,'filling level=',dEf
-          print *,'(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
+          write(iPrint,*) '-V_eln(1)=',-V_eln(1)
+          write(iPrint,*) 'filling level=',dEf
+          write(iPrint,*) '(EFermi1 - (CNL+dEf))=',(EFermi1 - (CNL+dEf))
          endif
  2       format(I4,2F11.5,2E15.5,6E14.4,F12.4)
         end subroutine calc_exp_scf
@@ -491,8 +517,10 @@
           L_conv = .true.
          endif
          ddEf = dabs(dEf-dEf1)
-         print 1,acc_scf
-         print 2,ddEf
+     !    if(Process==1) then
+          write(iPrint,1) acc_scf
+          write(iPrint,2) ddEf
+     !    endif
  1       format(' accuracy of scf cycle ',1p,E12.3) 
  2       format(' accuracy reached for deltaE ',1p,E12.3)
         end subroutine calc_check_scf
@@ -505,10 +533,10 @@
    !      call calc_MIGS_q                                                     ! calculate equivalent charge due to MIGS
    !      call calc_h_q                                                        ! calculate equivalent charge due to holes
    !      call calc_e_q                                                        ! calculate equivalent charge due to electrons
-          if(L_debug) print *,'Sig_total=',Sig
-   !      print *,'SigMIGS=',SigMIGS
-   !      print *,'Sig_e=',Sig_e
-   !      print *,'Sig_h=',Sig_h
+          if(L_debug) write(iPrint,*) 'Sig_total=',Sig
+   !      write(iPrint,*)*,'SigMIGS=',SigMIGS
+   !      write(iPrint,*)*,'Sig_e=',Sig_e
+   !      write(iPrint,*)*,'Sig_h=',Sig_h
         end subroutine calc_charges
 
 

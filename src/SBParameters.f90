@@ -8,6 +8,7 @@
 !                      https://efrc.ufl.edu/
 
      Module SBParameters
+      use SBmpi
       implicit none
       real(8), parameter     :: pi = 3.141592653589793238462643383279502884197169d0
       real(8), parameter     :: ee = 2.7182818284590452353602874713527d0
@@ -151,10 +152,28 @@
 
 
        subroutine read_data
-        call getargR(1,Temp)                                        ! temperature                                          
-        call getargR(2,EFermi_input)                                ! Fermi level                               
-        call getarg(3,LscA)                                         ! length of SC ('inf' or the value in A)
-        if(L_debug) print *,' LscA=',LscA
+        if(Process==0) then
+         call getargR(1,Temp)                                        ! temperature                                          
+         call getargR(2,EFermi_input)                                ! Fermi level                               
+         call getarg(3,LscA)                                         ! length of SC ('inf' or the value in A)
+         call getargR(4,Sig_gate)                                    ! gating charge density (in cm-2)
+        endif
+        
+        call P_wait
+        call P_sendR(Temp) 
+        call P_sendR(EFermi_input)
+        call P_sendA(Lsca)
+        call P_sendR(Sig_gate)
+
+!        if(Process==2) then
+!         write(iPrint,*) *,'Process=',Process
+!         write(iPrint,*) *,'Temp=',temp
+!         write(iPrint,*) *,'EFermi_input=',EFermi_input
+!         write(iPrint,*) *,'Lsca=',Lsca
+!         write(iPrint,*) *,'Sig_gate=',Sig_gate
+!        endif
+
+        if(L_debug) write(iPrint,*) ' LscA=',LscA
         if(trim(adjustl(LscA)) == 'inf') then
          L_inf = .true.
          Lsc = Lsc_inf
@@ -162,23 +181,25 @@
          L_inf = .false.
          read(LscA,*) Lsc                                           ! convert character(10) LscA to real(8) Lsc
         endif  
-        if(L_debug) print *,' Lsc=',Lsc
-        call getargR(4,Sig_gate)                                    ! gating charge density (in cm-2)
+        if(L_debug) write(iPrint,*) ' Lsc=',Lsc
         if(L_inf) Sig_gate = 0.d0
-        if(L_debug) print *,' Sig_gate=',Sig_gate
+        if(L_debug) write(iPrint,*) ' Sig_gate=',Sig_gate
         Sig_gate = Sig_gate*1.D-16                                  ! convert to A^-2
         if(Temp == 0.d0) then
-         print *,'Please use nonzero temperature'
+         write(iPrint,*) 'Please use nonzero temperature'
          stop
         endif
         kbT = kb*Temp 
+        L_restart = .false.
+        if(.false.) then
         if(L_check_file('restart.dat')) then
          L_restart = .true.                                         ! continue from previous calculation
-         if(L_super_debug) print *,'continue calculations from previous step'
+         if(L_super_debug) write(iPrint,*) 'continue calculations from previous step'
          call read_restart_dat
         else
          L_restart = .false.                                        ! start from scratch
-         if(L_super_debug) print *,'start calculation from scratch'
+         if(L_super_debug) write(iPrint,*) 'start calculation from scratch'
+        endif
         endif
         call read_input_dat  
         SigS    =  SigS**1.D-16                                     ! convert to A^-2
@@ -217,7 +238,8 @@
 
        subroutine read_input_dat
         character(5)         :: CBS
-        if(L_super_debug) print *,'read input.dat'
+        if(L_super_debug) write(iPrint,*) 'read input.dat'
+        if(Process==0) then
         open(unit=1,file='input.dat')    
          read(1,*) V_D0                                            ! V_D0 in a.u. (from QE output)
          read(1,*) Lz                                              ! Lz (A)
@@ -246,6 +268,26 @@
           cz = 0.d0
          endif 
         close(unit=1)
+        endif
+        call P_wait
+        call P_sendR(V_D0)
+        call P_sendR(Lz)
+        call P_sendR(CNL)
+        call P_sendR(alat)
+        call P_sendR(V_DSC)
+        call P_sendR(gap)
+        call P_sendR(SigS)
+        call P_sendA(CBS)
+        call P_sendL(lCBS)
+        if(lCBS) then
+         call P_sendR1(b1,3)
+         call P_sendR1(b2,3)
+         call P_sendR1(b3,3)
+         call P_sendR(Lz_int)
+         call P_sendR(z3)
+         call P_sendR(z4)
+         call P_sendR(cz)
+        endif        
        end subroutine read_input_dat
 
 
@@ -253,7 +295,8 @@
 
        subroutine read_restart_dat
         real(8)            :: Temp0,EFermi_input0,Lsc0,Sig_gate0
-        if(L_super_debug) print *,'read restart.dat'
+        if(L_super_debug) write(iPrint,*) 'read restart.dat'
+        if(Process==0) then
         open(unit=1,file='restart.dat')    
          read(1,*) za
          read(1,*) Sig
@@ -262,6 +305,15 @@
          read(1,*) Lsc0
          read(1,*) Sig_gate0
         close(unit=1)
+        endif
+        call P_wait
+        call P_sendR(za)
+        call P_sendR(Sig)
+        call P_sendR(Temp0)
+        call P_sendR(EFermi_input0)
+        call P_sendR(Lsc0)
+        call P_sendR(Sig_gate0)
+
         if(dabs((Temp0-Temp)/Temp) > 0.2d0) L_restart = .false.                  ! if Temp change more then 20% start from scratch
         if(Sig_gate /= 0.d0 .and. Sig_gate0 /= 0.d0) then                       
          if(dabs((Sig_gate0-Sig_gate)/Sig_gate) > 0.5d0) L_restart = .false.     ! if Sig_gate change more then 50% start from scratch
@@ -276,14 +328,15 @@
           L_restart = .true.
          endif
         endif
-        if(.not.L_restart) print 1
+        if(.not.L_restart) write(iPrint,1)
  1      format(/' Parameters of the systems are changed significantly from previous calculation'/' starting from scratch'/)
        end subroutine read_restart_dat
 
 
 
        subroutine write_restart_dat
-        if(L_super_debug) print *,'read restart.dat'
+        if(Process==0) then       
+        if(L_super_debug) write(iPrint,*) 'read restart.dat'
         open(unit=1,file='restart.dat')    
          write(1,*) za
          write(1,*) Sig
@@ -292,6 +345,13 @@
          write(1,*) Lsc
          write(1,*) Sig_gate
         close(unit=1)
+        endif
+      !  call P_sendR(za)
+      !  call P_sendR(Sig)
+      !  call P_sendR(Temp)
+      !  call P_sendR(EFermi_input)
+      !  call P_sendA(Lsc)
+      !  call P_sendR(Sig_gate)
        end subroutine write_restart_dat
 
 
@@ -299,34 +359,36 @@
 
 
        subroutine print_input_parameters
+      !  if(Process==0) then      
          if(trim(adjustl(LscA)) == 'inf') then
-          print 20
-          if(L_debug) print 22,Lsc_inf 
+          write(iPrint,20)
+          if(L_debug) write(iPrint,22) Lsc_inf 
          else
-          print 21,Lsc
+          write(iPrint,21) Lsc
          endif
-         print 2,Lz
-         print 3,Lz_int
-         print 5,V_D0
-         print 19,Surface
-         print 9,alat
-         print 12,V_DSC
-         print 15,EVBM
-         print 16,ECBM
-         print 17,EFermi_input
-         print 18,Temp
-         print 23,er
+         write(iPrint,2) Lz
+         write(iPrint,3) Lz_int
+         write(iPrint,5) V_D0
+         write(iPrint,19) Surface
+         write(iPrint,9) alat
+         write(iPrint,12) V_DSC
+         write(iPrint,15) EVBM
+         write(iPrint,16) ECBM
+         write(iPrint,17) EFermi_input
+         write(iPrint,18) Temp
+         write(iPrint,23) er
          if(lCBS) then
-          print 24
-          print 10,b1,b2,b3
-          print 7,z3
-          print 8,z4
-          print 11,cz
+          write(iPrint,24)
+          write(iPrint,10) b1,b2,b3
+          write(iPrint,7) z3
+          write(iPrint,8) z4
+          write(iPrint,11) cz
          endif 
          if(L_debug) then
-          print 13,e0
-          print 14,ckA
+          write(iPrint,13) e0
+          write(iPrint,14) ckA
          endif
+      !  endif 
  2       format(' length of the cell in the interface calculation (Lz) = ',   F12.4,' A')
  3       format(' width of the interfacial layer              (Lz_int) = ',   F12.4,' A') 
  5       format(' volume of the interfacial layer               (V_D0) = ',   F12.4,' A^3')
@@ -356,36 +418,49 @@
 
      subroutine read_CBS_data    
       integer                :: rNk,k,k1,i
+      if(Process==0) then
       if(L_super_debug) then
-       print *
-       print *,'READ CBS'
-       print 4
+       write(iPrint,*) 
+       write(iPrint,*) 'READ CBS'
+       write(iPrint,4)
       endif
       open(unit=1,file='cbs.dat') 
        read(1,1) rNk,Npt1
        if(L_super_debug) then 
-        print *,'Npt1=',Npt1
-        print *,'allocate arrays'
+        write(iPrint,*) 'Npt1=',Npt1
+        write(iPrint,*) 'allocate arrays'
        endif
        allocate(ImKL1(Npt1,Nk))
        allocate(ImKH1(Npt1,Nk))
        allocate(Ef1(Npt1))
        if(rNk/=Nk) then
-        print *,'ERROR with Nk'
+        write(iPrint,*) 'ERROR with Nk'
         stop
        endif
        do k=1,Nk
         read(1,2) k1
         if(k1/=k) then
-         print *,'ERROR with k1'
+         write(iPrint,*) 'ERROR with k1'
          stop
         endif
         do i=1,Npt1
          read(1,3) Ef1(i),ImKL1(i,k),ImKH1(i,k)
-         if(L_super_debug) print 3,Ef1(i),ImKL1(i,k),ImKH1(i,k)
+         if(L_super_debug) write(iPrint,3) Ef1(i),ImKL1(i,k),ImKH1(i,k)
         enddo
        enddo
       close(unit=1)
+      endif
+      call P_wait
+      call P_sendI(Npt1)
+      if(Process/=0) then
+       allocate(ImKL1(Npt1,Nk))
+       allocate(ImKH1(Npt1,Nk))
+       allocate(Ef1(Npt1))
+      endif
+      call P_sendR2(ImKL1,Npt1,Nk)
+      call P_sendR2(ImKH1,Npt1,Nk)
+      call P_sendR1(Ef1,Npt1)
+
  1    format(2I5)
  2    format(I5)
  3    format(3F14.6)
@@ -446,12 +521,14 @@
 
        subroutine plot_DOS_Mtot_test
         integer     :: j
+        if(Process==0) then
         open(unit=3,file='DOS_Mtot.dat')
         write(3,3) 'DOS_Mt',N_DOS_M
         do j=1,N_DOS_M
           write(3,2) Ef_DOS_M(j),DOS_Mtot(j)
         enddo
         close(unit=3)
+        endif
  2      format(5x,F8.3,E12.4)
  3      format(/'VARIABLES = "E", "PDOS"'/'ZONE T="',A7,'" I=',I4,' F=POINT')
        end subroutine plot_DOS_Mtot_test
@@ -469,7 +546,7 @@
         real(8)     :: PDOS3(Nptm,Nk)
         integer     :: j
         integer     :: k
-        if(L_super_debug) print *,'calc_DOS_Mtot:'
+        if(L_super_debug) write(iPrint,*) 'calc_DOS_Mtot:'
         do j=1,N_DOS_M
          DOSx = 0.d0
          do k=1,Nk
@@ -489,10 +566,11 @@
         integer      :: k
         real(8)      :: kr
         real(8)      :: kr9
-        if(L_debug) print *,'open file k_mesh.dat'
+        if(Process==0) then
+        if(L_debug) write(iPrint,*) 'open file k_mesh.dat'
         open(unit=2,file='k_mesh.dat')
          read(2,*) Nk
-         if(L_debug) print *,'Nk=',Nk
+         if(L_debug) write(iPrint,*) 'Nk=',Nk
          allocate(kp(3,Nk))
          allocate(wk(Nk))
          kp(1:3,1:Nk) = 0.d0
@@ -500,13 +578,23 @@
           read(2,*) kp(1:2,k),wk(k)
          enddo
         close(unit=2)
-        if(L_debug) print *,'read k-mesh with weights'
+        endif
+        call P_wait
+        call P_sendI(Nk)
+        if(Process/=0) then
+         allocate(kp(3,Nk))
+         allocate(wk(Nk))
+        endif
+        call P_sendR2(kp,2,Nk)
+        call P_sendR1(wk,Nk)        
+
+        if(L_debug) write(iPrint,*) 'read k-mesh with weights'
         sumk = 0.d0
         do k=1,Nk
          sumk = sumk + wk(k)
         enddo
-        if(L_debug) print *,'TEST wk:', sumk
-        if(L_debug) print *,'k kx ky kr'
+        if(L_debug) write(iPrint,*) 'TEST wk:', sumk
+        if(L_debug) write(iPrint,*) 'k kx ky kr'
         kr9 = 100.d0
         do k=1,Nk
          kr = dsqrt(kp(1,k)**2+kp(2,k)**2)
@@ -514,7 +602,7 @@
           k9 = k 
           kr9 = kr
          endif
-         if(L_debug) print 4,k,kp(1,k),kp(2,k),kr
+         if(L_debug) write(iPrint,4) k,kp(1,k),kp(2,k),kr
         enddo
  1      format(20x,3F12.7,7x,F12.7)
  2      format(3F16.10)
@@ -569,8 +657,8 @@
       ! PDOS4 = 0.d0
       endif 
       call read_pdos_0                         ! PDOS of the surface
-      if(L_debug) print *,'N_DOS_M=',N_DOS_M
-      if(L_debug) print *,'N_DOS_M0=',N_DOS_M0
+      if(L_debug) write(iPrint,*) 'N_DOS_M=',N_DOS_M
+      if(L_debug) write(iPrint,*) 'N_DOS_M0=',N_DOS_M0
       if(lCBS) then
       do k=1,Nk
        do j=1,N_DOS_M
@@ -580,17 +668,23 @@
       enddo
       endif
       if(lCBS) call calc_DOS_Mtot(PDOS3)                ! calculate integrated DOS_M of interfacial layer
-      call open_file(2,'dos_bulk_.dat')        ! DOS of bulk SC
-      read(2,*) N_DOS_SC
-      if(L_debug) print *,'N_DOS_SC=',N_DOS_SC
-      do j=1,N_DOS_SC
-       read(2,*) Ef_DOS_SC(j),DOS_SC(j)
-       if(DOS_SC(j) < 0.d0) then
-        DOS_SC(j) = 0.d0
-       endif
-      enddo
-      close(unit=2)
-      if(L_super_debug) print *,'read_PDOS: read ',N_DOS_SC,' points of bulk'
+      if(Process==0) then
+       call open_file(2,'dos_bulk_.dat')        ! DOS of bulk SC
+       read(2,*) N_DOS_SC
+       if(L_debug) write(iPrint,*) 'N_DOS_SC=',N_DOS_SC
+       do j=1,N_DOS_SC
+        read(2,*) Ef_DOS_SC(j),DOS_SC(j)
+        if(DOS_SC(j) < 0.d0) then
+         DOS_SC(j) = 0.d0
+        endif
+       enddo
+       close(unit=2)
+       if(L_super_debug) write(iPrint,*) 'read_PDOS: read ',N_DOS_SC,' points of bulk'
+      endif
+      call P_wait
+      call P_sendI(N_DOS_SC)
+      call P_sendR1(Ef_DOS_SC,N_DOS_SC)
+      call P_sendR1(DOS_SC,N_DOS_SC)
      end subroutine read_PDOS
 
 
@@ -602,18 +696,24 @@
       real(8)           :: PDOS(Nptm,Nk),Efi(Nptm)
       integer           :: ilayer
       integer           :: k,j,kr
-      if(L_debug) print *,'read_PDOS:'
+      if(Process==0) then
+      if(L_debug) write(iPrint,*) 'read_PDOS:'
       call open_file(2,'kpdos_int_'//trim(adjustl(fstr(ilayer)))//'.dat')     ! PDOS of interface (E,k)
       read(2,*) kr,N_DOS_M 
-      if(L_debug) print *,'read N_DOS_M =',N_DOS_M
+      if(L_debug) write(iPrint,*) 'read N_DOS_M =',N_DOS_M
       do k=1,Nk                                                               ! read Nk points
        read(2,*)
        do j=1,N_DOS_M
         read(2,*) Efi(j),PDOS(j,k)
        enddo
       enddo
-      if(L_debug) print *,'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
+      if(L_debug) write(iPrint,*) 'read_PDOS: read ',N_DOS_M,' points of interface and ',Nk,' k-points'
       close(unit=2)
+      endif
+      call P_wait
+      call P_sendI(N_DOS_M)
+      call P_sendR1(Efi,N_DOS_M)
+      call P_sendR2(PDOS,N_DOS_M,Nk)
      end subroutine read_pdos_1
 
 
@@ -622,25 +722,33 @@
      subroutine read_pdos_0                    ! read PDOS for surface (1st layer + metal surface)
       integer           :: j
    !   integer           :: Nnnx
-      if(L_debug) print *,'read_pdos_0:'
+     if(Process==0) then
+      if(L_debug) write(iPrint,*) 'read_pdos_0:'
       call open_file(2,'DOStot.dat')    
 !       read(2,*) Nnnx
        read(2,*) N_DOS_M0
-      if(L_debug) print *,'read ',N_DOS_M0,' values'
+      if(L_debug) write(iPrint,*) 'read ',N_DOS_M0,' values'
     !   if(Nnnx/=N_DOS_M) then
-    !    print *,'N_DOS_M=',N_DOS_M
-    !    print *,'but file contains ',Nnnx,' values'
+    !    write(iPrint,*) 'N_DOS_M=',N_DOS_M
+    !    write(iPrint,*) 'but file contains ',Nnnx,' values'
     !   endif
        do j=1,N_DOS_M0
         read(2,*) Efi0(j),DOS0(j)
        enddo
        if(L_super_debug) then
-        print *,'read_pdos_0: read ',N_DOS_M0,' points of surface layer'
+        write(iPrint,*) 'read_pdos_0: read ',N_DOS_M0,' points of surface layer'
         do j=1,N_DOS_M0
-         print 11,Efi0(j),DOS0(j)
+         write(iPrint,11) Efi0(j),DOS0(j)
         enddo
        endif
       close(unit=2)
+      endif
+
+      call P_wait
+      call P_sendI(N_DOS_M0)
+      call P_sendR1(Efi0,N_DOS_M0)
+      call P_sendR1(DOS0,N_DOS_M0)
+
  1    format(15x,I4)
 11    format(F14.5,E17.5)
      end subroutine read_pdos_0
@@ -663,14 +771,16 @@
       subroutine open_file(un,name)
        integer      :: un
        character(*) :: name
+      if(Process==0) then
        if(L_check_file(trim(adjustl(name)))) then
-        if(L_debug) print *,' Open file ',name
+        if(L_debug) write(iPrint,*) ' Open file ',name
         open(unit=un,file=trim(adjustl(name)))
 !        L_file = .true.
        else
-        print *,'ERROR:  File ',trim(adjustl(name)),' does not exist'
+        write(iPrint,*) 'ERROR:  File ',trim(adjustl(name)),' does not exist'
         stop
        endif
+       endif 
       end subroutine open_file
 
 
@@ -691,10 +801,11 @@
 
     subroutine read_pol                                             ! read polarization data    
      integer                :: i
+     if(Process==0) then 
      if(L_super_debug) then
-      print *
-      print *,' open polarization.dat'
-      print *,'    E     polarization'
+      write(iPrint,*) 
+      write(iPrint,*) ' open polarization.dat'
+      write(iPrint,*) '    E     polarization'
      endif
      open(unit=11,file='polarization.dat')
       read(11,*) Npol
@@ -702,29 +813,36 @@
        read(11,*) er
        kappa = e0*(er-1.d0)
       elseif(Npol > 1) then
-       if(L_debug) print *,'Npol=',Npol
+       if(L_debug) write(iPrint,*) 'Npol=',Npol
        allocate(Epol(Npol))
        allocate(dpol(Npol))
        do i=1,Npol
         read(11,*) Epol(i),dpol(i)
-        if(L_super_debug) print 1,Epol(i),dpol(i)
+        if(L_super_debug) write(iPrint,*) 1,Epol(i),dpol(i)
        enddo
        kappa = 0.d0
        do i=2,Npol
         kappa = kappa + (dpol(i)/Epol(i))
        enddo
        kappa = 1.d0/dfloat(Npol)*kappa
-       if(L_debug) print *,'read_pol:   kappa=',kappa
-       if(L_debug) print *,'read_pol:   kappa/e0=',kappa/e0
+       if(L_debug) write(iPrint,*) 'read_pol:   kappa=',kappa
+       if(L_debug) write(iPrint,*) 'read_pol:   kappa/e0=',kappa/e0
        er = kappa/e0 + 1.d0
        deallocate(Epol)
        deallocate(dpol)
       else
-       print *,'read_pol: *ERROR* Npol = 0'
-       print *,'read_pol: no data in polarization.dat file'
+       write(iPrint,*) 'read_pol: *ERROR* Npol = 0'
+       write(iPrint,*) 'read_pol: no data in polarization.dat file'
        stop
       endif
      close(unit=11)
+     endif
+
+     call P_wait
+     call P_sendI(Npol)
+     call P_sendR(er)
+     call P_sendR(kappa)
+
  1   format(F11.6,F12.7)
     end subroutine read_pol 
 
@@ -735,11 +853,11 @@
       subroutine calc_CBS_limits
        Emin1 = Ef1(1)
        Emax1 = Ef1(Npt1)
-       if(L_debug) then
-       print *
-       print *,'calc_CBS_limits'
-       print 2
-       print 1,Emin1,Emax1
+       if(L_debug.and.Process==0) then
+       write(iPrint,*) 
+       write(iPrint,*) 'calc_CBS_limits'
+       write(iPrint,2) 
+       write(iPrint,1) Emin1,Emax1
        endif
  1     format(2E12.4)
  2     format('     Emin1           Emax1 ')

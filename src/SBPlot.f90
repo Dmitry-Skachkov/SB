@@ -2,7 +2,8 @@
 
 
 
-     Module SBPlot                                           ! plot and print results
+     Module SBPlot                                           ! plot and write(iPrint,*)results
+      use SBmpi
       use SBParameters
       use SBSpline_functions
       implicit none
@@ -11,11 +12,13 @@
 
 
      subroutine print_logo
-      print 1
+      write(iPrint,1)
   1   format(///                                                                                           &
              '   ************************************************************************************' /   &
              '   *                                                                                  *' /   &
              '   *               Program SB: First-Principles Method for Schottky Barrier           *' /   &
+             '   *                         version 1.4 MPI                                          *' /   &
+             '   *                                                                                  *' /   &
              '   *               This program is the open-source software, please cite              *' /   &
              '   *               Phys. Rev. B, 104, 045429, 2021                                    *' /   &
              '   *               https://doi.org/10.1103/PhysRevB.104.045429                        * '/   &
@@ -35,6 +38,7 @@
 
      subroutine write_results
       integer       :: i
+      if(Process==0) then
       open(unit=2,file='elpot_.dat' )
        do i=1,Nz
         write(2,2) Zz(i),-V_eln(i),El_f2(i)                 
@@ -47,6 +51,7 @@
        enddo
       close(unit=2)
       call write_restart_dat
+      endif
  1    format(F17.5,4E21.12e3)
  2    format(F17.5,F18.10,E17.5e3)
  3    format(I5,'     !  "z", "poh", "poe", "poMIGS", "po"')
@@ -56,32 +61,34 @@
 
 
       subroutine print_results
-        if(L_scf) print 3,iter,V_eln(1)
-        if(L_conv) print 4
+!       if(Process==0) then       
+        if(L_scf) write(iPrint,3) iter,V_eln(1)
+        if(L_conv) write(iPrint,4)
         E_00 = -(V_eln(4)-V_eln(3))/(Zz(4)-Zz(3))
         P_00 = kappa*E_00
-        if(L_p_type) print 12
-        if(L_n_type) print 13
-        print 14,Temp
-        print 10,po00*1.d24
-        print 11,EFermi1
+        if(L_p_type) write(iPrint,12)
+        if(L_n_type) write(iPrint,13)
+        write(iPrint,14) Temp
+        write(iPrint,10) po00*1.d24
+        write(iPrint,11) EFermi1
         if(SigS /= 0.d0) then
-         print 23,CNL
+         write(iPrint,23) CNL
         else
-         print 21,CNL
+         write(iPrint,21) CNL
         endif
-        print 16,EFermi_00
-        print 9,SBH 
-        print 18,-V_eln(1)
-        print 8,dEf
-        print 22,SigS*1.d16
-        print 15,Sig_gate*1.d16
-        print 7,Sig*1.d16 
-        print 5,E_00
-        print 6,P_00
-        print 19,DLW
-        print 20,ILW
-        print 17
+        write(iPrint,16) EFermi_00
+        write(iPrint,9) SBH 
+        write(iPrint,18) -V_eln(1)
+        write(iPrint,8) dEf
+        write(iPrint,22) SigS*1.d16
+        write(iPrint,15) Sig_gate*1.d16
+        write(iPrint,7) Sig*1.d16 
+        write(iPrint,5) E_00
+        write(iPrint,6) P_00
+        write(iPrint,19) DLW
+        write(iPrint,20) ILW
+        write(iPrint,17) NumNodes
+!       endif 
 3       format(I4,F11.5,'     divergency due to V'/'STOP')
 4       format(' Convergence with respect to charge density is reached')
 5       format(' Electric field close to the surface of semiconductor E(0) =',1p,E14.5,' V/A')
@@ -96,7 +103,7 @@
 14      format(' Temperature                                               =',   F14.3,' K')
 15      format(' Surface charge density of the gate electrode     Sig_gate =',1p,E14.4,' cm-2')
 16      format(' Fermi level for intrinsic semiconductor         EFermi_00 =',   F14.5,' eV')
-17      format(///' NORMAL TERMINATION'/)
+17      format(///' NORMAL TERMINATION on ',I5,' cores'/)
 18      format(' Amplitude of Schottky potential energy               -eV0 =',   F14.5,' eV')
 19      format(' Depletion layer width                                 DLW =',   F14.2,' A')
 20      format(' Inversion layer width                                 ILW =',   F14.2,' A')
