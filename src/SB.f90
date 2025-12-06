@@ -6,9 +6,9 @@
 !                      Quantum Theory Project (QTP),
 !                      Department of Physics, University of Florida, Gainesville, FL 32611, USA 
 !                      https://efrc.ufl.edu/
-!                      Description of the method:      https://arxiv.org/abs/2001.00710
+!                      Description of the method:      https://doi.org/10.1103/PhysRevB.104.045429
 !                      Documentation and license:      https://github.com/m2qm-efrc/SB
-!                      Requests for contributing:      Dr. Hai-Ping Cheng <m2qm.efrc@phys.ufl.edu>
+!                      Requests for contributing:      Dr. Hai-Ping Cheng <ha.cheng@northeastern.edu>
 !                      Questions regarding the code:   Dr. Dmitry Skachkov <dmitry.skachkov@dsedu.org>
 !
 
