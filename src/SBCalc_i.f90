@@ -774,8 +774,8 @@
         real(8)    :: eps
         real(8)    :: a,b
         if(L_debug) print *,'calc_EFermiS:'
-        a = EVBM+0.10d0 
-        b = ECBM-0.10d0
+        a = EVBM-2.0d0 
+        b = ECBM+2.0d0
         do while (dabs(a-b) > eps)
          EFermi1 = (a+b)/2.d0
          call calc_po00S
