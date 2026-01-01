@@ -19,6 +19,7 @@
       real(8)                :: eV0
       real(8)                :: EFermi111
       real(8)                :: dEf1
+      real(8), parameter     :: dEF = 10.d0                    ! parameter of integration for CNL (eV)
      contains
 
 
@@ -244,7 +245,7 @@
       real(8)       :: R11    
       call set_eps(eps,'poe0')
       eps = 1.d-12
-      call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F2S,eps)        
+      call QSL3D(R11,EVBM-dEF,ECBM+dEF,F2S,eps)        
       poe0S = -(R11)/V_DSC
      end function poe0S
 
@@ -289,7 +290,7 @@
       real(8)       :: z
       real(8)       :: R11       
       eps = 1.d-12 
-      call QSL3D(R11,EVBM-1.d0,ECBM+1.d0,F1S,eps)        
+      call QSL3D(R11,EVBM-dEF,ECBM+dEF,F1S,eps)        
       poh0S =  (R11)/V_DSC
      end function poh0S
 
@@ -774,8 +775,8 @@
         real(8)    :: eps
         real(8)    :: a,b
         if(L_debug) print *,'calc_EFermiS:'
-        a = EVBM-2.0d0 
-        b = ECBM+2.0d0
+        a = EVBM-dEF 
+        b = ECBM+dEF
         do while (dabs(a-b) > eps)
          EFermi1 = (a+b)/2.d0
          call calc_po00S
