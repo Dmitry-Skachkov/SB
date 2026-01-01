@@ -20,6 +20,9 @@
       real(8)                :: EFermi111
       real(8)                :: dEf1
       real(8), parameter     :: dEFs = 10.d0                    ! parameter of integration for CNL (eV)
+      real(8), parameter     :: eps_Vel = 1.d-5                 ! accuracy for electrostatic potential
+      real(8), parameter     :: eps_po  = 1.d-10                ! accuracy for charge density
+      real(8), parameter     :: deltaEmax = 0.5d0               ! max value of deltaE to search
      contains
 
 
@@ -29,7 +32,7 @@
       real(8)            :: z
       real(8)            :: eps
       real(8)            :: intpo2,intpo21,intpo22,intpo23,intpo24,intpo25,intpo26
-      eps = 1.d-10
+      eps = eps_Vel    !1.d-10
       zp = z
       if(z < 10.d0) then                                       
        intpo21 = 0.d0
@@ -317,6 +320,7 @@
       else
        eps = 1.d-22
       endif
+      eps = eps_po   ! TEST******
       eVz = -Vels(z)
       call QSL3D(R11,Exxh1(1)+eVz,Exxh2(1)+eVz,poh_2,eps)        
       call QSL3D(R12,Exxh1(2)+eVz,Exxh2(2)+eVz,poh_2,eps)        
@@ -348,6 +352,7 @@
       else
        eps = 1.d-22
       endif
+      eps = eps_po   ! TEST******
       eVz = -Vels(z)
       call QSL3D(R11,Exxe1(1)+eVz,Exxe2(1)+eVz,poe_2,eps)        
       call QSL3D(R12,Exxe1(2)+eVz,Exxe2(2)+eVz,poe_2,eps)        
@@ -617,16 +622,16 @@
       real(8)            :: eps
       real(8)            :: E1,E2
       dEf1 = dEf                                             ! store previous value
-      eps = 0.000001d0
+      eps = 0.0002d0    !0.000001d0
       if(L_n_type) then
        E1 =  0.d0
-       E2 =  0.2d0
-       if(EFermi_input>=4.5d0.and.EFermi_input<4.82d0) then
-        E1 = 0.d0
-        E2 = 0.5d0
-       endif 
+       E2 =  deltaEmax     !0.2d0
+   !    if(EFermi_input>=4.5d0.and.EFermi_input<4.82d0) then
+   !     E1 = 0.d0
+   !     E2 = 0.5d0
+   !    endif 
       elseif(L_p_type) then
-       E1 = -0.2d0
+       E1 = -deltaEmax      !-0.2d0
        E2 =  0.0d0
       else
        E1 =  0.0d0
@@ -634,7 +639,7 @@
       endif
       call zero12(E1,E2,dEf,eps)
       if(L_debug) print *,'deltaE=',dEf
-      if(dabs(dEf-0.2d0) .le. 0.001d0) then
+      if(dabs(dEf-deltaEmax) .le. 0.001d0) then
        print *,'*** ERROR: calc_deltaE: increase searching range'
        stop
       endif
