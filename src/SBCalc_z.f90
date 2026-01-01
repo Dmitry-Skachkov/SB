@@ -259,7 +259,7 @@
           call reset_zz2(zz1,zz2,Lsuc1,Lsuc2)
          enddo
          call calc_charges                                               ! calculate charge on the interface
-         call calc_deltaE                                                ! calculate filling level of the surface
+!         call calc_deltaE                                                ! calculate filling level of the surface
         enddo
  else
         L_pre = .false.
