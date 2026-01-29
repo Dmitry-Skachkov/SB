@@ -20,8 +20,8 @@
       real(8)                :: EFermi111
       real(8)                :: dEf1
       real(8), parameter     :: dEFs = 10.d0                    ! parameter of integration for CNL (eV)
-      real(8), parameter     :: eps_Vel = 1.d-5                 ! accuracy for electrostatic potential
-      real(8), parameter     :: eps_po  = 1.d-10                ! accuracy for charge density
+      real(8), parameter     :: eps_Vel = 1.d-11                ! accuracy for electrostatic potential
+      real(8), parameter     :: eps_po  = 1.d-16                ! accuracy for charge density
       real(8), parameter     :: deltaEmax = 0.5d0               ! max value of deltaE to search
      contains
 
